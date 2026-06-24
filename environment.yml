@@ -31,4 +31,5 @@ dependencies:
   - pip:
       - fair-esm>=2.0.0
       - torch>=2.0          # arm64 macOS wheel includes MPS
+      - arcadia-pycolor   # Arcadia plot styling (apc)
       - -e ./fpbase-extractor   # installs the `fpbase-extract` CLI + fpbase_extractor package
