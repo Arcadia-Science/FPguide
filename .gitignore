@@ -1,0 +1,42 @@
+# ---- Large / regenerable artifacts (keep out of git) ----
+# Per-residue ESM-2 embedding cache is ~500 MB (> GitHub's 100 MB limit); regenerate from sequences.
+esm_residue_fp16.npy
+esm_residue_len.npy
+esm_embeddings.npy
+# Pairwise-identity matrix cache (regenerate via fpbase_cluster.ipynb)
+identity_matrix.npy
+identity_matrix.meta.json
+# Trained model binaries (regenerate by re-running the notebooks)
+*.pt
+*.joblib
+
+# ESM-2 weights are downloaded to the torch hub cache (~/.cache/torch), not here — nothing to ignore,
+# but block them if ever copied locally:
+*.pt.lock
+checkpoints/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipython/
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+nbconvert*.log
+
+# ---- Environments ----
+.venv/
+venv/
+env/
+.conda/
+
+# ---- OS / editor ----
+.DS_Store
+*.swp
+.idea/
+.vscode/

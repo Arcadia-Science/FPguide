@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FP Sequence ↔ Trait Mutual Information — Working Notes</title>
+<style>
+  :root {
+    --fg: #1c2433; --muted: #5b6678; --bg: #ffffff; --soft: #f5f7fa;
+    --line: #e2e7ee; --accent: #2f6df0; --accent-soft: #eaf1fe;
+    --warn: #b4690e; --warn-soft: #fdf3e3; --good: #1f7a4d; --good-soft: #e9f6ef;
+    --pin: #8a3ffc; --pin-soft: #f3ecff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 28px 96px; }
+  header.doc { border-bottom: 2px solid var(--line); padding-bottom: 20px; margin-bottom: 8px; }
+  h1 { font-size: 1.95rem; line-height: 1.25; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 1.02rem; }
+  .meta { color: var(--muted); font-size: 0.85rem; margin-top: 10px; }
+  h2 { font-size: 1.32rem; margin: 44px 0 12px; padding-top: 8px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.06rem; margin: 26px 0 8px; }
+  p { margin: 10px 0; }
+  code {
+    background: var(--soft); border: 1px solid var(--line); border-radius: 5px;
+    padding: 1px 5px; font: 0.86em "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 5px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
+  th { background: var(--soft); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .callout { border-radius: 10px; padding: 14px 18px; margin: 18px 0; border: 1px solid var(--line); }
+  .callout .tag { font-weight: 700; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 4px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout p:first-of-type { margin-top: 2px; }
+  .c-accent { background: var(--accent-soft); border-color: #cddffb; }
+  .c-accent .tag { color: var(--accent); }
+  .c-warn { background: var(--warn-soft); border-color: #f0dcb9; }
+  .c-warn .tag { color: var(--warn); }
+  .c-good { background: var(--good-soft); border-color: #c6e6d4; }
+  .c-good .tag { color: var(--good); }
+  .c-pin { background: var(--pin-soft); border-color: #e0cffb; }
+  .c-pin .tag { color: var(--pin); }
+  .files { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 6px 18px; }
+  .files code { background: #fff; }
+  .toc { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px 22px; margin: 24px 0; }
+  .toc ol { margin: 6px 0; }
+  .pill { display:inline-block; font-size:0.72rem; font-weight:600; padding:1px 8px; border-radius:999px; vertical-align:middle; }
+  .pill-good { background: var(--good-soft); color: var(--good); border:1px solid #c6e6d4; }
+  .pill-warn { background: var(--warn-soft); color: var(--warn); border:1px solid #f0dcb9; }
+  hr { border: none; border-top: 1px solid var(--line); margin: 36px 0; }
+  footer { color: var(--muted); font-size: 0.82rem; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .eq { background: var(--soft); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:0.9rem; overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <h1>Mutual Information between FP Sequence, Spectra, and Traits</h1>
+  <div class="sub">Working notes &amp; decisions — KSG estimation, PCA embeddings, and what to trust</div>
+  <div class="meta">Project: <code>fpbase-extractor</code> &nbsp;·&nbsp; Compiled 2026-06-22 &nbsp;·&nbsp; Status: analysis built, reliability question <strong>pinned</strong></div>
+</header>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#what">What we built</a></li>
+    <li><a href="#method">Method recap</a></li>
+    <li><a href="#results">Key results</a></li>
+    <li><a href="#trust">The reliability question (the crux)</a></li>
+    <li><a href="#concepts">Concepts clarified</a></li>
+    <li><a href="#pinned">Pinned &amp; open</a></li>
+    <li><a href="#next">Potential next steps</a></li>
+  </ol>
+</div>
+
+<h2 id="what">1. What we built</h2>
+<p>Two executed Jupyter notebooks in <code>fpbase-extractor/</code>, working from the FPbase extract
+(<code>fpbase_output/fpbase_proteins.csv</code>, ~1,115 sequenced proteins; <code>fpbase_spectra_long.csv</code>,
+450 proteins with excitation + emission curves).</p>
+
+<div class="files">
+<ul>
+  <li><code>mutual_information_sequence_traits.ipynb</code> — main pipeline: k-mer sequence representation → PCA embedding → from-scratch KSG MI estimator → MI vs. each quantitative trait → spectra analysis → sequence↔spectrum MI, with a <code>k</code>-sensitivity section.</li>
+  <li><code>mi_benchmark_embeddings_map.ipynb</code> — (1) benchmark of the estimator vs. Gaussian theory and sklearn; (2) PCA of the k-mer representation; (3) PCA of excitation/emission spectra; (4) combinatorial MI heatmap over all feature pairs; (5) "sequence vs. everything" bar plot.</li>
+</ul>
+</div>
+
+<p>Saved embeddings (tab-separated, slug-indexed; reload with <code>pd.read_csv(path, sep="\t", index_col=0)</code>):</p>
+<div class="files">
+<ul>
+  <li><code>processed_data/PCA_seq_ebd.txt</code> — 10-PC k-mer sequence embedding (990 proteins)</li>
+  <li><code>processed_data/PCA_excitation_ebd.txt</code> — 10-PC excitation-spectrum embedding (452)</li>
+  <li><code>processed_data/PCA_emission_ebd.txt</code> — 10-PC emission-spectrum embedding (451)</li>
+</ul>
+</div>
+
+<h2 id="method">2. Method recap</h2>
+<ul>
+  <li><strong>Representation.</strong> Sequences → length-normalized <em>k</em>=2 amino-acid k-mer frequency vectors (400-dim) → standardize → PCA. Spectra → resampled onto a common 350–750&nbsp;nm grid → PCA.</li>
+  <li><strong>Dimensionality.</strong> Everything reduced to 10 PCs. Sequence k-mers are information-spread (10 PCs ≈ 45% variance); spectra are smooth/redundant (10 PCs ≈ 96%).</li>
+  <li><strong>Estimator.</strong> Kraskov–Stögbauer–Grassberger (KSG, 2004) algorithm&nbsp;1, implemented from scratch with a <code>cKDTree</code> max-norm kNN search. Validated against the analytic Gaussian MI and against <code>sklearn</code> on the 1-D case.</li>
+  <li><strong>Significance.</strong> Every reported MI is paired with a <em>shuffled-pairing permutation null</em> using the same estimator, at the same dimension and sample size. We report <em>net MI</em> (estimate − null mean), a z-score, and a permutation p-value.</li>
+</ul>
+
+<h2 id="results">3. Key results</h2>
+
+<h3>Information the sequence carries about each feature (net MI, bits)</h3>
+<table>
+  <tr><th>Feature</th><th class="num">net MI (bits)</th><th class="num">z</th><th class="num">n</th><th>Trust on magnitude</th></tr>
+  <tr><td>emission spectrum</td><td class="num">1.80</td><td class="num">72</td><td class="num">432</td><td><span class="pill pill-warn">lower bound (20-D)</span></td></tr>
+  <tr><td>excitation spectrum</td><td class="num">1.42</td><td class="num">62</td><td class="num">433</td><td><span class="pill pill-warn">lower bound (20-D)</span></td></tr>
+  <tr><td>em_max</td><td class="num">1.39</td><td class="num">135</td><td class="num">839</td><td><span class="pill pill-good">moderate (11-D)</span></td></tr>
+  <tr><td>ex_max</td><td class="num">1.29</td><td class="num">89</td><td class="num">878</td><td><span class="pill pill-good">moderate (11-D)</span></td></tr>
+  <tr><td>qy</td><td class="num">0.65</td><td class="num">41</td><td class="num">698</td><td><span class="pill pill-good">moderate</span></td></tr>
+  <tr><td>brightness</td><td class="num">0.54</td><td class="num">31</td><td class="num">602</td><td><span class="pill pill-good">moderate</span></td></tr>
+  <tr><td>ext_coeff</td><td class="num">0.46</td><td class="num">26</td><td class="num">626</td><td><span class="pill pill-good">moderate</span></td></tr>
+  <tr><td>pka</td><td class="num">0.37</td><td class="num">22</td><td class="num">406</td><td><span class="pill pill-good">moderate</span></td></tr>
+  <tr><td>maturation</td><td class="num">0.18</td><td class="num">10</td><td class="num">178</td><td><span class="pill pill-good">moderate</span></td></tr>
+</table>
+<p>All pairs are significant (<code>p ≈ 0.005–0.01</code>). The combinatorial heatmap additionally recovers sensible
+structure — e.g. excitation↔emission and ex_max↔em_max are the strongest pairs, and brightness↔(qy, ext_coeff) is
+strong because brightness is derived from those two.</p>
+
+<div class="callout c-good">
+  <span class="tag">What the results support</span>
+  <p>The sequence is most informative about the optical <em>spectra</em> and the spectral peak positions, and least about
+  maturation time. Ordering is biologically coherent and stable across estimator settings (the <code>k</code>-sweep gave
+  Spearman ≈ 1.0).</p>
+</div>
+
+<h2 id="trust">4. The reliability question (the crux of the discussion)</h2>
+
+<p>The benchmark stress-tested <code>ksg_mi</code> on Gaussians of growing dimension with a <em>known</em> true MI
+(theory = <code>−(d/2)·ln(1−ρ²)</code> nats). The estimator is accurate in low dimension but increasingly
+<strong>under-reports</strong> as dimension grows:</p>
+
+<table>
+  <tr><th class="num">d (per side)</th><th class="num">theory (nats)</th><th class="num">ksg_mi</th><th class="num">error</th></tr>
+  <tr><td class="num">1</td><td class="num">0.223</td><td class="num">0.212</td><td class="num">−5%</td></tr>
+  <tr><td class="num">5</td><td class="num">1.116</td><td class="num">0.760</td><td class="num">−32%</td></tr>
+  <tr><td class="num">10</td><td class="num">2.231</td><td class="num">0.904</td><td class="num">−60%</td></tr>
+  <tr><td class="num">15</td><td class="num">3.347</td><td class="num">0.873</td><td class="num">−74%</td></tr>
+</table>
+
+<div class="callout c-warn">
+  <span class="tag">The honest read</span>
+  <p>In high dimension, relative to sample size, the estimator becomes unreliable <strong>for absolute magnitude</strong>.
+  This is the curse of dimensionality — fundamental to <em>all</em> nonparametric MI estimators, not a bug in KSG. It is
+  driven by the <strong>dimension-to-N ratio</strong>: KSG is provably consistent (bias → 0 as N → ∞), but the samples
+  needed to fill space grow exponentially with dimension.</p>
+</div>
+
+<h3>"Which one is physical reality?"</h3>
+<p>In the <em>benchmark</em>, the theory is reality by construction — the data were generated from a known distribution,
+so its MI is a defined quantity, not an opinion. <code>ksg_mi</code> is simply the finite-sample estimate falling short.
+That the gap is <em>measurable</em> is the source of trust, not the source of doubt: an instrument whose error you have
+characterized is more trustworthy than one you have not. On the <strong>real data there is no theory line</strong> — the
+true distribution is unknown, so no method (KSG or otherwise) yields the absolute physical MI from finite samples.</p>
+
+<h3>What therefore is and isn't trustworthy</h3>
+<table>
+  <tr><th>Use of the estimator</th><th>Trustworthy?</th><th>Why</th></tr>
+  <tr><td><strong>Detection</strong> — is there dependence (vs. null)?</td><td><span class="pill pill-good">Yes</span></td><td>Under independence the estimator is ~unbiased; the null is calibrated at the same d, N.</td></tr>
+  <tr><td><strong>Ranking</strong> — which pair carries more?</td><td><span class="pill pill-good">Yes</span></td><td>The bias is monotonic, so it compresses the scale without reordering.</td></tr>
+  <tr><td><strong>Absolute magnitude</strong> (bits) in high-D pairs</td><td><span class="pill pill-warn">Lower bound</span></td><td>Downward bias; the 20-D embedding pairs (N≈430) are in a worse regime than the d=10 benchmark row.</td></tr>
+</table>
+<p>Practical consequence: the bar/heatmap values are best read as <em>net-of-null, comparative</em> quantities. The
+20-D pairs (sequence↔spectrum, spectrum↔spectrum) are conservative lower bounds — the true dependence is likely
+<em>higher</em> than shown, which strengthens (not weakens) the qualitative conclusion that the dependence is real and large.</p>
+
+<h3>On "KSG is data-efficient"</h3>
+<p>No contradiction — different baselines. "Data-efficient" is <em>comparative</em> (vs. histogram/KDE estimators at the
+same task, mostly demonstrated in 1–2 dimensions). "Unreliable in high-D" is <em>vs. ground truth, absolute</em>. KSG
+degrades later and more gracefully than the alternatives; it does not escape the curse. Analogy: a fuel-efficient car
+still can't cross a continent on one tank.</p>
+
+<h2 id="concepts">5. Concepts clarified along the way</h2>
+<ul>
+  <li><strong>nats vs. bits.</strong> Same quantity, different log base. <code>1 nat = 1/ln2 ≈ 1.443 bits</code>. KSG returns nats natively (digamma/natural logs); we convert to bits for reporting via <code>NATS_TO_BITS = 1/np.log(2)</code>.</li>
+  <li><strong>Interpreting MI magnitude.</strong> For continuous variables MI is unbounded above (no fixed scale), with 0 = independence. A useful intuition pump: under joint Gaussianity, <code>ρ² = 1 − 2^(−2·MI_bits)</code>, so 1 bit ≈ 75% "shared variance", 2 bits ≈ 94%. Treat as intuition, not literal ρ.</li>
+  <li><strong>z-score here.</strong> Standardized distance of the observed MI above its <em>permutation null</em>: <code>(MI − null.mean) / null.std</code>. A signal-to-noise / detectability measure, <em>not</em> a Gaussian p-value, and distinct from magnitude (a tight null can give high z at modest MI).</li>
+  <li><strong>Custom <code>ksg_mi</code> vs. sklearn.</strong> sklearn's <code>mutual_info_regression</code> computes per-feature MI against a <em>1-D</em> target — it cannot do joint multivariate X, nor multivariate-Y↔multivariate (sequence↔spectrum). The custom estimator was needed for those; sklearn was kept only as a 1-D validation cross-check.</li>
+</ul>
+
+<h2 id="pinned">6. Pinned &amp; open</h2>
+<div class="callout c-pin">
+  <span class="tag">📌 Pinned</span>
+  <p><strong>Estimator reliability in the high-dimensional pairs.</strong> The absolute MI for the 20-D pairs
+  (sequence↔spectrum, spectrum↔spectrum) is a lower bound of unknown tightness. We paused here rather than resolving it.
+  Detection and ranking conclusions stand; magnitude does not.</p>
+</div>
+
+<h2 id="next">7. Potential next steps</h2>
+
+<div class="callout c-accent">
+  <span class="tag">Recommended first</span>
+  <p><strong>Calibrate at the real operating points.</strong> Re-run the Gaussian benchmark at the exact
+  <code>(dx, dy, N)</code> of each real feature pair, so the expected under-estimation is <em>known and bounded</em>
+  there (rather than read off the pathological d=15 case). Annotate which heatmap cells are quantitatively reliable
+  vs. lower-bound, and optionally apply a bias correction to the embedding pairs.</p>
+</div>
+
+<h3>Cross-check with estimators that have different failure modes</h3>
+<p>The strongest evidence of trust is agreement across methods that fail differently — especially on <em>ranking</em>.</p>
+<table>
+  <tr><th>Method</th><th>Effort</th><th>Why it fits this data (10-D embeddings, N≈430)</th></tr>
+  <tr><td>Gaussian-copula MI (GCMI; Ince 2017)</td><td>low</td><td>Fast, robust at modest N; rank-transform + closed-form Gaussian MI. Ideal cross-check; flags KSG under-reporting.</td></tr>
+  <tr><td>LNC-corrected KSG (Gao 2015)</td><td>low</td><td>Near drop-in; directly targets KSG's high-dependence underestimation.</td></tr>
+  <tr><td>Sliced MI (Goldfeld 2021)</td><td>medium</td><td>Averages 1-D-projection MIs; scalable, stable in higher D (estimates a related quantity).</td></tr>
+  <tr><td>Neural (InfoNCE / MINE / SMILE)</td><td>high</td><td>Scales to high-D, but data-hungry — likely <em>worse</em> than the above at N≈430; revisit only with much more data.</td></tr>
+</table>
+
+<h3>Other directions noted</h3>
+<ul>
+  <li><strong>Reduce dimension for the embedding↔embedding pairs</strong> (e.g. 5 PCs) and/or increase N — both directly shrink the bias gap.</li>
+  <li><strong>Apples-to-apples comparison:</strong> restrict every pair to the common set of proteins for strict cross-representation comparability.</li>
+  <li><strong>Richer sequence representation:</strong> 3-mers or learned protein-language-model embeddings (vs. k=2 k-mers) to capture finer structure — at the cost of more dimensions.</li>
+  <li><strong>Reference:</strong> Czyż et al., "Beyond Normal: On the Evaluation of Mutual Information Estimators," NeurIPS 2023 — benchmark showing no estimator is uniformly best at high MI / high dimension. Useful sanity anchor.</li>
+</ul>
+
+<footer>
+  Generated from the working conversation on the <code>fpbase-extractor</code> MI analysis. Companion to
+  <code>mutual_information_sequence_traits.ipynb</code> and <code>mi_benchmark_embeddings_map.ipynb</code>.
+  Numbers reflect the executed notebooks as of 2026-06-22.
+</footer>
+
+</div>
+</body>
+</html>

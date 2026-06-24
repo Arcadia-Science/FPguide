@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fpbase-extractor"
+version = "1.0.0"
+description = "Extract protein sequences and phenotype data from FPbase (www.fpbase.org)"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["fluorescent protein", "FPbase", "bioinformatics", "fasta"]
+dependencies = []
+
+[project.scripts]
+fpbase-extract = "fpbase_extractor.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["fpbase_extractor*"]
