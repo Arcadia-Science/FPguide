@@ -1,7 +1,7 @@
 """Shared FP-spectrum surrogate/oracle models + ESM-2 per-residue embedding utilities.
 
-Used by surrogate_model_design*.ipynb, finalize_models.ipynb, and guided_design_approach1.ipynb so the
-saved checkpoints reconstruct identically wherever they are loaded.
+Used by surrogate_model_design.ipynb, surrogate_model_design_dual.ipynb, and guided_design_approach1.ipynb so
+the saved checkpoints reconstruct identically wherever they are loaded.
 """
 from __future__ import annotations
 import torch
@@ -29,18 +29,25 @@ def masked_pool(x, mask, kind):
 
 
 class SpectrumNet(nn.Module):
-    """MLP (pool raw embeddings) or CNN (conv over residues -> pool) -> spectrum."""
+    """MLP (pool raw embeddings) or CNN (conv over residues -> pool) -> spectrum.
+
+    pool: 'mean'|'min'|'max'|'std', or 'concat' (concatenate all four).
+    """
+    CONCAT = ["mean", "max", "min", "std"]
+
     def __init__(self, pool, use_cnn, d_in=D_IN, conv_ch=128, k=5, hidden=256, nl=2, drop=0.2, out=1002):
         super().__init__()
         self.pool = pool
         self.use_cnn = use_cnn
+        self.kinds = self.CONCAT if pool == "concat" else [pool]
         if use_cnn:
             self.conv = nn.Sequential(nn.Conv1d(d_in, conv_ch, k, padding=k // 2), nn.ReLU(),
                                       nn.Conv1d(conv_ch, conv_ch, k, padding=k // 2), nn.ReLU())
-            feat = conv_ch
+            base = conv_ch
         else:
             self.conv = None
-            feat = d_in
+            base = d_in
+        feat = base * len(self.kinds)
         layers = [nn.Linear(feat, hidden), nn.ReLU()]
         for _ in range(nl - 1):
             layers += [nn.Dropout(drop), nn.Linear(hidden, hidden), nn.ReLU()]
@@ -51,7 +58,31 @@ class SpectrumNet(nn.Module):
         x = Hb
         if self.use_cnn:
             x = self.conv(x.transpose(1, 2)).transpose(1, 2)
-        return self.head(masked_pool(x, mask, self.pool))
+        pooled = torch.cat([masked_pool(x, mask, k) for k in self.kinds], dim=-1)
+        return self.head(pooled)
+
+
+class PooledMLP(nn.Module):
+    """Pool per-residue embeddings (mean/min/max/std, or 'concat'=all four) -> MLP -> spectrum.
+
+    Pools internally so it shares SpectrumNet's forward(H, mask) interface (works with spectrum_fn).
+    """
+    CONCAT = ["mean", "max", "min", "std"]
+
+    def __init__(self, input, hidden, nl, d_in=D_IN, out=1002, drop=0.2):
+        super().__init__()
+        self.input = input
+        self.kinds = self.CONCAT if input == "concat" else [input]
+        d = d_in * len(self.kinds)
+        layers = [nn.Linear(d, hidden), nn.ReLU()]
+        for _ in range(nl - 1):
+            layers += [nn.Dropout(drop), nn.Linear(hidden, hidden), nn.ReLU()]
+        layers += [nn.Linear(hidden, out)]
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, Hb, mask):
+        feat = torch.cat([masked_pool(Hb, mask, k) for k in self.kinds], dim=-1)
+        return self.net(feat)
 
 
 # ---- checkpoint save/load ----
@@ -61,8 +92,12 @@ def save_model(path, net, meta):
 
 def load_model(path, dev, out=1002):
     ck = torch.load(path, map_location=dev)
-    net = SpectrumNet(ck["pool"], ck["arch"] == "CNN", conv_ch=ck.get("conv_ch", 128), k=ck.get("k", 5),
-                      hidden=ck["hidden"], nl=ck["nl"], drop=ck["drop"], out=out).to(dev)
+    out = ck.get("out", out)   # prefer the output dim saved with the checkpoint (e.g. PCA n_components)
+    if ck.get("kind") == "pooledmlp":
+        net = PooledMLP(ck["input"], ck["hidden"], ck["nl"], out=out, drop=ck.get("drop", 0.2)).to(dev)
+    else:  # SpectrumNet (MLP or CNN over per-residue embeddings)
+        net = SpectrumNet(ck["pool"], ck["arch"] == "CNN", conv_ch=ck.get("conv_ch", 128), k=ck.get("k", 5),
+                          hidden=ck["hidden"], nl=ck["nl"], drop=ck["drop"], out=out).to(dev)
     net.load_state_dict(ck["state_dict"])
     net.eval()
     return net, ck
@@ -110,4 +145,14 @@ def spectrum_fn(net, dev):
     def f(seqs):
         H, mask = resid_embed(seqs, dev)
         return net(H, mask)
+    return f
+
+
+def pca_spectrum_fn(net, pca, dev):
+    """Like spectrum_fn, but the net predicts PCA coefficients; reconstruct to a full spectrum."""
+    @torch.no_grad()
+    def f(seqs):
+        H, mask = resid_embed(seqs, dev)
+        coef = net(H, mask).cpu().numpy()
+        return torch.tensor(pca.inverse_transform(coef), dtype=torch.float32, device=dev)
     return f
