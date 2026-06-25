@@ -24,18 +24,21 @@ any unsupported op use `PYTORCH_ENABLE_MPS_FALLBACK=1`. ESM-2 weights download o
 | File | Role |
 |------|------|
 | [`build_fpbase_dataset.py`](build_fpbase_dataset.py) | Build the processed `(sequence, ex/em spectrum)` dataset from the fpbase-extractor export → `../fpbase-extractor/processed_data/ESM-spectrum/` (`spectra.npy`, `sequences.fasta`, `metadata.csv`). |
-| [`fpbase_cluster.ipynb`](fpbase_cluster.ipynb) | Sequence-identity alignment (Biopython `PairwiseAligner`), clustering exploration (dendrogram, between-cluster heatmaps, membership lists), and the **coordinated surrogate/oracle train/val/test splits** → `training_data/`. The identity matrix is cached (`identity_matrix.npy` + fingerprint) so restarts skip re-alignment. |
-| [`guided_design_approach1.ipynb`](guided_design_approach1.ipynb) | **Property-guided design** — a small surrogate `g(seq)→spectrum` (on frozen ESM-2 embeddings) steers ESM-2 masked refinement toward a target spectrum; designs are scored by an **independent oracle**, never by `g`. Currently a synthetic-data demo, to be wired to `training_data/`. |
+| [`surrogate_model_design_dual.ipynb`](surrogate_model_design_dual.ipynb) | Pick the **surrogate** (best MLP) and **oracle** (best CNN) on two coordinated random splits; models predict **PCA-reduced** spectra. Saves `trained_models/dual_*` and per-sample roles to `training_data/dual_splits.csv`. |
+| [`guided_design_approach1.ipynb`](guided_design_approach1.ipynb) | **Property-guided design** — a small surrogate `g(seq)→spectrum` (on frozen ESM-2 embeddings) steers ESM-2 masked refinement toward a target spectrum; designs are scored by an **independent oracle**, never by `g`. |
 | [`design.ipynb`](design.ipynb) | General masked-sequence design with ESM-2: naive single-pass fill, iterative/autoregressive decoding, and pseudo-perplexity ranking. |
-| [`training_data/`](training_data) | Saved cluster-wise splits (see its README). |
-| [`archive/`](archive) | Frozen references: the original `design.py` CLI, the synthetic Approach-1 baseline, and the k-mer clustering explorer. |
+| [`training_data/`](training_data) | Saved splits + cached per-residue embeddings (see its README). |
+| [`archive/`](archive) | Frozen references, incl. `fpbase_cluster.ipynb` (group-based clustering/splits, not in use for now) and `surrogate_model_design.ipynb` (raw-curve sweep). |
 
 ## Typical order
 
 1. In `../fpbase-extractor`: `fpbase-extract --spectra` → `fpbase_output/`.
 2. `python build_fpbase_dataset.py` → `processed_data/ESM-spectrum/`.
-3. `fpbase_cluster.ipynb` → identity clusters + `training_data/` splits.
+3. `surrogate_model_design_dual.ipynb` → trained surrogate/oracle + `training_data/` splits.
 4. `guided_design_approach1.ipynb` → surrogate-guided design + oracle evaluation.
+
+> Group-based (sequence-identity cluster) splitting lives in `archive/fpbase_cluster.ipynb`; we're using
+> random splits for now, so it's archived.
 
 ## Design approaches
 
