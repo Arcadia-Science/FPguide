@@ -40,3 +40,6 @@ env/
 *.swp
 .idea/
 .vscode/
+
+# Cached trained models (regenerable)
+trained_models/
