@@ -2,10 +2,13 @@
 
 Frozen, read-only reference notebooks. Do not edit — re-run to reproduce.
 
-| File | Data | Notes |
-|------|------|-------|
-| `guided_design_approach1_synthetic.ipynb` | **Synthetic** (`true_spectrum` toy map) | Validated end-to-end baseline of Approach 1, executed 2026-06-24 with outputs kept. `esm2_t33_650M_UR50D`, env `esm2-design`. Fixed seeds → reproducible. |
+| File | Notes |
+|------|-------|
+| `guided_design_approach1_synthetic.ipynb` | Synthetic (`true_spectrum` toy) baseline of Approach 1; superseded by the real-data `../guided_design_approach1.ipynb`. |
+| `fpbase_kmer_clustering_explorer.ipynb` | Early k-mer-proxy clustering explorer; superseded by `../fpbase_cluster.ipynb` (exact alignment). |
+| `surrogate_model.ipynb` | Early surrogate exploration (mean-pool MLP + RF); superseded by `../surrogate_model_design*.ipynb`. |
+| `finalize_models.ipynb` | Picked surrogate+oracle from top-2 models on separate random splits; **superseded by `../surrogate_model_design_dual.ipynb`** (coordinated dual datasets + dual labels + param-matched sweep). |
+| `surrogate_model_design_random.ipynb` | Single random-split pooling×arch sweep; **superseded by `../surrogate_model_design_dual.ipynb`**. |
 
-Active development (real FPbase spectra) continues in
-`../guided_design_approach1.ipynb`. This archive exists so the synthetic
-proof-of-correctness run is always recoverable for comparison.
+Frozen reference only. Note: `guided_design_approach1.ipynb` still loads `trained_models/{surrogate,oracle}_net.pt`
+(produced by the archived `finalize_models.ipynb`) until it is repointed to the dual models.
