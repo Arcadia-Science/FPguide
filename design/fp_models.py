@@ -28,6 +28,29 @@ def masked_pool(x, mask, kind):
     raise ValueError(kind)
 
 
+def peak_normalize(spec, G, eps=1e-8):
+    """Per-half (excitation|emission) peak-normalize a (..., 2G) spectrum so each half maxes at 1.
+
+    Works for torch tensors (differentiable) and numpy arrays.
+    """
+    ex, em = spec[..., :G], spec[..., G:]
+    if isinstance(spec, torch.Tensor):
+        ex = ex / ex.amax(-1, keepdim=True).clamp_min(eps)
+        em = em / em.amax(-1, keepdim=True).clamp_min(eps)
+        return torch.cat([ex, em], dim=-1)
+    import numpy as np
+    ex = ex / np.clip(ex.max(-1, keepdims=True), eps, None)
+    em = em / np.clip(em.max(-1, keepdims=True), eps, None)
+    return np.concatenate([ex, em], axis=-1)
+
+
+def cosine_loss(pred, target, G):
+    """1 - mean over the batch of the average per-half cosine similarity. pred/target: (B, 2G)."""
+    ex = nn.functional.cosine_similarity(pred[..., :G], target[..., :G], dim=-1)
+    em = nn.functional.cosine_similarity(pred[..., G:], target[..., G:], dim=-1)
+    return (1.0 - 0.5 * (ex + em)).mean()
+
+
 class SpectrumNet(nn.Module):
     """MLP (pool raw embeddings) or CNN (conv over residues -> pool) -> spectrum.
 
@@ -83,6 +106,28 @@ class PooledMLP(nn.Module):
     def forward(self, Hb, mask):
         feat = torch.cat([masked_pool(Hb, mask, k) for k in self.kinds], dim=-1)
         return self.net(feat)
+
+
+class NormalizedSpectrum(nn.Module):
+    """Wrap a PCA-coefficient net so forward() returns a peak-normalized spectrum.
+
+    coeffs = base(H, mask)  ->  PCA inverse_transform (fixed linear: coef @ components + mean)
+                            ->  per-half (ex|em) max-normalization.
+    The base net (trainable) is what gets saved/loaded; the PCA basis is held as buffers and
+    re-attached via the dataset's fitted PCA wherever the model is reconstructed.
+    """
+
+    def __init__(self, base, components, mean, G):
+        super().__init__()
+        self.base = base
+        self.G = G
+        self.register_buffer("components", torch.as_tensor(components, dtype=torch.float32))  # (n_comp, 2G)
+        self.register_buffer("pca_mean", torch.as_tensor(mean, dtype=torch.float32))          # (2G,)
+
+    def forward(self, Hb, mask):
+        coef = self.base(Hb, mask)
+        spec = coef @ self.components + self.pca_mean      # PCA inverse_transform
+        return peak_normalize(spec, self.G)
 
 
 # ---- checkpoint save/load ----
@@ -148,11 +193,18 @@ def spectrum_fn(net, dev):
     return f
 
 
-def pca_spectrum_fn(net, pca, dev):
-    """Like spectrum_fn, but the net predicts PCA coefficients; reconstruct to a full spectrum."""
+def pca_spectrum_fn(net, pca, dev, normalize=True):
+    """Like spectrum_fn, but the net predicts PCA coefficients; reconstruct (and peak-normalize) to a spectrum.
+
+    `normalize=True` applies per-half max-normalization so the returned spectrum peaks at 1 (matching the
+    peak-normalized training targets and the NormalizedSpectrum model used at training time).
+    """
     @torch.no_grad()
     def f(seqs):
         H, mask = resid_embed(seqs, dev)
         coef = net(H, mask).cpu().numpy()
-        return torch.tensor(pca.inverse_transform(coef), dtype=torch.float32, device=dev)
+        spec = pca.inverse_transform(coef)
+        if normalize:
+            spec = peak_normalize(spec, spec.shape[-1] // 2)
+        return torch.tensor(spec, dtype=torch.float32, device=dev)
     return f
