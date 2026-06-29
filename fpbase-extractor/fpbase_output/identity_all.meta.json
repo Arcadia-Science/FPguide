@@ -1,0 +1,12 @@
+{
+ "mode": "global",
+ "matrix": "BLOSUM62",
+ "gap_open": 11.0,
+ "gap_extend": 1.0,
+ "identity_den": "shorter",
+ "min_coverage": 0.8,
+ "prefilter": 0.2,
+ "kmer": 3,
+ "n": 990,
+ "seq_md5": "41eca8c72975fe73a55a3da101c5b369"
+}
