@@ -1,0 +1,46 @@
+{
+  "created": "2026-06-30",
+  "source_proteins": "../../fpbase-extractor/fpbase_output/fpbase_proteins.json",
+  "n_samples": 823,
+  "n_unique_sequences": 823,
+  "targets": [
+    "ex_max",
+    "em_max"
+  ],
+  "units": "nm",
+  "ex_max_range": [
+    342.0,
+    702.0
+  ],
+  "em_max_range": [
+    382.0,
+    1000.0
+  ],
+  "skipped_no_sequence": 51,
+  "skipped_nonstandard_aa": 14,
+  "skipped_state_missing_peak": 105,
+  "collapse_multistate": true,
+  "n_states_before_collapse": 894,
+  "collapse": {
+    "counts": {
+      "single_state": 779,
+      "drop_sensor": 7,
+      "keep_min_emission": 43,
+      "drop_ambiguous": 2,
+      "dedup_identical": 1
+    },
+    "dropped_multistate_names": [
+      "CAR-GECO1",
+      "GRvT",
+      "mKeima",
+      "pHluorin2",
+      "pHluorin4",
+      "pHluorin, ecliptic",
+      "pHluorin, ratiometric",
+      "pHmScarlet",
+      "PSLSSmKate"
+    ]
+  },
+  "note": "Peaks are FPbase-reported ex_max/em_max per (protein, state); no spectral curve required.",
+  "citation": "FPbase: Lambert TJ, Nat Methods 2019. Data (c) FPbase contributors."
+}
