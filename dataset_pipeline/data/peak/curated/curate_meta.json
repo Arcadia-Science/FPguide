@@ -1,0 +1,148 @@
+{
+  "created": "2026-07-02",
+  "target": "peak",
+  "source_proteins": "../../../../fpbase-extractor/fpbase_output/fpbase_proteins.json",
+  "pipeline": "A std-AA | B1 emission-gate | B2 exogenous | C resolve(target-aware) | D target-gate | E NN4mer<0.10",
+  "params": {
+    "EM_EPS": 10.0,
+    "NN_THRESHOLD": 0.1,
+    "drop_analyte_sensors": true,
+    "agree_tol": null
+  },
+  "counts": {
+    "curated": 758,
+    "unique_sequences": 758,
+    "after_resolve": 761,
+    "nn_dropped": 3,
+    "skipped_no_sequence": 51,
+    "skipped_nonstandard_aa": 14,
+    "skipped_exogenous": 69,
+    "skipped_no_emission_states": 138,
+    "resolve": {
+      "analyte_sensor": 6,
+      "dedup_identical": 718,
+      "drop_ambiguous": 2,
+      "keep_min_emission": 43
+    }
+  },
+  "dropped_names": {
+    "nonstandard_aa": [
+      "FPmcavgr7.7",
+      "FPrfl2.3",
+      "Fpaagar",
+      "StayRose",
+      "acanFP",
+      "cgigGFP",
+      "echFP",
+      "htFuncLib_slow.5",
+      "psupFP",
+      "rfloGFP2",
+      "rfloRFP",
+      "scubGFP1",
+      "scubGFP2",
+      "sympFP"
+    ],
+    "exogenous_cofactor": [
+      "BDFP1.6",
+      "BDFP1.8",
+      "BR1",
+      "CagFbFP",
+      "CreiLOV",
+      "DrCBD",
+      "KOFP-7",
+      "LucY",
+      "Lumazine binding protein",
+      "NpR3784g",
+      "Pp2 FbFP",
+      "Pp2FbFP L30M",
+      "R3-2+PCB",
+      "RpBphP1",
+      "SH3",
+      "SNIFP",
+      "SOPP",
+      "SOPP2",
+      "SOPP3",
+      "Sandercyanin",
+      "TDsmURFP",
+      "TeAPC\u03b1",
+      "UnaG",
+      "Wi-Phy",
+      "WiPhy2",
+      "eUnaG",
+      "emiRFP670",
+      "emiRFP703",
+      "iFP1.4",
+      "iLov",
+      "iRFP670",
+      "iRFP682",
+      "iRFP702",
+      "iRFP713",
+      "iRFP713/V256C",
+      "iRFP720",
+      "mIFP",
+      "mRhubarb713",
+      "mRhubarb719",
+      "mRhubarb720",
+      "miRFP",
+      "miRFP2",
+      "miRFP670",
+      "miRFP670-2",
+      "miRFP670nano",
+      "miRFP670nano3",
+      "miRFP670v1",
+      "miRFP680",
+      "miRFP682",
+      "miRFP702",
+      "miRFP703",
+      "miRFP709",
+      "miRFP713",
+      "miRFP720",
+      "miniGFP1",
+      "miniGFP2",
+      "miniSOG",
+      "miniSOG Q103V",
+      "miniSOG2",
+      "phiLOV2.1",
+      "phiLOV3",
+      "smURFP",
+      "smURFP_2.5"
+    ],
+    "exogenous_opsin": [
+      "Channelrhodopsin2"
+    ],
+    "exogenous_fluorogen": [
+      "FAST",
+      "frFAST",
+      "nirFAST  + HPAR-3,5DOM",
+      "pFAST"
+    ],
+    "exogenous_manual_irfp": [
+      "iFP2.0"
+    ],
+    "analyte_sensor": [
+      "CAR-GECO1",
+      "mKeima",
+      "pHluorin, ratiometric",
+      "pHluorin2",
+      "pHluorin4",
+      "pHmScarlet"
+    ],
+    "drop_ambiguous": [
+      "GRvT",
+      "PSLSSmKate"
+    ],
+    "nn_isolated": [
+      "BP02",
+      "CheGFP4",
+      "nanoLuc"
+    ]
+  },
+  "ex_max_range": [
+    343.0,
+    611.0
+  ],
+  "em_max_range": [
+    414.0,
+    684.0
+  ]
+}
