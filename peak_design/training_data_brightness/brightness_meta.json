@@ -1,0 +1,33 @@
+{
+  "source_proteins": "../fpbase-extractor/fpbase_output/fpbase_proteins.json",
+  "target": "brightness",
+  "units": "EC(M^-1 cm^-1) x QY / 1000",
+  "n_samples": 589,
+  "n_unique_sequences": 589,
+  "brightness_range": [
+    0.009999999776482582,
+    164.89999389648438
+  ],
+  "brightness_median": 24.170000076293945,
+  "skipped_no_sequence": 51,
+  "skipped_nonstandard_aa": 14,
+  "skipped_state_missing_brightness_or_peak": 362,
+  "n_states_before_collapse": 637,
+  "collapse": {
+    "counts": {
+      "single_state": 549,
+      "drop_sensor": 2,
+      "keep_min_emission": 39,
+      "drop_ambiguous": 2,
+      "dedup_identical": 1
+    },
+    "dropped_multistate_names": [
+      "CAR-GECO1",
+      "GRvT",
+      "pHluorin4",
+      "PSLSSmKate"
+    ]
+  },
+  "note": "Brightness = FPbase-reported EC x QY / 1000 per (protein, state). Every sample is a fluorescent FP with both ex_max and em_max; non-emissive chromoproteins are excluded. Wide dynamic range (~0-165); consider log1p for regression targets.",
+  "citation": "FPbase: Lambert TJ, Nat Methods 2019. Data (c) FPbase contributors."
+}
