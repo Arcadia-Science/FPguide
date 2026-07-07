@@ -36,38 +36,78 @@ def masked_pool(x, mask, kind):
     raise ValueError(kind)
 
 
-# pooling readouts exposed to the notebooks
-POOLS = ["mean", "min", "max", "concat"]
-CONCAT = ["mean", "max", "min"]          # what 'concat' expands to (no std, matching the requested set)
+# pooling readouts. Stat pools are parameter-free reductions; 'attn' is a learned attention pool.
+STAT_POOLS = {
+    "mean": ["mean"], "min": ["min"], "max": ["max"], "std": ["std"],
+    "concat": ["mean", "max", "min"],            # default multi-stat readout
+    "concatstd": ["mean", "max", "min", "std"],  # + dispersion
+}
+POOLS = ["mean", "min", "max", "std", "concat", "concatstd", "attn"]
+CONCAT = STAT_POOLS["concat"]                     # back-compat alias
 
 
 def _pool_kinds(pool):
-    return CONCAT if pool == "concat" else [pool]
+    return STAT_POOLS.get(pool, [pool])
+
+
+class Readout(nn.Module):
+    """Collapse (B, L, C) over valid residues to a fixed vector.
+
+    Stat pools concatenate parameter-free reductions (out_dim = C * n_stats). 'attn' is a learned
+    single-query masked attention pool (out_dim = C). Stat pools add no parameters, so existing
+    checkpoints (mean/min/max/concat) reconstruct with identical state_dict keys.
+    """
+
+    def __init__(self, pool, C):
+        super().__init__()
+        self.pool = pool
+        if pool == "attn":
+            self.score = nn.Linear(C, 1)
+            self.out_dim = C
+        else:
+            self.kinds = STAT_POOLS[pool]
+            self.out_dim = C * len(self.kinds)
+
+    def forward(self, x, mask):
+        if self.pool == "attn":
+            s = self.score(x).squeeze(-1).masked_fill(~mask, float("-inf"))
+            w = torch.softmax(s, dim=1).unsqueeze(-1)
+            return (x * w).sum(1)
+        return torch.cat([masked_pool(x, mask, k) for k in self.kinds], dim=-1)
+
+
+def mlp_head(feat, hidden, nl, drop, out):
+    """MLP head: (feat) -> hidden x(nl) -> out. Matches the previous inline head structure."""
+    layers = [nn.Linear(feat, hidden), nn.ReLU()]
+    for _ in range(nl - 1):
+        layers += [nn.Dropout(drop), nn.Linear(hidden, hidden), nn.ReLU()]
+    layers += [nn.Linear(hidden, out)]
+    return nn.Sequential(*layers)
 
 
 class PeakCNN(nn.Module):
-    """Conv1d over per-residue embeddings -> masked pool -> MLP head -> (ex_max, em_max).
+    """Conv1d stack over per-residue embeddings -> readout -> MLP head -> (ex_max, em_max).
 
-    pool: 'mean'|'min'|'max', or 'concat' (concatenate mean+max+min).
+    n_conv conv layers (default 2 = the original depth). n_conv=0 is a pooling-only MLP baseline
+    (no residue mixing; the readout runs directly over the raw ESM dims).
     """
 
-    def __init__(self, pool, d_in=D_IN, conv_ch=128, k=5, hidden=256, nl=2, drop=0.2, out=N_PEAKS):
+    def __init__(self, pool, d_in=D_IN, conv_ch=128, k=5, n_conv=2, hidden=256, nl=2, drop=0.2, out=N_PEAKS):
         super().__init__()
         self.pool = pool
-        self.kinds = _pool_kinds(pool)
-        self.conv = nn.Sequential(nn.Conv1d(d_in, conv_ch, k, padding=k // 2), nn.ReLU(),
-                                  nn.Conv1d(conv_ch, conv_ch, k, padding=k // 2), nn.ReLU())
-        feat = conv_ch * len(self.kinds)
-        layers = [nn.Linear(feat, hidden), nn.ReLU()]
-        for _ in range(nl - 1):
-            layers += [nn.Dropout(drop), nn.Linear(hidden, hidden), nn.ReLU()]
-        layers += [nn.Linear(hidden, out)]
-        self.head = nn.Sequential(*layers)
+        self.n_conv = n_conv
+        convs, c = [], d_in
+        for _ in range(n_conv):
+            convs += [nn.Conv1d(c, conv_ch, k, padding=k // 2), nn.ReLU()]
+            c = conv_ch
+        self.conv = nn.Sequential(*convs)
+        C = conv_ch if n_conv > 0 else d_in
+        self.readout = Readout(pool, C)
+        self.head = mlp_head(self.readout.out_dim, hidden, nl, drop, out)
 
     def forward(self, Hb, mask):
-        x = self.conv(Hb.transpose(1, 2)).transpose(1, 2)
-        pooled = torch.cat([masked_pool(x, mask, kk) for kk in self.kinds], dim=-1)
-        return self.head(pooled)
+        x = self.conv(Hb.transpose(1, 2)).transpose(1, 2) if self.n_conv > 0 else Hb
+        return self.head(self.readout(x, mask))
 
 
 class PeakTransformer(nn.Module):
@@ -81,25 +121,18 @@ class PeakTransformer(nn.Module):
                  hidden=256, nl=2, drop=0.2, out=N_PEAKS):
         super().__init__()
         self.pool = pool
-        self.kinds = _pool_kinds(pool)
         self.proj = nn.Linear(d_in, d_model)
         enc = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=ff, dropout=drop,
                                          batch_first=True, activation="relu")
         # enable_nested_tensor=False keeps the padding-masked path on GPU (the nested-tensor
         # fast-path falls back to CPU on MPS); weights are unchanged either way.
         self.encoder = nn.TransformerEncoder(enc, nlayers, enable_nested_tensor=False)
-        feat = d_model * len(self.kinds)
-        layers = [nn.Linear(feat, hidden), nn.ReLU()]
-        for _ in range(nl - 1):
-            layers += [nn.Dropout(drop), nn.Linear(hidden, hidden), nn.ReLU()]
-        layers += [nn.Linear(hidden, out)]
-        self.head = nn.Sequential(*layers)
+        self.readout = Readout(pool, d_model)
+        self.head = mlp_head(self.readout.out_dim, hidden, nl, drop, out)
 
     def forward(self, Hb, mask):
-        x = self.proj(Hb)
-        x = self.encoder(x, src_key_padding_mask=~mask)        # True = ignore (padding)
-        pooled = torch.cat([masked_pool(x, mask, kk) for kk in self.kinds], dim=-1)
-        return self.head(pooled)
+        x = self.encoder(self.proj(Hb), src_key_padding_mask=~mask)   # True = ignore (padding)
+        return self.head(self.readout(x, mask))
 
 
 class StandardizedPeaks(nn.Module):
@@ -127,10 +160,16 @@ def save_model(path, net, meta):
 
 
 def build_base(spec, dev, out=N_PEAKS, drop=0.2):
-    """Construct the trainable base net (predicts standardized peaks) from a spec dict."""
-    if spec["arch"] == "cnn":
+    """Construct the trainable base net (predicts standardized peaks) from a spec dict.
+
+    spec['arch'] in {'cnn', 'mlp', 'transformer'}: 'mlp' is a pooling-only baseline (cnn with n_conv=0).
+    """
+    arch = spec["arch"]
+    if arch in ("cnn", "mlp"):
+        n_conv = 0 if arch == "mlp" else spec.get("n_conv", 2)
         return PeakCNN(spec["pool"], conv_ch=spec.get("conv_ch", 128), k=spec.get("k", 5),
-                       hidden=spec.get("hidden", 256), nl=spec.get("nl", 2), drop=drop, out=out).to(dev)
+                       n_conv=n_conv, hidden=spec.get("hidden", 256), nl=spec.get("nl", 2),
+                       drop=drop, out=out).to(dev)
     return PeakTransformer(spec["pool"], d_model=spec.get("d_model", 128), nhead=spec.get("nhead", 4),
                            nlayers=spec.get("nlayers", 2), ff=spec.get("ff", 256),
                            hidden=spec.get("hidden", 256), nl=spec.get("nl", 2), drop=drop, out=out).to(dev)
