@@ -138,11 +138,47 @@ python build_dataset.py --target peak --outdir data/peak/curated
 # all three at once
 python build_dataset.py --all
 
-# compare against the existing peak_design/training_data*/curated sets
+# coordinated surrogate/oracle train/val/test split for the peak (ex/em) set
+python make_dual_split.py        # -> data/peak/curated/dual_splits.csv
+
+# compare against the archived peak_design data-processing outputs
 python compare.py
 ```
 
-Runs on CPU in seconds — no ESM-2 weights or GPU required.
+`build_dataset.py`, `make_dual_split.py`, and `compare.py` run on CPU in seconds — no ESM-2 or GPU needed.
+
+Embedding is the one heavy step and is its own script:
+
+```bash
+# embed each trait's curated sequences with ESM-2, cached per trait (needs GPU/MPS + ESM-2 weights)
+python embed.py                  # all three; skips traits already cached
+python embed.py --dry-run        # report N / Lmax / cache size without loading ESM-2
+python embed.py --trait pka --force
+```
+
+`embed.py` writes `esm_residue_fp16.npy` + `esm_residue_len.npy` into each `data/<trait>/curated/`, embedding
+every trait **independently** (a shared sequence is embedded once per trait). That wastes a little compute but
+keeps each dataset self-contained. These are exactly the caches the learning-curve notebooks load.
+
+## Downstream (peak_design)
+
+The old data-processing code and data in `peak_design/` were archived to
+`peak_design/archive/data_processing/` once this pipeline replaced them. What remains wired up:
+
+- **Peak surrogate/oracle split.** `make_dual_split.py` writes `data/peak/curated/dual_splits.csv` using the
+  same logic as before (seed 0, 70/15/15, coordinated so `S_test ⊆ O_train` and `O_test ⊆ S_train`).
+- **Embeddings.** Run `python embed.py` once to build the per-trait ESM-2 caches (see Usage). The
+  learning-curve notebooks load these directly; if a cache is missing they fall back to building it inline,
+  so `embed.py` is the clean pre-step but not strictly required.
+- **Learning-curve evaluations** stay in `peak_design/` — `learning_curve.ipynb` (peak),
+  `learning_curve_pka.ipynb`, `learning_curve_brightness.ipynb` — repointed to `data/<trait>/curated/` and
+  its `esm_residue_*.npy` cache.
+- **Stale caches to clear before re-running the learning curves:** the old sweep results computed on the
+  previous data still sit in `peak_design/trained_models/` and `trained_models_brightness/`
+  (`*_learning_curve_sweep.json`, `lc_models/`). Delete them so the notebooks recompute on the new data.
+  (`trained_models_pka/` is already absent.)
+- **Not yet repointed:** `surrogate_oracle_peak_dual.ipynb` and `guided_design_peak.ipynb` still read the
+  archived `training_data/`. They'll need repointing to `dataset_pipeline/data/` before they run again.
 
 ## What changed vs. the notebook pipeline
 
