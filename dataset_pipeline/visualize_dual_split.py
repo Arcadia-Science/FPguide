@@ -118,7 +118,6 @@ def main():
         ax.text(RX + 0.8, yp[o], f"{o}\n{Otot[o]}", ha="left", va="center", fontsize=15)
     ax.text(LX, 2.78, "surrogate", ha="center", fontsize=15, color=C.aegean, fontweight="bold")
     ax.text(RX, 2.78, "oracle", ha="center", fontsize=15, color=C.amber, fontweight="bold")
-    print(LX,RX)
     ax.set_xlim(-1.6, 3.6)
     ax.set_ylim(-0.7, 3.15)
     ax.axis("off")
