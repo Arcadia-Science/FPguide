@@ -31,6 +31,9 @@ dependencies:
   - pip:
       - fair-esm>=2.0.0
       - torch>=2.0          # arm64 macOS wheel includes MPS
+      - transformers        # ProstT5 encoder (Rostlab/ProstT5) for the structure-aware oracle
+      - sentencepiece       # ProstT5 T5Tokenizer backend
+      - protobuf            # sentencepiece model loading
       - biotite            # multiple sequence alignment + plotting
       - arcadia-pycolor   # Arcadia plot styling (apc)
       - -e ./fpbase-extractor   # installs the `fpbase-extract` CLI + fpbase_extractor package

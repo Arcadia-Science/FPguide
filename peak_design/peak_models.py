@@ -163,14 +163,17 @@ def build_base(spec, dev, out=N_PEAKS, drop=0.2):
     """Construct the trainable base net (predicts standardized peaks) from a spec dict.
 
     spec['arch'] in {'cnn', 'mlp', 'transformer'}: 'mlp' is a pooling-only baseline (cnn with n_conv=0).
+    spec['d_in'] sets the per-residue embedding dim (default D_IN=1280 for ESM-2 650M; use 1024 for
+    the ProstT5 encoder). Baked into the checkpoint so load_model reconstructs the right shape.
     """
     arch = spec["arch"]
+    d_in = spec.get("d_in", D_IN)
     if arch in ("cnn", "mlp"):
         n_conv = 0 if arch == "mlp" else spec.get("n_conv", 2)
-        return PeakCNN(spec["pool"], conv_ch=spec.get("conv_ch", 128), k=spec.get("k", 5),
+        return PeakCNN(spec["pool"], d_in=d_in, conv_ch=spec.get("conv_ch", 128), k=spec.get("k", 5),
                        n_conv=n_conv, hidden=spec.get("hidden", 256), nl=spec.get("nl", 2),
                        drop=drop, out=out).to(dev)
-    return PeakTransformer(spec["pool"], d_model=spec.get("d_model", 128), nhead=spec.get("nhead", 4),
+    return PeakTransformer(spec["pool"], d_in=d_in, d_model=spec.get("d_model", 128), nhead=spec.get("nhead", 4),
                            nlayers=spec.get("nlayers", 2), ff=spec.get("ff", 256),
                            hidden=spec.get("hidden", 256), nl=spec.get("nl", 2), drop=drop, out=out).to(dev)
 
