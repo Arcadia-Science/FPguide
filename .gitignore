@@ -3,6 +3,9 @@
 esm_residue_fp16.npy
 esm_residue_len.npy
 esm_embeddings.npy
+# Per-residue ProstT5 embedding cache is ~900 MB (> GitHub's 100 MB limit); regenerate via embed_prostt5.py.
+prostt5_residue_fp16.npy
+prostt5_residue_len.npy
 # Pairwise-identity matrix cache (regenerate via fpbase_cluster.ipynb)
 identity_matrix.npy
 identity_matrix.meta.json
@@ -43,3 +46,7 @@ env/
 
 # Cached trained models (regenerable)
 trained_models/
+
+# ---- Archived / superseded material (kept locally, out of git) ----
+# Any archive/ folder anywhere in the tree — old notebooks, superseded designs, EDA, etc.
+archive/
