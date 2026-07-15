@@ -1,0 +1,12 @@
+[esmfold] loading esmfold_v1 weights (first run downloads ~2.7 GB) ...
+[esmfold] weights loaded in 21s
+[esmfold] folding on device=mps chunk_size=128
+[DsRed] folded L=225 in 26s | mean pLDDT 31.4 | pTM 0.267 | device mps -> structures/esmfold/DsRed.pdb
+[avGFP] folded L=238 in 28s | mean pLDDT 40.1 | pTM 0.456 | device mps -> structures/esmfold/avGFP.pdb
+[eqFP578] folded L=231 in 28s | mean pLDDT 32.8 | pTM 0.279 | device mps -> structures/esmfold/eqFP578.pdb
+
+=== ESMFold summary ===
+scaffold    idx  len  mean_pLDDT    pTM  device
+DsRed       138  225        31.4  0.267     mps
+avGFP        52  238        40.1  0.456     mps
+eqFP578     179  231        32.8  0.279     mps

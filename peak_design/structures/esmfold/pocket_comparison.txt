@@ -1,0 +1,25 @@
+5 A chromophore-pocket comparison (experimental RCSB vs ESMFold prediction), cutoff=5.0 A
+
+scaffold PDB    n_exp n_esm shared  Jaccard exp recall
+DsRed    1G7K      24     8      5     0.19       21%
+avGFP    1GFL      23    14      9     0.32       39%
+eqFP578  3M22      23    14      9     0.32       39%
+
+--- DsRed (1-based dataset positions) ---
+  experimental pocket (24): 14,42,43,44,62,63,64,65,69,70,93,109,120,144,145,146,161,163,177,197,198,199,213,214
+  ESMFold pocket      (8): 58,61,62,64,65,69,70,100
+  recovered by ESMFold (5): 62,64,65,69,70
+  missed by ESMFold   (19): 14,42,43,44,63,93,109,120,144,145,146,161,163,177,197,198,199,213,214
+  spurious in ESMFold (3): 58,61,100
+--- avGFP (1-based dataset positions) ---
+  experimental pocket (23): 42,44,60,61,62,63,64,68,69,92,94,112,121,145,146,148,150,165,167,183,203,205,220
+  ESMFold pocket      (14): 61,62,63,64,68,69,70,92,98,112,119,121,225,226
+  recovered by ESMFold (9): 61,62,63,64,68,69,92,112,121
+  missed by ESMFold   (14): 42,44,60,94,145,146,148,150,165,167,183,203,205,220
+  spurious in ESMFold (5): 70,98,119,225,226
+--- eqFP578 (1-based dataset positions) ---
+  experimental pocket (23): 39,41,59,60,61,62,66,67,90,106,108,117,143,145,158,160,174,178,197,199,200,213,214
+  ESMFold pocket      (14): 59,60,61,62,66,67,68,69,90,106,119,144,146,158
+  recovered by ESMFold (9): 59,60,61,62,66,67,90,106,158
+  missed by ESMFold   (14): 39,41,108,117,143,145,160,174,178,197,199,200,213,214
+  spurious in ESMFold (5): 68,69,119,144,146
