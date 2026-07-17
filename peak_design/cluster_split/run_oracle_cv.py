@@ -1,11 +1,16 @@
 """Cross-cluster CV for the Oracle (cnn-concatstd-d1). Populates a per-fold cache so the
 companion notebook reads results instantly. Nothing existing is modified."""
-import csv, os, numpy as np, torch, hashlib, time
+import csv, os, sys, numpy as np, torch, hashlib, time
+# This script lives in peak_design/cluster_split/; peak_models.py + the shared
+# oracle_cv_cache/ live one level up in peak_design/, the dataset two levels up.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_PEAK_DESIGN = os.path.dirname(_HERE)
+sys.path.insert(0, _PEAK_DESIGN)
 import peak_models as pm
 from sklearn.model_selection import GroupKFold, KFold, GroupShuffleSplit
 
-CUR="../dataset_pipeline/data/peak/curated"
-CACHE="oracle_cv_cache"; os.makedirs(CACHE, exist_ok=True)
+CUR=os.path.join(_HERE, "..", "..", "dataset_pipeline", "data", "peak", "curated")
+CACHE=os.path.join(_PEAK_DESIGN, "oracle_cv_cache"); os.makedirs(CACHE, exist_ok=True)
 dev=torch.device("mps") if (getattr(torch.backends,"mps",None) and torch.backends.mps.is_available()) \
     else (torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu"))
 

@@ -17,13 +17,14 @@ Usage:
 """
 from __future__ import annotations
 
-import argparse, copy, csv, json, os
+import argparse, copy, csv, json, os, sys
 import numpy as np
 import torch
 
-import peak_models as pm
-
 HERE = os.path.dirname(os.path.abspath(__file__))
+# peak_models.py lives in the sibling peak_design/ folder.
+sys.path.insert(0, os.path.join(HERE, "..", "peak_design"))
+import peak_models as pm
 POOLS = ["mean", "max", "concat", "concatstd", "attn"]
 DEPTHS = (1, 2, 3)
 BS, LR, WD = 32, 1e-3, 1e-4
