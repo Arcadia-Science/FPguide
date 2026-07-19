@@ -1,0 +1,21 @@
+name,cohort,pdb,seq_id,scaf_err,best_round,best_err,d_err,ppl0,ppl,id_scaf
+RFP630-mRubyFT,knownstruct_Sval_Otrain,1UIS,0.821,170.79,3,85.74,-85.05,17.76,17.27,0.905
+P4-AvicFP1,knownstruct_Sval_Otrain,1W7S,0.798,74.38,2,3.17,-71.21,16.63,16.8,0.908
+TagBFP-Crimson,knownstruct_Sval_Otrain,3M24,0.789,167.48,3,116.08,-51.39999999999999,16.84,15.96,0.918
+RFP637-mRubyFT,knownstruct_Sval_Otrain,3E5W,0.813,179.18,3,133.82,-45.360000000000014,17.44,17.14,0.896
+Blue102-GdT,knownstruct_Sval_Otrain,22MM,0.795,45.02,1,6.71,-38.31,15.25,15.54,0.926
+htFuncLib_sf:acid.5-PS-CFP2,knownstruct_Sval_Otrain,4J8A,0.819,69.61,3,34.4,-35.21,14.76,14.46,0.92
+htFuncLib_sf:mid.10-PS-CFP2,knownstruct_Sval_Otrain,5MFC,0.811,68.1,1,33.81,-34.28999999999999,14.86,14.48,0.912
+mEos4a-eechRFP,knownstruct_Sval_Otrain,6YLS,0.793,67.41,1,45.6,-21.809999999999995,15.86,15.47,0.894
+mGold-GFPxm19,knownstruct_Sval_Otrain,4NDJ,0.807,31.38,2,11.11,-20.27,16.03,16.49,0.916
+laGFP-laRFP,knownstruct_Sval_Otrain,4HVF,0.776,47.45,1,31.01,-16.44,16.11,14.88,0.93
+htFuncLib_thermo.9-TripartiteGFP,knownstruct_Sval_Otrain,6XU4,0.806,17.3,3,2.41,-14.89,15.46,15.21,0.944
+eGFP203C-AvicFP1,knownstruct_Sval_Otrain,5N9O,0.794,17.51,2,7.7,-9.810000000000002,16.82,16.5,0.933
+deGFP1-AvicFP1,knownstruct_Sval_Otrain,4OGS,0.79,24.82,2,16.96,-7.859999999999999,16.79,16.12,0.92
+msGFP2-ShG24,knownstruct_Sval_Otrain,9QKS,0.773,7.87,2,2.96,-4.91,15.66,15.02,0.966
+mEos2-mc1,knownstruct_Sval_Otrain,5OQ9,0.801,34.14,3,30.71,-3.4299999999999997,15.76,15.61,0.894
+mEos4Fast1-mc1,knownstruct_Sval_Otrain,6YLS,0.788,31.6,1,30.43,-1.1700000000000017,15.86,15.4,0.916
+Dendra2-T69A-CGP,knownstruct_Sval_Otrain,2VZX,0.77,4.25,1,4.08,-0.16999999999999993,16.03,15.45,0.909
+ccGFP E6-ccalGFP3,knownstruct_Sval_Otrain,8U21,0.819,2.86,3,2.73,-0.1299999999999999,14.55,14.1,0.9
+rsFusionRed2-eqFP650,knownstruct_Sval_Otrain,6U1A,0.812,23.88,1,32.73,8.849999999999998,16.75,16.02,0.957
+mRuby2-RFP637,knownstruct_Sval_Otrain,7QGK,0.83,30.26,1,65.53,35.269999999999996,16.65,16.66,0.911

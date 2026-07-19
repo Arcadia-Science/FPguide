@@ -1,0 +1,21 @@
+scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity,scaffold_pdb
+120,Dendra2-T69A,16,val,88,CGP,11,train,0.7696,2VZX
+527,msGFP2,20,val,678,ShG24,20,train,0.7731,9QKS
+334,laGFP,9,val,339,laRFP,71,train,0.7763,4HVF
+415,mEos4Fast1,12,val,364,mc1,74,train,0.7885,6YLS
+703,TagBFP,55,val,100,Crimson,29,train,0.7890,3M24
+112,deGFP1,12,val,55,AvicFP1,22,train,0.7899,4OGS
+412,mEos4a,10,val,167,eechRFP,8,train,0.7930,6YLS
+172,eGFP203C,11,val,55,AvicFP1,22,train,0.7941,5N9O
+69,Blue102,51,val,211,GdT,24,train,0.7949,22MM
+568,P4,66,val,55,AvicFP1,22,train,0.7983,1W7S
+408,mEos2,13,val,364,mc1,74,train,0.8009,5OQ9
+308,htFuncLib_thermo.9,16,val,727,TripartiteGFP,34,train,0.8056,6XU4
+434,mGold,16,val,226,GFPxm19,27,train,0.8075,4NDJ
+287,htFuncLib_sf:mid.10,21,val,608,PS-CFP2,68,train,0.8112,5MFC
+642,rsFusionRed2,27,val,182,eqFP650,58,train,0.8120,6U1A
+624,RFP637,50,val,513,mRubyFT,49,train,0.8128,3E5W
+78,ccGFP E6,19,val,74,ccalGFP3,12,train,0.8190,8U21
+280,htFuncLib_sf:acid.5,23,val,608,PS-CFP2,68,train,0.8193,4J8A
+623,RFP630,47,val,513,mRubyFT,49,train,0.8213,1UIS
+511,mRuby2,41,val,624,RFP637,50,train,0.8298,7QGK

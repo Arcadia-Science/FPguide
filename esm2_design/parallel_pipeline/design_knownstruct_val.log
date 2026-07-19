@@ -1,0 +1,13 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+device cuda | fp16 True
+20 tasks across 1 cohort(s): knownstruct_Sval_Otrain=20
+building experimental windows ...
+  20 windows in 8s | pocket size min/med/max = 8/23/26
+surrogate val MAE 13.8 nm | oracle val MAE 13.7 nm
+running 20 tasks | 3 iters x (chromo -> pocket) | k=10 T=5.0 lam_ex=20.0 lam_em=20.0
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 27288.45it/s]
+  round 0 (scaffold): mean oracle err 55.8 nm | 99s
+  it1 [chromo+pocket]: mean oracle err 40.4 nm | mean id 0.92 | 304s
+  it2 [chromo+pocket]: mean oracle err 41.9 nm | mean id 0.92 | 510s
+  it3 [chromo+pocket]: mean oracle err 40.9 nm | mean id 0.91 | 716s
+wrote 20 design CSVs | total 716s

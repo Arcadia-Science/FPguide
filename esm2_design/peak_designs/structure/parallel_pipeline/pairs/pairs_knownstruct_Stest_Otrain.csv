@@ -1,0 +1,21 @@
+scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity,scaffold_pdb
+730,TurboGFP,20,test,588,pdae1GFP,20,train,0.7162,2G6X
+118,Dendra2,17,test,88,CGP,11,train,0.7652,2VZX
+23,amCyan1,33,test,689,stylGFP,15,train,0.7686,2A46
+26,amFP506,23,test,689,stylGFP,15,train,0.7729,2A48
+25,amFP495,28,test,689,stylGFP,15,train,0.7729,2A46
+446,mKate,47,test,100,Crimson,29,train,0.7828,4NWS
+664,sg42,66,test,55,AvicFP1,22,train,0.7866,1GFL
+743,W1C,60,test,55,AvicFP1,22,train,0.7899,2WSN
+104,CyPet,42,test,219,GFPxm16,19,train,0.7908,3GEX
+754,ZsGreen,10,test,489,mPapaya0.7,12,train,0.7932,2OJK
+113,deGFP2,21,test,55,AvicFP1,22,train,0.7941,9NA8
+249,htFuncLib_basic.3,27,test,678,ShG24,20,train,0.7944,2G2S
+410,mEos3.1,8,test,365,mc2,10,train,0.7948,5OOZ
+586,pcStar,10,test,365,mc2,10,train,0.7948,5OOZ
+477,Monomeric hyperfolder YFP,14,test,562,OFPxm,14,train,0.7950,7UGS
+326,KikG,10,test,134,Dronpa-2,25,train,0.8018,1XSS
+95,Clomeleon,50,test,226,GFPxm19,27,train,0.8075,7SUN
+510,mRuby,47,test,174,Electra1,52,train,0.8139,3U0L
+721,td-RFP639,42,test,513,mRubyFT,49,train,0.8170,3E5W
+338,LanYFP,11,test,334,laGFP,9,train,0.8246,5LTQ

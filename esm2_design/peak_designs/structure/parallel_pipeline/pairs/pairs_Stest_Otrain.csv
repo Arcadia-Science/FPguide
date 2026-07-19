@@ -1,0 +1,3 @@
+scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity
+2,(3-F)Tyr-EGFP,30,test,477,Monomeric hyperfolder YFP,14,train,0.8991
+13,AcGFP1,30,test,3,5B,12,train,0.9038

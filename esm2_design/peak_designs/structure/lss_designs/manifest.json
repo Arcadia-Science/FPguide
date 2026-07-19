@@ -1,0 +1,44 @@
+{
+  "n_designs": 72,
+  "n_best": 12,
+  "strategies": [
+    "fixTyrAcceptor",
+    "relaxAcceptor",
+    "enlargeWindow"
+  ],
+  "scaffolds": [
+    "LSS-mKate1",
+    "LSS-mKate2",
+    "LSSmOrange",
+    "mAmetrine"
+  ],
+  "target_ex": 343.0,
+  "target_em": 684.0,
+  "surrogate": "ESM-2 cnn-max-d1 (surrogate split)",
+  "oracle": "ProstT5 cnn-max-d2 (oracle split)",
+  "peak_err": "0.5*(|pred_ex-target_ex| + |pred_em-target_em|), oracle-predicted, nm",
+  "columns": [
+    "strategy",
+    "scaffold",
+    "parent",
+    "mechanism",
+    "acceptor",
+    "round",
+    "n_editable",
+    "target_ex",
+    "target_em",
+    "pred_ex",
+    "pred_em",
+    "peak_err",
+    "ppl",
+    "ident_to_scaffold",
+    "designed_seq",
+    "scaffold_seq"
+  ],
+  "files": {
+    "all": "all_designs.csv",
+    "best": "best_designs.csv",
+    "best_fasta": "best_designs.fasta",
+    "scaffolds_fasta": "scaffolds.fasta"
+  }
+}
