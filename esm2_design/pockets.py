@@ -118,7 +118,7 @@ def _chain_letters(a, chain_id):
 
 
 def experimental_window(name, seq, pdb_id, cutoff=CUTOFF, min_id=0.90, min_cov=0.70,
-                        return_quality=False,
+                        return_quality=False, return_hbond=False, hbond_cutoff=3.5,
                         structdir=os.path.join("structures", "experimental")):
     """(c1, catal_0based, pocket_0based) from an arbitrary experimental RCSB structure.
 
@@ -138,6 +138,17 @@ def experimental_window(name, seq, pdb_id, cutoff=CUTOFF, min_id=0.90, min_cov=0
          chromophore, minus the tripeptide and minus the catalytic pair;
       5. catalytic pair = the Arg and the Glu (by dataset letter) nearest the
          chromophore (generalizes GFP R96/E222).
+
+    Return signature grows with the flags (backward compatible):
+      * default                                 -> (c1, catal, pocket)
+      * return_quality                          -> (c1, catal, pocket, quality)
+      * return_hbond                            -> (c1, catal, pocket, hbond)
+      * return_quality and return_hbond         -> (c1, catal, pocket, quality, hbond)
+    where ``hbond`` (Tier-B) is the sorted 0-based list of pocket residues whose SIDE-CHAIN
+    polar (N/O) atom lies within ``hbond_cutoff`` (default 3.5 A) of a chromophore polar
+    (N/O) atom -- i.e. likely hydrogen-bond partners of the chromophore, excluding the
+    tripeptide and the catalytic pair. Heavy-atom distance only (no explicit H / angle /
+    ordered-water bridges), so treat it as an H-bond *capability* proxy, not ground truth.
 
     QUALITY GATE: the best chain must match the dataset sequence with local identity
     >= ``min_id`` over >= ``min_cov`` * len(seq) aligned residues. If no chain clears
@@ -230,8 +241,39 @@ def experimental_window(name, seq, pdb_id, cutoff=CUTOFF, min_id=0.90, min_cov=0
         catal.add(min(gluc)[1])
 
     pocket = sorted({s2d[rid] for rid, d in dmin.items() if d <= cutoff} - tri0 - catal)
+
+    # ---- Tier-B chromophore H-bond partners (capability proxy) --------------------
+    # standard residues whose SIDE-CHAIN polar (N/O) atom lies within ``hbond_cutoff`` of a
+    # chromophore polar (N/O) atom. Heavy-atom distance only: no explicit H, no angle test,
+    # and no water-mediated bridges, so this over/under-calls at the margins by design. The
+    # tripeptide and the catalytic pair are excluded (they are handled as fixed / pos2). A
+    # subset of ``pocket`` since hbond_cutoff < cutoff and polar atoms are a subset of heavy.
+    chromo_atoms = a[np.isin(a.res_id, list(chromo_resids))]
+    cpolar = chromo_atoms[np.isin(chromo_atoms.element, ["N", "O"])].coord
+    hbond = []
+    if len(cpolar):
+        _BB = ["N", "CA", "C", "O", "OXT"]                # backbone: unchanged by substitution
+        for rid in dict.fromkeys(prot.res_id.tolist()):
+            if rid not in s2d:
+                continue
+            res = prot[prot.res_id == rid]
+            sc = res[np.isin(res.element, ["N", "O"]) & ~np.isin(res.atom_name, _BB)]
+            if len(sc) == 0:                              # no side-chain donor/acceptor (nonpolar)
+                continue
+            d = float(np.sqrt(((sc.coord[:, None, :] - cpolar[None, :, :]) ** 2).sum(-1)).min())
+            if d <= hbond_cutoff:
+                dp = s2d[rid]
+                if dp not in tri0 and dp not in catal:
+                    hbond.append(dp)
+    hbond = sorted(set(hbond))
+
+    quality = dict(chain=chain_id, local_id=idv, coverage=cov)
+    if return_hbond and return_quality:
+        return c1, sorted(catal), pocket, quality, hbond
+    if return_hbond:
+        return c1, sorted(catal), pocket, hbond
     if return_quality:
-        return c1, sorted(catal), pocket, dict(chain=chain_id, local_id=idv, coverage=cov)
+        return c1, sorted(catal), pocket, quality
     return c1, sorted(catal), pocket
 
 
