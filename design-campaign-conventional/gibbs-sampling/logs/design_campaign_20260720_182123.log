@@ -1,0 +1,29 @@
+=== campaign start Mon Jul 20 18:21:23 UTC 2026 | ppl=endpoints | extra args: --trials 24 ===
+device cuda | fp16 True
+surrogate (all-data, diagnostic only) train MAE 5.2 nm
+[1/24] mTagBFP2-Crimson: cached 24/24 trials -> skip
+[2/24] EGFP-TagYFP: trials 6..23 appended | scaffold err 17.7 -> mean 44.6 / best 16.3 nm (diag, over new trials) | 25 editable | 201s
+[3/24] mVenus-TagYFP: trials 6..23 appended | scaffold err 1.0 -> mean 38.7 / best 22.7 nm (diag, over new trials) | 26 editable | 206s
+[4/24] mCherry-DsRed: trials 6..23 appended | scaffold err 34.3 -> mean 65.8 / best 27.1 nm (diag, over new trials) | 26 editable | 200s
+[5/24] mKate2-Crimson: trials 6..23 appended | scaffold err 4.2 -> mean 105.6 / best 90.0 nm (diag, over new trials) | 26 editable | 192s
+[6/24] mScarlet-2A-mApple: trials 6..23 appended | scaffold err 1.4 -> mean 81.8 / best 72.5 nm (diag, over new trials) | 26 editable | 192s
+[7/24] td-RFP639-mRubyFT: trials 6..23 appended | scaffold err 174.7 -> mean 84.9 / best 67.1 nm (diag, over new trials) | 27 editable | 194s
+[8/24] DimVenus-TagYFP: trials 6..23 appended | scaffold err 1.0 -> mean 48.0 / best 21.1 nm (diag, over new trials) | 26 editable | 207s
+[9/24] moxDendra2-CGP: trials 6..23 appended | scaffold err 12.2 -> mean 20.9 / best 8.4 nm (diag, over new trials) | 28 editable | 190s
+[10/24] PA-GFP-GFPxm16: trials 6..23 appended | scaffold err 10.1 -> mean 34.0 / best 3.4 nm (diag, over new trials) | 24 editable | 204s
+[11/24] tdKatushka2-FR-1: trials 6..23 appended | scaffold err 8.0 -> mean 80.7 / best 35.5 nm (diag, over new trials) | 25 editable | 192s
+[12/24] DsRed-Express-mNectarine: trials 6..23 appended | scaffold err 3.1 -> mean 72.8 / best 45.0 nm (diag, over new trials) | 26 editable | 182s
+[13/24] mEosFP-mc1: trials 6..23 appended | scaffold err 35.0 -> mean 48.9 / best 41.3 nm (diag, over new trials) | 25 editable | 180s
+[14/24] rsFusionRed3-eqFP670: trials 6..23 appended | scaffold err 52.8 -> mean 126.6 / best 77.3 nm (diag, over new trials) | 14 editable | 180s
+[15/24] GFPxm191uv-Aquamarine: trials 6..23 appended | scaffold err 45.1 -> mean 19.1 / best 6.3 nm (diag, over new trials) | 25 editable | 201s
+[16/24] mEosEM-mc1: trials 6..23 appended | scaffold err 36.7 -> mean 40.7 / best 32.9 nm (diag, over new trials) | 26 editable | 184s
+[17/24] 10B-TagYFP: trials 6..23 appended | scaffold err 3.3 -> mean 43.7 / best 20.7 nm (diag, over new trials) | 20 editable | 195s
+[18/24] mStrawberry-DsRed.T4: trials 6..23 appended | scaffold err 16.4 -> mean 58.0 / best 26.0 nm (diag, over new trials) | 24 editable | 197s
+[19/24] deGFP3-AvicFP1: trials 6..23 appended | scaffold err 17.4 -> mean 28.7 / best 4.8 nm (diag, over new trials) | 25 editable | 201s
+[20/24] E2-Red/Green-mHoneydew: trials 6..23 appended | scaffold err 47.4 -> mean 31.6 / best 21.3 nm (diag, over new trials) | 26 editable | 182s
+[21/24] GFPxm162-Aquamarine: trials 6..23 appended | scaffold err 56.0 -> mean 21.9 / best 1.9 nm (diag, over new trials) | 25 editable | 201s
+[22/24] mCerulean2.D3-ShG24: trials 6..23 appended | scaffold err 43.8 -> mean 16.0 / best 2.2 nm (diag, over new trials) | 26 editable | 204s
+[23/24] htFuncLib_sf:mid.9-PS-CFP: trials 6..23 appended | scaffold err 62.2 -> mean 42.7 / best 22.0 nm (diag, over new trials) | 26 editable | 222s
+[24/24] W1C-GFPxm191uv: trials 6..23 appended | scaffold err 37.9 -> mean 30.0 / best 4.8 nm (diag, over new trials) | 25 editable | 201s
+done: 23 pairs updated -> /home/ubuntu/spectrum-to-fp-design/design-campaign-conventional/gibbs-sampling/designs | total 4506s
+=== campaign done Mon Jul 20 19:36:37 UTC 2026 | rc=0 ===

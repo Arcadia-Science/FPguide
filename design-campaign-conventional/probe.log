@@ -1,13 +1,0 @@
-device cuda | fp16 True
-surrogate (all-data) train MAE 5.2 nm | oracle val MAE 13.7 nm
-probing 1 pair [mTagBFP2-Crimson] | 6 trials | window=23 editable | iters=3 T=10.0 k=10
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 21451.15it/s]
-
-=== PROBE (one pair) ===
-  per-round eval (oracle+ppl, 6 trials):   30.4 s  x 4 =  121.5 s
-  per-iteration design pass:                          30.2 s  x 3  =   90.7 s
-  --------------------------------------------------
-  time per pair (~6 trials, 3 iters):  ~ 212.2 s  (~3.5 min)
-  PROJECTED for 24 pairs (sequential):     ~5093.8 s  (~84.9 min)
-  probe done; no CSVs written. Re-run without --probe to commit.

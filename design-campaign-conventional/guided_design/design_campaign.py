@@ -13,8 +13,11 @@ Each iteration (default 3) is a masked-LM proposal + surrogate-guided selection 
   (models/surrogate_cnn-max-d1_alldata.pt) predicts (ex, em) for every candidate; we score
   score = z(logp_ESM) - lam_ex*z(|d ex|) - lam_em*z(|d em|) and sample at temperature T.
 
-The ProstT5 oracle (esm2_design/trained_models/oracle_sweep/cnn-max-d2_s0.pt) judges (ex, em) each
-round; ESM-2 pseudo-perplexity is the naturalness diagnostic. Settings: T=10, k=10, lam=20.
+There is NO oracle for this task: this campaign trains the surrogate on ALL data, so no held-out
+independent evaluator exists (the real judge is experiment). The recorded prediction (pred_ex,
+pred_em) is therefore the SURROGATE's own (ex, em) for the current sequence, and peak_err is the
+surrogate's distance to the target. ESM-2 pseudo-perplexity is logged as a naturalness diagnostic.
+Settings: T=10, k=10, lam=20.
 
 ACCELERATION: within a pair the 6 trials advance together in one GPU batch (same window, so slot j
 is genuinely the same set of positions across trials, differing only by each trial's random order);
@@ -29,6 +32,8 @@ Usage
     python design_campaign.py                  # full run, one pair at a time
     python design_campaign.py --trials 6 --iters 3 --temp 10 --k 10
     python design_campaign.py --pairs-limit 2  # first 2 pairs only
+    python design_campaign.py --rescore        # re-fill pred_ex/pred_em/peak_err of existing CSVs
+                                               # with the surrogate (no re-running the design loop)
 """
 import argparse
 import csv
@@ -42,23 +47,21 @@ from pathlib import Path
 import numpy as np
 import torch
 
-HERE = Path(__file__).resolve().parent
-REPO = HERE.parent
+HERE = Path(__file__).resolve().parent      # .../design-campaign-conventional/guided_design
+CAMPAIGN = HERE.parent                       # .../design-campaign-conventional (shared assets)
+REPO = CAMPAIGN.parent                       # .../spectrum-to-fp-design
 ESM2 = REPO / "esm2_design"
 CUR = REPO / "dataset_pipeline" / "data" / "peak" / "curated"
 sys.path.insert(0, str(ESM2))
 import peak_models as pm            # noqa: E402
-import prostt5_embed as pe          # noqa: E402
 
-SURR_CKPT = HERE / "models" / "surrogate_cnn-max-d1_alldata.pt"
-ORAC_CKPT = ESM2 / "trained_models" / "oracle_sweep" / "cnn-max-d2_s0.pt"
-WINDOWS_JSON = HERE / "design_windows_24.json"
-PAIRS_CSV = HERE / "pairs" / "campaign_pairs_24.csv"
+SURR_CKPT = CAMPAIGN / "models" / "surrogate_cnn-max-d1_alldata.pt"
+WINDOWS_JSON = CAMPAIGN / "design_windows_24.json"
+PAIRS_CSV = CAMPAIGN / "pairs" / "campaign_pairs_24.csv"
 OUTDIR = HERE / "designs"
 
 SEED = 42
 ESM_BS = 64            # sub-batch for ESM-2 embed / logits forwards
-ORAC_BS = 32           # sub-batch for ProstT5 oracle
 PPL_BS = 128           # sub-batch for pseudo-perplexity single-mask rows
 
 COLS = ["pair", "scaffold_name", "scaffold_idx", "scaffold_pdb", "target_name", "target_idx",
@@ -99,6 +102,8 @@ def main():
                     help="compute ESM-2 pseudo-perplexity every round ('all') or only scaffold + final ('endpoints')")
     ap.add_argument("--probe", action="store_true",
                     help="time ONE pair (round-0 eval + 1 iteration), project the 24-pair total, and EXIT")
+    ap.add_argument("--rescore", action="store_true",
+                    help="do not design; re-fill pred_ex/pred_em/peak_err of existing designs/*.csv with the surrogate")
     args = ap.parse_args()
 
     dev = (torch.device("cuda") if torch.cuda.is_available()
@@ -114,11 +119,10 @@ def main():
     if args.pairs_limit:
         pairs = pairs[:args.pairs_limit]
 
-    # ---- models -------------------------------------------------------------------
+    # ---- model (surrogate only; no oracle for this task) --------------------------
     _sb, s_meta = pm.load_model(str(SURR_CKPT), dev); surrogate_net = pm.wrap(_sb, s_meta["mean"], s_meta["std"], dev)
-    _ob, o_meta = pm.load_model(str(ORAC_CKPT), dev); oracle_net = pm.wrap(_ob, o_meta["mean"], o_meta["std"], dev)
     s_mae = s_meta.get("train_mae", s_meta.get("val_mae", float("nan")))
-    print(f"surrogate (all-data) train MAE {s_mae:.1f} nm | oracle val MAE {o_meta.get('val_mae', float('nan')):.1f} nm", flush=True)
+    print(f"surrogate (all-data) train MAE {s_mae:.1f} nm", flush=True)
     esm_model, alphabet, bc = pm.get_esm(dev)
 
     def _mask(aas):
@@ -147,13 +151,6 @@ def main():
         outs = []
         for i in range(0, len(seqlist), bs):
             H, mask = _esm_embed(seqlist[i:i + bs]); outs.append(surrogate_net(H, mask))
-        return torch.cat(outs, 0)
-
-    @torch.no_grad()
-    def oracle_peaks_batched(seqlist, bs=ORAC_BS):
-        outs = []
-        for i in range(0, len(seqlist), bs):
-            ch = seqlist[i:i + bs]; H, mask = pe.resid_embed_prostt5(ch, dev, bs=len(ch)); outs.append(oracle_net(H, mask))
         return torch.cat(outs, 0)
 
     @torch.no_grad()
@@ -219,7 +216,7 @@ def main():
 
     def evaluate_round(insts, r, do_ppl):
         seqlist = [t["seq"] for t in insts]
-        P = oracle_peaks_batched(seqlist)
+        P = surrogate_peaks_batched(seqlist)
         ppls = ppl_batched(seqlist) if do_ppl else [float("nan")] * len(insts)
         for i, t in enumerate(insts):
             ex, em = float(P[i, 0]), float(P[i, 1])
@@ -276,6 +273,30 @@ def main():
     os.makedirs(OUTDIR, exist_ok=True)
     torch.manual_seed(SEED); np.random.seed(SEED)
 
+    # ---- RESCORE: re-fill pred columns of existing CSVs with the surrogate --------
+    if args.rescore:
+        import glob
+        files = sorted(glob.glob(str(OUTDIR / "design_*.csv")))
+        if not files:
+            print(f"no CSVs found in {OUTDIR}; nothing to rescore"); return
+        print(f"rescoring {len(files)} CSVs with the surrogate (no design loop) ...", flush=True)
+        for fn in files:
+            with open(fn) as fh:
+                rd = list(csv.DictReader(fh)); hdr = rd[0].keys() if rd else []
+            if not rd:
+                continue
+            seqlist = [r["designed_seq"] for r in rd]
+            P = surrogate_peaks_batched(seqlist)
+            for i, r in enumerate(rd):
+                ex, em = float(P[i, 0]), float(P[i, 1])
+                r["pred_ex"] = f"{ex:.1f}"; r["pred_em"] = f"{em:.1f}"
+                r["peak_err"] = f"{0.5*(abs(ex-float(r['target_ex']))+abs(em-float(r['target_em']))):.2f}"
+            with open(fn, "w", newline="") as fh:
+                wr = csv.DictWriter(fh, fieldnames=list(hdr)); wr.writeheader(); wr.writerows(rd)
+            print(f"  rescored {os.path.basename(fn)} ({len(rd)} rows)", flush=True)
+        print("rescore done.", flush=True)
+        return
+
     # ---- PROBE: time ONE pair, project 24 pairs, exit -----------------------------
     if args.probe:
         pr = pairs[0]; name = f"{pr['scaffold_name']}-{pr['target_name']}"
@@ -290,9 +311,9 @@ def main():
         per_pair_all = t_ppl * (args.iters + 1) + t_iter * args.iters
         per_pair_ep = t_ppl * 2 + t_orac * (args.iters - 1) + t_iter * args.iters
         print("\n=== PROBE (one pair) ===", flush=True)
-        print(f"  eval w/ ppl (oracle+ppl, {args.trials} trials): {t_ppl:6.1f} s")
-        print(f"  eval w/o ppl (oracle only):                    {t_orac:6.1f} s")
-        print(f"  per-iteration design pass:                     {t_iter:6.1f} s  x {args.iters}")
+        print(f"  eval w/ ppl (surrogate+ppl, {args.trials} trials): {t_ppl:6.1f} s")
+        print(f"  eval w/o ppl (surrogate only):                    {t_orac:6.1f} s")
+        print(f"  per-iteration design pass:                        {t_iter:6.1f} s  x {args.iters}")
         print(f"  --------------------------------------------------")
         print(f"  --ppl all       : ~{per_pair_all/60:.1f} min/pair -> {np_} pairs ~{per_pair_all*np_/60:.0f} min")
         print(f"  --ppl endpoints : ~{per_pair_ep/60:.1f} min/pair -> {np_} pairs ~{per_pair_ep*np_/60:.0f} min  (default)")
