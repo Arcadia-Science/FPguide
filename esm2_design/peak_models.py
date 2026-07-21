@@ -36,14 +36,16 @@ def masked_pool(x, mask, kind):
     raise ValueError(kind)
 
 
-# pooling readouts. Stat pools are parameter-free reductions; 'attn' is a learned attention pool.
+# pooling readouts. Stat pools are parameter-free reductions; 'attn' is a learned attention pool;
+# 'cov' is a learned second-order (covariance-probe) pool.
 STAT_POOLS = {
     "mean": ["mean"], "min": ["min"], "max": ["max"], "std": ["std"],
     "concat": ["mean", "max", "min"],            # default multi-stat readout
     "concatstd": ["mean", "max", "min", "std"],  # + dispersion
 }
-POOLS = ["mean", "min", "max", "std", "concat", "concatstd", "attn"]
+POOLS = ["mean", "min", "max", "std", "concat", "concatstd", "attn", "cov"]
 CONCAT = STAT_POOLS["concat"]                     # back-compat alias
+COV_PROBE_DIM = 32                                # default probe width p for covariance pooling
 
 
 def _pool_kinds(pool):
@@ -54,16 +56,26 @@ class Readout(nn.Module):
     """Collapse (B, L, C) over valid residues to a fixed vector.
 
     Stat pools concatenate parameter-free reductions (out_dim = C * n_stats). 'attn' is a learned
-    single-query masked attention pool (out_dim = C). Stat pools add no parameters, so existing
-    checkpoints (mean/min/max/concat) reconstruct with identical state_dict keys.
+    single-query masked attention pool (out_dim = C). 'cov' is a learned covariance-probe pool:
+    a linear probe z_i = Wᵀ x_i (W: C -> p) followed by the (uncentered) second-moment matrix
+    C_z = (1/L) Σ_i z_i z_iᵀ over the L valid residues, flattened over its upper triangle
+    (out_dim = p(p+1)/2). Stat pools add no parameters, so existing checkpoints (mean/min/max/
+    concat) reconstruct with identical state_dict keys.
     """
 
-    def __init__(self, pool, C):
+    def __init__(self, pool, C, probe_dim=COV_PROBE_DIM):
         super().__init__()
         self.pool = pool
         if pool == "attn":
             self.score = nn.Linear(C, 1)
             self.out_dim = C
+        elif pool == "cov":
+            self.probe_dim = probe_dim
+            self.probe = nn.Linear(C, probe_dim, bias=False)     # W: z_i = Wᵀ x_i
+            iu, ju = torch.triu_indices(probe_dim, probe_dim)     # upper triangle incl. diagonal
+            self.register_buffer("_iu", iu, persistent=False)
+            self.register_buffer("_ju", ju, persistent=False)
+            self.out_dim = probe_dim * (probe_dim + 1) // 2
         else:
             self.kinds = STAT_POOLS[pool]
             self.out_dim = C * len(self.kinds)
@@ -73,6 +85,12 @@ class Readout(nn.Module):
             s = self.score(x).squeeze(-1).masked_fill(~mask, float("-inf"))
             w = torch.softmax(s, dim=1).unsqueeze(-1)
             return (x * w).sum(1)
+        if self.pool == "cov":
+            mk = mask.unsqueeze(-1)
+            z = self.probe(x) * mk                                # (B, L, p); zero padded residues
+            L = mk.sum(1).clamp(min=1).unsqueeze(-1)              # (B, 1, 1) valid-residue count
+            Cz = torch.einsum("blp,blq->bpq", z, z) / L          # (B, p, p) = (1/L) Σ z_i z_iᵀ
+            return Cz[:, self._iu, self._ju]                     # (B, p(p+1)/2) upper triangle
         return torch.cat([masked_pool(x, mask, k) for k in self.kinds], dim=-1)
 
 
@@ -92,7 +110,8 @@ class PeakCNN(nn.Module):
     (no residue mixing; the readout runs directly over the raw ESM dims).
     """
 
-    def __init__(self, pool, d_in=D_IN, conv_ch=128, k=5, n_conv=2, hidden=256, nl=2, drop=0.2, out=N_PEAKS):
+    def __init__(self, pool, d_in=D_IN, conv_ch=128, k=5, n_conv=2, hidden=256, nl=2, drop=0.2,
+                 out=N_PEAKS, probe_dim=COV_PROBE_DIM):
         super().__init__()
         self.pool = pool
         self.n_conv = n_conv
@@ -102,7 +121,7 @@ class PeakCNN(nn.Module):
             c = conv_ch
         self.conv = nn.Sequential(*convs)
         C = conv_ch if n_conv > 0 else d_in
-        self.readout = Readout(pool, C)
+        self.readout = Readout(pool, C, probe_dim=probe_dim)
         self.head = mlp_head(self.readout.out_dim, hidden, nl, drop, out)
 
     def forward(self, Hb, mask):
@@ -118,7 +137,7 @@ class PeakTransformer(nn.Module):
     """
 
     def __init__(self, pool, d_in=D_IN, d_model=128, nhead=4, nlayers=2, ff=256,
-                 hidden=256, nl=2, drop=0.2, out=N_PEAKS):
+                 hidden=256, nl=2, drop=0.2, out=N_PEAKS, probe_dim=COV_PROBE_DIM):
         super().__init__()
         self.pool = pool
         self.proj = nn.Linear(d_in, d_model)
@@ -127,7 +146,7 @@ class PeakTransformer(nn.Module):
         # enable_nested_tensor=False keeps the padding-masked path on GPU (the nested-tensor
         # fast-path falls back to CPU on MPS); weights are unchanged either way.
         self.encoder = nn.TransformerEncoder(enc, nlayers, enable_nested_tensor=False)
-        self.readout = Readout(pool, d_model)
+        self.readout = Readout(pool, d_model, probe_dim=probe_dim)
         self.head = mlp_head(self.readout.out_dim, hidden, nl, drop, out)
 
     def forward(self, Hb, mask):
@@ -168,14 +187,16 @@ def build_base(spec, dev, out=N_PEAKS, drop=0.2):
     """
     arch = spec["arch"]
     d_in = spec.get("d_in", D_IN)
+    probe_dim = spec.get("probe_dim", COV_PROBE_DIM)     # only used by the 'cov' readout
     if arch in ("cnn", "mlp"):
         n_conv = 0 if arch == "mlp" else spec.get("n_conv", 2)
         return PeakCNN(spec["pool"], d_in=d_in, conv_ch=spec.get("conv_ch", 128), k=spec.get("k", 5),
                        n_conv=n_conv, hidden=spec.get("hidden", 256), nl=spec.get("nl", 2),
-                       drop=drop, out=out).to(dev)
+                       drop=drop, out=out, probe_dim=probe_dim).to(dev)
     return PeakTransformer(spec["pool"], d_in=d_in, d_model=spec.get("d_model", 128), nhead=spec.get("nhead", 4),
                            nlayers=spec.get("nlayers", 2), ff=spec.get("ff", 256),
-                           hidden=spec.get("hidden", 256), nl=spec.get("nl", 2), drop=drop, out=out).to(dev)
+                           hidden=spec.get("hidden", 256), nl=spec.get("nl", 2), drop=drop, out=out,
+                           probe_dim=probe_dim).to(dev)
 
 
 def load_model(path, dev, out=N_PEAKS):

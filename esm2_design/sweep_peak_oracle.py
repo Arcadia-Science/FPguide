@@ -18,7 +18,10 @@ Each role sweeps the same three axes:
   pooling readout:                          mean | max | concat | concatstd | attn
   depth:                                    cnn n_conv in {1..4}; transformer nlayers in {1..4}
 
-= 5 pools x (1 mlp + 4 cnn + 4 transformer) = 45 configs per role, **90 across both roles**, x 3 seeds.
+= 5 pools x (1 mlp + 4 cnn + 4 transformer) = 45 configs per role, plus a **covariance-probe (cov)
+  pool on CNN depth 1-3** (z_i = Wᵀ x_i, C_z = (1/L) Σ z_i z_iᵀ) = 3 more -> 48 configs per role,
+  **96 across both roles**, x 3 seeds. The cov configs are appended after the originals, so re-running
+  a completed sweep only trains the 3 new CNN-cov fits per role (resume skips existing checkpoints).
 
 Protocol (identical per role): targets standardized on that role's train split; standardized-peak MSE;
 Adam(1e-3, wd 1e-4), batch 32; early stopping on val peak-MAE (nm, patience 20, max 200 epochs, best
@@ -80,6 +83,9 @@ def device():
     return torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 
+COV_PROBE_DIM = 32          # probe width p for the covariance-probe pool (out_dim = p(p+1)/2)
+
+
 def make_configs():
     cfgs = []
     for pool in POOLS:
@@ -88,6 +94,10 @@ def make_configs():
             cfgs.append({"arch": "cnn", "pool": pool, "n_conv": d, "depth": d})
         for d in (1, 2, 3, 4):
             cfgs.append({"arch": "transformer", "pool": pool, "nlayers": d, "depth": d})
+    # Covariance-probe pool (z_i = Wᵀ x_i, C_z = (1/L) Σ z_i z_iᵀ) added for CNN depth 1-3 only.
+    # Appended separately so existing configs/checkpoints are untouched (resume skips them).
+    for d in (1, 2, 3):
+        cfgs.append({"arch": "cnn", "pool": "cov", "n_conv": d, "depth": d, "probe_dim": COV_PROBE_DIM})
     return cfgs
 
 
@@ -288,12 +298,17 @@ def main():
     ap.add_argument("--max-epochs", type=int, default=200)
     ap.add_argument("--patience", type=int, default=20)
     ap.add_argument("--limit", type=int, default=None, help="only the first N configs per role (smoke)")
+    ap.add_argument("--pools", nargs="+", default=None,
+                    help="only configs whose pool is in this list (e.g. --pools cov to add just the new "
+                         "covariance-probe CNNs without touching the rest of the sweep)")
     ap.add_argument("--force", action="store_true", help="retrain fits even if a checkpoint exists")
     ap.add_argument("--dry-run", action="store_true", help="list configs, no training")
     a = ap.parse_args()
 
     roles = ROLES if a.role == "both" else [a.role]
     cfgs = make_configs()
+    if a.pools:
+        cfgs = [c for c in cfgs if c["pool"] in a.pools]
     if a.limit:
         cfgs = cfgs[:a.limit]
 
