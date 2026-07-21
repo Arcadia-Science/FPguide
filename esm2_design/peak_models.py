@@ -5,10 +5,12 @@ The *peak_design* analog of ``../design/fp_models.py``. Instead of predicting th
 wavelengths** ``(ex_max, em_max)`` (nm) taken over the full spectrum — i.e. we condition
 design on the peaks rather than the whole curve.
 
-Backbones: a **CNN** (1-D convolutions over residues) and a **Transformer encoder**, each
-with a ``max | min | mean | concat`` masked-pooling readout over the ESM-2 per-residue
-embeddings. Used by ``surrogate_oracle_peak_dual.ipynb`` and ``guided_design_peak.ipynb`` so
-saved checkpoints reconstruct identically wherever they are loaded.
+Backbones: a **CNN** (1-D convolutions over residues) and a **Transformer encoder**, each with a
+``mean | min | max | std | concat | concatstd`` masked-pooling readout, a learned ``attn`` pool, or a
+learned second-order ``cov`` (covariance-probe) pool over the ESM-2 / ProstT5 per-residue embeddings.
+Used by ``sweep_peak_oracle.py`` / ``sweep_results.ipynb`` / ``train_oracle_prostt5.py`` (and the archived
+``archive/surrogate_oracle_peak_dual.ipynb``) so saved checkpoints reconstruct identically wherever they
+are loaded.
 """
 from __future__ import annotations
 import torch
