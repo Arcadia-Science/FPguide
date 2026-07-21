@@ -116,6 +116,14 @@ class CampaignConfig:
     add_rescore: bool = True                   # expose --rescore (guided only)
     record_lambda: bool = True                 # write lam_ex/lam_em columns (else left blank)
     trial_resume: bool = False                 # resume/append at trial granularity (gibbs); else pair-level skip
+    per_trial_rng: bool = False                # guided: draw the per-position choice from each trial's
+                                               # OWN torch.Generator (seeded per trial) instead of the
+                                               # global RNG. Makes a trial bit-reproducible regardless of
+                                               # how many run together -> guided becomes trial-resumable
+                                               # (pair with trial_resume=True). gibbs ALWAYS uses the
+                                               # per-trial generator, so this flag only affects guided.
+                                               # NB: changes guided's numeric results vs the global-RNG
+                                               # default, so leave False to preserve legacy campaigns.
     description: str = ""
 
     def __post_init__(self):
@@ -258,7 +266,8 @@ class Campaign:
         Both RNGs are seeded PER TRIAL from (SEED, scaffold_idx, trial) so trial k is identical
         regardless of how many trials are requested or when it is computed. The numpy RNG drives
         the any-order visiting permutation (used by both strategies); the torch.Generator drives
-        gibbs' per-position sampling (guided ignores it, sampling from the global torch RNG)."""
+        gibbs' per-position sampling (and guided's too when cfg.per_trial_rng is set; otherwise
+        guided samples from the global torch RNG and is not trial-resumable)."""
         trial_end = self.args.trials if trial_end is None else trial_end
         si, ti = int(pr["scaffold_idx"]), int(pr["target_idx"])
         w = self.windows[pr["scaffold_name"]]
@@ -298,8 +307,10 @@ class Campaign:
             self._select(sub, positions, logits)
 
     def _select_guided(self, sub, positions, logits):
-        """Surrogate-guided top-k selection (global torch RNG). Ported from guided_design."""
+        """Surrogate-guided top-k selection. Uses the global torch RNG by default, or each trial's
+        own Generator when cfg.per_trial_rng is set (making guided trial-reproducible/resumable)."""
         args = self.args
+        per_trial = self.cfg.per_trial_rng
         cand_all = []; meta = []
         for i, t in enumerate(sub):
             pos = positions[i]
@@ -318,7 +329,8 @@ class Campaign:
             Pc = Pk[off:off + k_eff]; off += k_eff
             ex_err = (Pc[:, 0] - t["tgt"][0]).abs(); em_err = (Pc[:, 1] - t["tgt"][1]).abs()
             scores = _zc(topv) - args.lam_ex * _zc(ex_err) - args.lam_em * _zc(em_err)
-            ch = (int(torch.multinomial(torch.softmax(scores / args.temp, -1), 1).item())
+            gen = t["gen"] if per_trial else None
+            ch = (int(torch.multinomial(torch.softmax(scores / args.temp, -1), 1, generator=gen).item())
                   if args.temp > 0 else int(torch.argmax(scores)))
             t["seq"] = t["seq"][:pos] + aas[ch] + t["seq"][pos + 1:]
 
