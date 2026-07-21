@@ -33,8 +33,9 @@ import sys
 import time
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
-REPO = HERE.parent
+HERE = Path(__file__).resolve().parent      # .../fpdesign
+REPO = HERE.parent                           # .../spectrum-to-fp-design
+CAMPAIGN = REPO / "design-campaign-conventional"   # default home for pairs list + output JSON
 CUR = REPO / "dataset_pipeline" / "data" / "peak" / "curated"
 sys.path.insert(0, str(REPO / "esm2_design"))
 import pockets                     # noqa: E402
@@ -66,8 +67,8 @@ def load_seqs():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pairs", default=str(HERE / "pairs" / "campaign_pairs_24.csv"))
-    ap.add_argument("--out", default=str(HERE / "design_windows_24_tierB.json"))
+    ap.add_argument("--pairs", default=str(CAMPAIGN / "pairs" / "campaign_pairs_24.csv"))
+    ap.add_argument("--out", default=str(CAMPAIGN / "design_windows_24_tierB.json"))
     ap.add_argument("--cutoff", type=float, default=CUTOFF)
     ap.add_argument("--hbond-cutoff", type=float, default=HBOND_CUTOFF,
                     help="heavy-atom N/O donor..acceptor distance to flag a Tier-B H-bond partner")
@@ -147,7 +148,7 @@ def main():
         "tier_b_note": "H-bond partners are a CAPABILITY proxy (heavy-atom N/O distance only; no "
                        "explicit H, angle, or water-mediated bridges) -- not ground-truth H-bonds.",
         "n_scaffolds": len(windows),
-        "generated_by": "design-campaign-conventional/build_design_windows.py",
+        "generated_by": "fpdesign/build_design_windows.py",
         "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
     }
     with open(args.out, "w") as fh:
