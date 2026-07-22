@@ -1,0 +1,26 @@
+# avGFP_DMS/.gitignore
+#
+# Track the inputs and code, skip the large regenerable artifacts.
+#   KEEP  : transform/embed/sweep scripts, notebooks, brightness_threshold.py,
+#           the raw DMS tables and the (small) processed sequence CSVs, figures.
+#   IGNORE: ESM-2 embedding caches (tens of GB), trained models, prediction caches,
+#           and run logs -- all reproducible from the scripts above.
+
+# ---- ESM-2 embedding caches (huge; rebuild with embed_dms.py) --------------------
+# Covers esm_residue_fp16.npy (~31 GB), esm_residue_len.npy, the maxpool caches, and
+# any future per-scaffold embedding array. The processed *_sequences.csv (the actual
+# dataset) are .csv, so they are NOT matched here and stay tracked.
+DMS_data/*.npy
+DMS_data/.embed_progress
+
+# ---- Trained models & cached predictions (rebuild with sweep_brightness.py) ------
+trained_models/
+
+# ---- Run logs / scratch ----------------------------------------------------------
+logs/
+*.log
+
+# ---- Python / Jupyter cruft ------------------------------------------------------
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
