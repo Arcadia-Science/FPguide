@@ -18,7 +18,12 @@ bit-for-bit reproducible:
   ``guided``  surrogate-guided generation. At each visited position ESM-2 gives the top-k allowed
               residues; the ALL-DATA (ex, em) surrogate scores every candidate and we sample
               score = z(logp_ESM) - lam_ex*z(|d ex|) - lam_em*z(|d em|) at temperature T (T=10,
-              lam=20). Selection draws from the GLOBAL torch RNG (seeded once).
+              lam=20). Selection draws from the GLOBAL torch RNG (seeded once). OPTIONALLY a
+              second head -- a classifier-predicted brightness model (``cfg.brightness_ckpt``,
+              opt-in) -- adds a ``+ lam_bright*z(pred_bright)`` term so the search is steered toward
+              BRIGHT designs as well as on-spectrum ones; that head shares the same ESM-2 embedding
+              as the surrogate (no extra embed cost) and its per-design prediction is logged in the
+              ``pred_bright`` column.
 
   ``gibbs``   pure ESM-2 masked-LM Gibbs sampling. We sample DIRECTLY from the top-k masked-LM
               conditional softmax(logp / T) at T=1 -- a true Gibbs draw of p(x_i | x_{-i}); the
@@ -65,6 +70,13 @@ import peak_models as pm            # noqa: E402  (shared ESM-2 + surrogate/orac
 # Default surrogate checkpoint now lives inside the library so every campaign shares one weight.
 DEFAULT_SURROGATE = HERE / "models" / "surrogate_cnn-max-d1_alldata.pt"
 
+# Optional brightness classifier for guided campaigns that also steer on predicted brightness.
+# Any peak_models out=1 checkpoint (self-describing architecture, with train-split mean/std baked
+# into its metadata) works -- swap this for the finalized brightness weight when it is ready. The
+# default points at the avGFP-DMS log10-median-brightness model (same one the post-hoc
+# brightness_shortlist screen uses) so the workflow is runnable end-to-end today.
+DEFAULT_BRIGHTNESS = REPO / "avGFP_DMS" / "trained_models" / "full" / "cnn-max-d1_s0.pt"
+
 SEED = 42
 ESM_BS = 64            # sub-batch for ESM-2 embed / logits forwards
 PPL_BS = 128           # sub-batch for pseudo-perplexity single-mask rows
@@ -74,6 +86,13 @@ COLS = ["pair", "scaffold_name", "scaffold_idx", "scaffold_pdb", "target_name", 
         "trial", "round", "n_editable", "temp", "k", "lam_ex", "lam_em",
         "pred_ex", "pred_em", "peak_err", "ppl", "ident_to_scaffold",
         "designed_seq", "scaffold_seq", "target_seq"]
+
+# Target-free schema (cfg.target_free, e.g. gibbs): the search never uses a target, so a run is one
+# effort PER SCAFFOLD (not per scaffold->target pair). All target columns are dropped; pred_ex/pred_em
+# remain as the surrogate's diagnostic (ex, em) for the design's OWN predicted peaks.
+COLS_FREE = ["scaffold_name", "scaffold_idx", "scaffold_pdb", "selection",
+             "scaffold_ex", "scaffold_em", "trial", "round", "n_editable", "temp", "k",
+             "pred_ex", "pred_em", "ppl", "ident_to_scaffold", "designed_seq", "scaffold_seq"]
 
 
 def _san(s):
@@ -111,11 +130,24 @@ class CampaignConfig:
     default_k: int = 10
     default_lam_ex: float = 20.0
     default_lam_em: float = 20.0
+    # optional classifier-predicted-brightness guidance (guided only). When brightness_ckpt is set,
+    # each candidate's predicted brightness adds a + lam_bright*z(pred_bright) term to the guided
+    # score, steering toward brighter designs; its per-design value is logged in the pred_bright
+    # column. Leave brightness_ckpt=None to preserve the peaks-only guided behaviour exactly.
+    brightness_ckpt: Path | None = None
+    default_lam_bright: float = 20.0
+    add_lam_bright_arg: bool = False           # expose --lam-bright (brightness-guided campaigns)
+    record_brightness: bool = False            # append pred_bright + lam_bright columns to the CSV
     # surface flags (keep each folder's CLI + CSV identical to its original hand-written driver)
     add_lam_args: bool = True                  # expose --lam-ex/--lam-em (guided only)
     add_rescore: bool = True                   # expose --rescore (guided only)
     record_lambda: bool = True                 # write lam_ex/lam_em columns (else left blank)
     trial_resume: bool = False                 # resume/append at trial granularity (gibbs); else pair-level skip
+    target_free: bool = False                  # the search ignores the target (gibbs): iterate over UNIQUE
+                                               # scaffolds (not pairs), write one design_<scaffold>.csv per
+                                               # scaffold with the target-free COLS_FREE schema. The four
+                                               # per-target CSVs were byte-identical apart from the target
+                                               # columns, so this keeps a single design effort per scaffold.
     per_trial_rng: bool = False                # guided: draw the per-position choice from each trial's
                                                # OWN torch.Generator (seeded per trial) instead of the
                                                # global RNG. Makes a trial bit-reproducible regardless of
@@ -129,6 +161,9 @@ class CampaignConfig:
     def __post_init__(self):
         if self.strategy not in ("guided", "gibbs"):
             raise ValueError(f"strategy must be 'guided' or 'gibbs', got {self.strategy!r}")
+        if self.brightness_ckpt is not None and self.strategy != "guided":
+            raise ValueError("brightness_ckpt is only supported with strategy='guided' "
+                             f"(it steers the guided score); got strategy={self.strategy!r}")
 
 
 def build_argparser(cfg: CampaignConfig) -> argparse.ArgumentParser:
@@ -140,6 +175,10 @@ def build_argparser(cfg: CampaignConfig) -> argparse.ArgumentParser:
     if cfg.add_lam_args:
         ap.add_argument("--lam-ex", type=float, default=cfg.default_lam_ex)
         ap.add_argument("--lam-em", type=float, default=cfg.default_lam_em)
+    if cfg.add_lam_bright_arg:
+        ap.add_argument("--lam-bright", type=float, default=cfg.default_lam_bright,
+                        help="weight of the z(predicted-brightness) term in the guided score "
+                             "(steers toward brighter designs)")
     ap.add_argument("--pairs-limit", type=int, default=0, help="use only the first N pairs")
     ap.add_argument("--ppl", choices=["all", "endpoints"], default="endpoints",
                     help="compute ESM-2 pseudo-perplexity every round ('all') or only scaffold + final ('endpoints')")
@@ -174,9 +213,17 @@ class Campaign:
         self.rows, self.seqs, self.peaks = load_dataset()
         self.windows = json.load(open(cfg.windows_json))["windows"]
         pairs = list(csv.DictReader(open(cfg.pairs_csv)))
+        if cfg.target_free:
+            # target-independent search: one design effort per UNIQUE scaffold (dedupe the pairs list)
+            seen, units = set(), []
+            for pr in pairs:
+                if pr["scaffold_name"] in seen:
+                    continue
+                seen.add(pr["scaffold_name"]); units.append(pr)
+            pairs = units
         if args.pairs_limit:
             pairs = pairs[:args.pairs_limit]
-        self.pairs = pairs
+        self.units = pairs
 
         # ---- models: surrogate (guides in 'guided', diagnostic-only in 'gibbs') + ESM-2 ----
         _sb, s_meta = pm.load_model(str(cfg.surrogate_ckpt), self.dev)
@@ -184,12 +231,35 @@ class Campaign:
         s_mae = s_meta.get("train_mae", s_meta.get("val_mae", float("nan")))
         role = "guides search" if cfg.strategy == "guided" else "diagnostic only"
         print(f"surrogate (all-data, {role}) train MAE {s_mae:.1f} nm", flush=True)
+
+        # ---- optional brightness classifier (adds a z(pred_bright) term to the guided score) ----
+        self.brightness_net = None
+        if cfg.brightness_ckpt is not None:
+            ckpt = Path(cfg.brightness_ckpt)
+            if not ckpt.exists():
+                raise FileNotFoundError(
+                    f"brightness classifier checkpoint not found: {ckpt}\n"
+                    "This campaign guides on ex/em peaks + a classifier-predicted brightness. Train "
+                    "the brightness model (a peak_models out=1 checkpoint whose metadata carries its "
+                    "architecture + train-split mean/std) and drop it at that path, or point "
+                    "cfg.brightness_ckpt elsewhere.")
+            _bb, b_meta = pm.load_model(str(ckpt), self.dev, out=1)
+            self.brightness_net = pm.wrap(_bb, b_meta["mean"], b_meta["std"], self.dev)
+            b_mae = b_meta.get("val_mae", b_meta.get("train_mae", float("nan")))
+            b_unit = b_meta.get("unit", "brightness")
+            b_arch = f"{b_meta.get('arch','?')}-{b_meta.get('pool','?')}-d{b_meta.get('depth','?')}"
+            print(f"brightness classifier ({b_arch}, guides search) val MAE {b_mae:.3f} {b_unit}",
+                  flush=True)
+
         self.esm_model, self.alphabet, self.bc = pm.get_esm(self.dev)
 
         self.AA_MASK = self._mask("ACDEFGHIKLMNPQRSTVWY")
         self.SPECIAL = {self.alphabet.cls_idx, self.alphabet.eos_idx,
                         self.alphabet.padding_idx, self.alphabet.mask_idx}
         self._select = self._select_guided if cfg.strategy == "guided" else self._select_gibbs
+        # CSV schema: the peaks-only campaigns keep COLS exactly; brightness-guided ones append
+        # pred_bright + lam_bright so downstream tools that read by column name are unaffected.
+        self.cols = list(COLS) + (["pred_bright", "lam_bright"] if cfg.record_brightness else [])
 
     # ---- tokenization / batched model forwards ------------------------------------
     def _mask(self, aas):
@@ -216,6 +286,24 @@ class Campaign:
         for i in range(0, len(seqlist), bs):
             H, mask = self._esm_embed(seqlist[i:i + bs]); outs.append(self.surrogate_net(H, mask))
         return torch.cat(outs, 0)
+
+    @torch.no_grad()
+    def peaks_and_brightness_batched(self, seqlist, bs=ESM_BS):
+        """Embed each sequence ONCE and run the (ex, em) surrogate plus the optional brightness head.
+
+        Returns ``(P, B)`` where ``P`` is (N, 2) ex/em in nm and ``B`` is (N, 1) predicted brightness
+        (or ``None`` when no brightness classifier is configured). Sharing the ESM-2 embedding keeps
+        the brightness term from doubling the dominant embedding cost, and gives numerically
+        identical peaks to ``surrogate_peaks_batched`` so peaks-only campaigns are unaffected."""
+        peaks, bright = [], []
+        for i in range(0, len(seqlist), bs):
+            H, mask = self._esm_embed(seqlist[i:i + bs])
+            peaks.append(self.surrogate_net(H, mask))
+            if self.brightness_net is not None:
+                bright.append(self.brightness_net(H, mask))
+        P = torch.cat(peaks, 0)
+        B = torch.cat(bright, 0) if bright else None
+        return P, B
 
     @torch.no_grad()
     def esm_logits_at(self, seqlist, positions, bs=ESM_BS):
@@ -269,12 +357,15 @@ class Campaign:
         gibbs' per-position sampling (and guided's too when cfg.per_trial_rng is set; otherwise
         guided samples from the global torch RNG and is not trial-resumable)."""
         trial_end = self.args.trials if trial_end is None else trial_end
-        si, ti = int(pr["scaffold_idx"]), int(pr["target_idx"])
+        si = int(pr["scaffold_idx"])
         w = self.windows[pr["scaffold_name"]]
         editable = list(w["editable_0based"])
         pos_allowed = {int(p): self._mask(aas) for p, aas in w["position_constraints"].items()}
         scaf = w["scaffold_seq"]
-        tgt = torch.tensor(self.peaks[ti], device=self.dev)
+        if self.cfg.target_free:                       # no target -> no (ex, em) goal, no peak_err
+            ti, tgt = None, None
+        else:
+            ti = int(pr["target_idx"]); tgt = torch.tensor(self.peaks[ti], device=self.dev)
         insts = []
         for trial in range(trial_start, trial_end):
             seed = SEED + si * 131 + trial * 17
@@ -286,14 +377,16 @@ class Campaign:
 
     def evaluate_round(self, insts, r, do_ppl):
         seqlist = [t["seq"] for t in insts]
-        P = self.surrogate_peaks_batched(seqlist)
+        P, B = self.peaks_and_brightness_batched(seqlist)
         ppls = self.ppl_batched(seqlist) if do_ppl else [float("nan")] * len(insts)
         for i, t in enumerate(insts):
             ex, em = float(P[i, 0]), float(P[i, 1])
-            err = 0.5 * (abs(ex - float(t["tgt"][0])) + abs(em - float(t["tgt"][1])))
+            err = (0.5 * (abs(ex - float(t["tgt"][0])) + abs(em - float(t["tgt"][1])))
+                   if t["tgt"] is not None else float("nan"))
             ident = sum(x == y for x, y in zip(t["seq"], t["scaffold"])) / len(t["scaffold"])
             t["hist"].append(dict(round=r, pred_ex=ex, pred_em=em, peak_err=err,
-                                  ppl=ppls[i], ident=ident, seq=t["seq"]))
+                                  ppl=ppls[i], ident=ident, seq=t["seq"],
+                                  pred_bright=(float(B[i, 0]) if B is not None else float("nan"))))
 
     def run_iteration(self, insts):
         # each trial: fresh random visiting order over the (identical) window this iteration
@@ -323,12 +416,16 @@ class Campaign:
             for aa in aas:
                 cand_all.append(t["seq"][:pos] + aa + t["seq"][pos + 1:])
             meta.append((t, pos, topv, aas, k_eff))
-        Pk = self.surrogate_peaks_batched(cand_all)
+        Pk, Bk = self.peaks_and_brightness_batched(cand_all)
+        lam_bright = getattr(args, "lam_bright", self.cfg.default_lam_bright)
         off = 0
         for (t, pos, topv, aas, k_eff) in meta:
-            Pc = Pk[off:off + k_eff]; off += k_eff
+            sl = slice(off, off + k_eff); off += k_eff
+            Pc = Pk[sl]
             ex_err = (Pc[:, 0] - t["tgt"][0]).abs(); em_err = (Pc[:, 1] - t["tgt"][1]).abs()
             scores = _zc(topv) - args.lam_ex * _zc(ex_err) - args.lam_em * _zc(em_err)
+            if Bk is not None:                       # steer toward brighter candidates (maximize)
+                scores = scores + lam_bright * _zc(Bk[sl, 0])
             gen = t["gen"] if per_trial else None
             ch = (int(torch.multinomial(torch.softmax(scores / args.temp, -1), 1, generator=gen).item())
                   if args.temp > 0 else int(torch.argmax(scores)))
@@ -374,24 +471,45 @@ class Campaign:
 
     def write_pair(self, pr, name, fn, insts, append=False):
         args = self.args
-        si, ti = int(pr["scaffold_idx"]), int(pr["target_idx"])
+        si = int(pr["scaffold_idx"])
+        if self.cfg.target_free:                       # one target-free effort per scaffold
+            with open(fn, "a" if append else "w", newline="") as fh:
+                wr = csv.writer(fh)
+                if not append:
+                    wr.writerow(COLS_FREE)
+                for t in sorted(insts, key=lambda x: x["trial"]):
+                    for hh in t["hist"]:
+                        wr.writerow([pr["scaffold_name"], si, pr["scaffold_pdb"], pr.get("selection", ""),
+                                     f"{self.peaks[si,0]:.0f}", f"{self.peaks[si,1]:.0f}",
+                                     t["trial"], hh["round"], len(t["editable"]), args.temp, args.k,
+                                     f"{hh['pred_ex']:.1f}", f"{hh['pred_em']:.1f}",
+                                     f"{hh['ppl']:.2f}" if hh["ppl"] == hh["ppl"] else "",
+                                     f"{hh['ident']:.3f}", hh["seq"], t["scaffold"]])
+            return
+        ti = int(pr["target_idx"])
         lam_ex = f"{args.lam_ex}" if self.cfg.record_lambda else ""
         lam_em = f"{args.lam_em}" if self.cfg.record_lambda else ""
+        lam_bright = (f"{getattr(args, 'lam_bright', self.cfg.default_lam_bright)}"
+                      if self.cfg.record_brightness else "")
         with open(fn, "a" if append else "w", newline="") as fh:
             wr = csv.writer(fh)
             if not append:
-                wr.writerow(COLS)
+                wr.writerow(self.cols)
             for t in sorted(insts, key=lambda x: x["trial"]):
                 for hh in t["hist"]:
-                    wr.writerow([name, pr["scaffold_name"], si, pr["scaffold_pdb"],
-                                 pr["target_name"], ti, pr.get("selection", ""),
-                                 f"{self.peaks[si,0]:.0f}", f"{self.peaks[si,1]:.0f}",
-                                 f"{self.peaks[ti,0]:.0f}", f"{self.peaks[ti,1]:.0f}",
-                                 pr["identity"], t["trial"], hh["round"], len(t["editable"]),
-                                 args.temp, args.k, lam_ex, lam_em,
-                                 f"{hh['pred_ex']:.1f}", f"{hh['pred_em']:.1f}", f"{hh['peak_err']:.2f}",
-                                 f"{hh['ppl']:.2f}" if hh["ppl"] == hh["ppl"] else "", f"{hh['ident']:.3f}",
-                                 hh["seq"], t["scaffold"], self.seqs[ti]])
+                    row = [name, pr["scaffold_name"], si, pr["scaffold_pdb"],
+                           pr["target_name"], ti, pr.get("selection", ""),
+                           f"{self.peaks[si,0]:.0f}", f"{self.peaks[si,1]:.0f}",
+                           f"{self.peaks[ti,0]:.0f}", f"{self.peaks[ti,1]:.0f}",
+                           pr["identity"], t["trial"], hh["round"], len(t["editable"]),
+                           args.temp, args.k, lam_ex, lam_em,
+                           f"{hh['pred_ex']:.1f}", f"{hh['pred_em']:.1f}", f"{hh['peak_err']:.2f}",
+                           f"{hh['ppl']:.2f}" if hh["ppl"] == hh["ppl"] else "", f"{hh['ident']:.3f}",
+                           hh["seq"], t["scaffold"], self.seqs[ti]]
+                    if self.cfg.record_brightness:
+                        pb = hh.get("pred_bright", float("nan"))
+                        row += [f"{pb:.4f}" if pb == pb else "", lam_bright]
+                    wr.writerow(row)
 
     # ---- top-level modes ----------------------------------------------------------
     def rescore(self):
@@ -421,8 +539,8 @@ class Campaign:
         parsed, need = [], set()
         for fn in files:
             with open(fn, newline="") as fh:
-                rd = list(csv.DictReader(fh))
-            parsed.append((fn, rd))
+                rdr = csv.DictReader(fh); rd = list(rdr); hdr = rdr.fieldnames
+            parsed.append((fn, rd, hdr))
             for row in rd:
                 if row.get("ppl", "").strip() == "":
                     need.add(row["designed_seq"])
@@ -437,7 +555,7 @@ class Campaign:
                 vals[s] = p
             print(f"  ppl {min(i + 1024, len(seqs_u))}/{len(seqs_u)} ({time.time() - t0:.0f}s)", flush=True)
         filled = 0
-        for fn, rd in parsed:
+        for fn, rd, hdr in parsed:
             changed = False
             for row in rd:
                 if row.get("ppl", "").strip() == "":
@@ -445,23 +563,26 @@ class Campaign:
                     if p is not None and p == p:
                         row["ppl"] = f"{p:.2f}"; filled += 1; changed = True
             if changed:
+                cols = hdr or COLS
                 with open(fn, "w", newline="") as fh:
-                    wr = csv.DictWriter(fh, fieldnames=COLS, extrasaction="ignore")
+                    wr = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
                     wr.writeheader()
                     for row in rd:
-                        wr.writerow({c: row.get(c, "") for c in COLS})
+                        wr.writerow({c: row.get(c, "") for c in cols})
         print(f"backfill: filled {filled} rows from {len(seqs_u)} unique seqs -> {self.outdir} | {time.time() - t0:.0f}s", flush=True)
 
     def probe(self):
         args = self.args
-        pr = self.pairs[0]; name = f"{pr['scaffold_name']}-{pr['target_name']}"
+        pr = self.units[0]
+        name = pr["scaffold_name"] if self.cfg.target_free else f"{pr['scaffold_name']}-{pr['target_name']}"
+        unit = "scaffold" if self.cfg.target_free else "pair"
         insts = self.build_trials(pr)
-        print(f"probing 1 pair [{name}] | {args.trials} trials | window={len(insts[0]['editable'])} editable "
+        print(f"probing 1 {unit} [{name}] | {args.trials} trials | window={len(insts[0]['editable'])} editable "
               f"| iters={args.iters} T={args.temp} k={args.k}", flush=True)
         te0 = time.time(); self.evaluate_round(insts, 0, do_ppl=True); t_ppl = time.time() - te0
         ti0 = time.time(); self.run_iteration(insts); t_iter = time.time() - ti0
         te1 = time.time(); self.evaluate_round(insts, 1, do_ppl=False); t_orac = time.time() - te1
-        np_ = len(self.pairs)
+        np_ = len(self.units)
         per_pair_all = t_ppl * (args.iters + 1) + t_iter * args.iters
         per_pair_ep = t_ppl * 2 + t_orac * (args.iters - 1) + t_iter * args.iters
         print("\n=== PROBE (one pair) ===", flush=True)
@@ -477,13 +598,15 @@ class Campaign:
         args = self.args
         t_all = time.time()
         done = 0
-        for pi, pr in enumerate(self.pairs):
-            name = f"{pr['scaffold_name']}-{pr['target_name']}"
+        n_units = len(self.units)
+        unit_word = "scaffolds" if self.cfg.target_free else "pairs"
+        for pi, pr in enumerate(self.units):
+            name = pr["scaffold_name"] if self.cfg.target_free else f"{pr['scaffold_name']}-{pr['target_name']}"
             fn = self.outdir / f"design_{_san(name)}.csv"
             if self.cfg.trial_resume:
                 have, have_rounds, have_temp, have_k = self.existing_pair(fn)
                 if have >= args.trials:
-                    print(f"[{pi+1}/{len(self.pairs)}] {name}: cached {have}/{args.trials} trials -> skip", flush=True); continue
+                    print(f"[{pi+1}/{n_units}] {name}: cached {have}/{args.trials} trials -> skip", flush=True); continue
                 if have > 0:
                     issues = []
                     if have_rounds is not None and have_rounds != args.iters + 1:
@@ -493,12 +616,12 @@ class Campaign:
                     if self._num(have_k) is not None and int(self._num(have_k)) != args.k:
                         issues.append(f"k {have_k}!=--k {args.k}")
                     if issues:
-                        print(f"[{pi+1}/{len(self.pairs)}] {name}: WARNING appending with different settings "
+                        print(f"[{pi+1}/{n_units}] {name}: WARNING appending with different settings "
                               f"({'; '.join(issues)}) -> CSV will mix trajectory shapes", flush=True)
                 trial_start = have
             else:
                 if fn.exists():
-                    print(f"[{pi+1}/{len(self.pairs)}] {name}: cached -> skip", flush=True); continue
+                    print(f"[{pi+1}/{n_units}] {name}: cached -> skip", flush=True); continue
                 trial_start = 0
             t0 = time.time()
             insts = self.build_trials(pr, trial_start=trial_start, trial_end=args.trials)
@@ -509,17 +632,22 @@ class Campaign:
                 self.evaluate_round(insts, r, do_ppl=do_ppl)
             self.write_pair(pr, name, fn, insts, append=(trial_start > 0))
             done += 1
-            best = min(t["hist"][-1]["peak_err"] for t in insts)
-            mean_end = np.mean([t["hist"][-1]["peak_err"] for t in insts])
-            scaf_err = insts[0]["hist"][0]["peak_err"]
-            if self.cfg.trial_resume and trial_start > 0:
-                lead = f"trials {trial_start}..{args.trials-1} appended | "
+            lead = (f"trials {trial_start}..{args.trials-1} appended | "
+                    if (self.cfg.trial_resume and trial_start > 0) else "")
+            if self.cfg.target_free:                   # no target -> report edit depth, not peak error
+                mean_ident = np.mean([t["hist"][-1]["ident"] for t in insts])
+                print(f"[{pi+1}/{n_units}] {name}: {lead}{len(insts)} trials x {args.iters} iters | "
+                      f"{len(insts[0]['editable'])} editable | mean ident-to-scaffold {mean_ident:.2f} "
+                      f"| {time.time()-t0:.0f}s", flush=True)
             else:
-                lead = ""
-            print(f"[{pi+1}/{len(self.pairs)}] {name}: {lead}scaffold err {scaf_err:.1f} -> "
-                  f"mean {mean_end:.1f} / best {best:.1f} nm | {len(insts[0]['editable'])} editable "
-                  f"| {time.time()-t0:.0f}s", flush=True)
-        print(f"done: {done} pairs designed ({done*args.trials} trajectories) -> {self.outdir} | total {time.time()-t_all:.0f}s", flush=True)
+                best = min(t["hist"][-1]["peak_err"] for t in insts)
+                mean_end = np.mean([t["hist"][-1]["peak_err"] for t in insts])
+                scaf_err = insts[0]["hist"][0]["peak_err"]
+                print(f"[{pi+1}/{n_units}] {name}: {lead}scaffold err {scaf_err:.1f} -> "
+                      f"mean {mean_end:.1f} / best {best:.1f} nm | {len(insts[0]['editable'])} editable "
+                      f"| {time.time()-t0:.0f}s", flush=True)
+        print(f"done: {done} {unit_word} designed ({done*args.trials} trajectories) -> {self.outdir} "
+              f"| total {time.time()-t_all:.0f}s", flush=True)
 
     def run(self):
         os.makedirs(self.outdir, exist_ok=True)
