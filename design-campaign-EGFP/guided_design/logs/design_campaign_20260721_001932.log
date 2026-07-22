@@ -1,0 +1,15 @@
+=== EGFP guided campaign start Tue Jul 21 00:19:32 UTC 2026 | ppl=endpoints | extra args:  ===
+device cuda | fp16 True
+surrogate (all-data, guides search) train MAE 5.2 nm
+[1/4] EGFP-EBFP: scaffold err 88.3 -> mean 1.3 / best 0.7 nm | 25 editable | 343s
+[2/4] EGFP-mEmerald: scaffold err 2.0 -> mean 1.3 / best 0.4 nm | 25 editable | 339s
+[3/4] EGFP-mOrange: scaffold err 56.7 -> mean 20.0 / best 12.5 nm | 25 editable | 185s
+[4/4] EGFP-mCherry: scaffold err 100.2 -> mean 66.8 / best 56.2 nm | 25 editable | 162s
+done: 4 pairs designed (24 trajectories) -> /home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP/guided_design/designs | total 1029s
+=== backfilling intermediate-round ppl Tue Jul 21 00:36:49 UTC 2026 ===
+device cuda | fp16 True
+surrogate (all-data, guides search) train MAE 5.2 nm
+backfill: 48 unique sequences need ppl across 4 files
+  ppl 48/48 (238s)
+backfill: filled 48 rows from 48 unique seqs -> /home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP/guided_design/designs | 238s
+=== EGFP guided campaign done Tue Jul 21 00:40:55 UTC 2026 | rc=0 ===

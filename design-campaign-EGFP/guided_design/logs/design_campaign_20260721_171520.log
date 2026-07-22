@@ -1,0 +1,3 @@
+=== EGFP guided campaign start Tue Jul 21 17:15:20 UTC 2026 | ppl=endpoints | extra args: --trials 12 ===
+device cuda | fp16 True
+surrogate (all-data, guides search) train MAE 5.2 nm

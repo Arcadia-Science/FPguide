@@ -1,0 +1,15 @@
+=== EGFP gibbs campaign start Tue Jul 21 00:19:32 UTC 2026 | ppl=endpoints | extra args:  ===
+device cuda | fp16 True
+surrogate (all-data, diagnostic only) train MAE 5.2 nm
+[1/4] EGFP-EBFP: scaffold err 88.3 -> mean 61.0 / best 35.4 nm | 25 editable | 145s
+[2/4] EGFP-mEmerald: scaffold err 2.0 -> mean 27.0 / best 12.2 nm | 25 editable | 144s
+[3/4] EGFP-mOrange: scaffold err 56.7 -> mean 84.0 / best 69.2 nm | 25 editable | 150s
+[4/4] EGFP-mCherry: scaffold err 100.2 -> mean 127.5 / best 112.7 nm | 25 editable | 146s
+done: 4 pairs designed (24 trajectories) -> /home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP/gibbs-sampling/designs | total 585s
+=== backfilling intermediate-round ppl Tue Jul 21 00:29:25 UTC 2026 ===
+device cuda | fp16 True
+surrogate (all-data, diagnostic only) train MAE 5.2 nm
+backfill: 12 unique sequences need ppl across 4 files
+  ppl 12/12 (130s)
+backfill: filled 48 rows from 12 unique seqs -> /home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP/gibbs-sampling/designs | 130s
+=== EGFP gibbs campaign done Tue Jul 21 00:31:44 UTC 2026 | rc=0 ===
