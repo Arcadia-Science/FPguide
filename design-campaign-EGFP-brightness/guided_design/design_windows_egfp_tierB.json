@@ -1,0 +1,247 @@
+{
+  "meta": {
+    "description": "Structure-based 5 A chromophore edit window per campaign scaffold (same rule as esm2_design/pockets.py) + Tier-B H-bond-partner alphabet restriction.",
+    "rule": "editable = chromophore pos1 & pos2 + residues with a heavy atom within CUTOFF of the chromophore; pos2 constrained to aromatics {Y,W,H,F}; pos3 (Gly) and catalytic Arg+Glu fixed; Tier-B chromophore H-bond partners (side-chain N/O within HBOND_CUTOFF of a chromophore N/O) stay editable but restricted to H-bond-capable residues.",
+    "cutoff_angstrom": 5.0,
+    "hbond_cutoff_angstrom": 3.5,
+    "chromophore_motif": "X-[YWHF]-G near sequence position 50-85 (closest to ~65)",
+    "structure_source": "experimental RCSB structure (>=97% identity), per-scaffold PDB id",
+    "position_indexing": "0-based into scaffold_seq; *_1based mirrors provided; position_constraints keys are 0-based",
+    "aromatic_alphabet": [
+      "Y",
+      "W",
+      "H",
+      "F"
+    ],
+    "hbond_alphabet": [
+      "S",
+      "T",
+      "Y",
+      "N",
+      "Q",
+      "D",
+      "E",
+      "H",
+      "K",
+      "R",
+      "W"
+    ],
+    "tier_b_note": "H-bond partners are a CAPABILITY proxy (heavy-atom N/O distance only; no explicit H, angle, or water-mediated bridges) -- not ground-truth H-bonds.",
+    "n_scaffolds": 1,
+    "generated_by": "fpdesign/build_design_windows.py",
+    "generated_at": "2026-07-21T00:17:54"
+  },
+  "windows": {
+    "EGFP": {
+      "scaffold_idx": 171,
+      "scaffold_pdb": "4EUL",
+      "seq_len": 239,
+      "chromophore": {
+        "pos1_0based": 65,
+        "pos2_0based": 66,
+        "pos3_0based": 67,
+        "pos1_1based": 66,
+        "pos2_1based": 67,
+        "pos3_1based": 68,
+        "residues": "T66-Y67-G68"
+      },
+      "catalytic_0based": [
+        96,
+        222
+      ],
+      "catalytic_1based": [
+        97,
+        223
+      ],
+      "catalytic_residues": [
+        "R97",
+        "E223"
+      ],
+      "pocket_0based": [
+        42,
+        44,
+        46,
+        60,
+        61,
+        62,
+        63,
+        64,
+        68,
+        69,
+        92,
+        94,
+        112,
+        121,
+        145,
+        146,
+        148,
+        150,
+        165,
+        167,
+        203,
+        205,
+        220
+      ],
+      "pocket_1based": [
+        43,
+        45,
+        47,
+        61,
+        62,
+        63,
+        64,
+        65,
+        69,
+        70,
+        93,
+        95,
+        113,
+        122,
+        146,
+        147,
+        149,
+        151,
+        166,
+        168,
+        204,
+        206,
+        221
+      ],
+      "hbond_partners_0based": [
+        94,
+        148,
+        203
+      ],
+      "hbond_partners_1based": [
+        95,
+        149,
+        204
+      ],
+      "hbond_residues": [
+        "Q95",
+        "H149",
+        "T204"
+      ],
+      "editable_0based": [
+        42,
+        44,
+        46,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        68,
+        69,
+        92,
+        94,
+        112,
+        121,
+        145,
+        146,
+        148,
+        150,
+        165,
+        167,
+        203,
+        205,
+        220
+      ],
+      "editable_1based": [
+        43,
+        45,
+        47,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        69,
+        70,
+        93,
+        95,
+        113,
+        122,
+        146,
+        147,
+        149,
+        151,
+        166,
+        168,
+        204,
+        206,
+        221
+      ],
+      "fixed_0based": [
+        67,
+        96,
+        222
+      ],
+      "fixed_1based": [
+        68,
+        97,
+        223
+      ],
+      "position_constraints": {
+        "66": [
+          "Y",
+          "W",
+          "H",
+          "F"
+        ],
+        "94": [
+          "S",
+          "T",
+          "Y",
+          "N",
+          "Q",
+          "D",
+          "E",
+          "H",
+          "K",
+          "R",
+          "W"
+        ],
+        "148": [
+          "S",
+          "T",
+          "Y",
+          "N",
+          "Q",
+          "D",
+          "E",
+          "H",
+          "K",
+          "R",
+          "W"
+        ],
+        "203": [
+          "S",
+          "T",
+          "Y",
+          "N",
+          "Q",
+          "D",
+          "E",
+          "H",
+          "K",
+          "R",
+          "W"
+        ]
+      },
+      "n_editable": 25,
+      "n_pocket": 23,
+      "n_hbond": 3,
+      "structure_match": {
+        "chain": "A",
+        "local_identity": 1.0,
+        "coverage": 0.946
+      },
+      "scaffold_seq": "MVSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTLTYGVQCFSRYPDHMKQHDFFKSAMPEGYVQERTIFFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYIMADKQKNGIKVNFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITLGMDELYK"
+    }
+  }
+}
