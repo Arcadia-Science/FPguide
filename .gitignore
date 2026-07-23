@@ -12,6 +12,9 @@ identity_matrix.meta.json
 # Trained model binaries (regenerate by re-running the notebooks)
 *.pt
 *.joblib
+# Exceptions: keep the fpdesign/models models tracked in git
+!fpdesign/models/brightness_cnn-max-d2_40k.pt
+!fpdesign/models/surrogate_cnn-max-d1_alldata.pt
 
 # ESM-2 weights are downloaded to the torch hub cache (~/.cache/torch), not here — nothing to ignore,
 # but block them if ever copied locally:
