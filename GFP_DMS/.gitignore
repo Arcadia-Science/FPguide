@@ -1,26 +1,36 @@
-# avGFP_DMS/.gitignore
+# GFP_DMS/.gitignore
 #
-# Track the inputs and code, skip the large regenerable artifacts.
-#   KEEP  : transform/embed/sweep scripts, notebooks, brightness_threshold.py,
-#           the raw DMS tables and the (small) processed sequence CSVs, figures.
-#   IGNORE: ESM-2 embedding caches (tens of GB), trained models, prediction caches,
-#           and run logs -- all reproducible from the scripts above.
+# Track the code needed to reproduce the best brightness model (cnn-max-d2, 40k classifier);
+# skip the large / regenerable / externally-sourced artifacts.
+#   KEEP  : transform/embed/subsample/classify scripts, notebooks, brightness_threshold.py,
+#           README, figures.
+#   IGNORE: the DMS datasets (raw + processed + subsample caches), ESM-2 embedding caches,
+#           trained models, prediction caches, run logs, and the archived regression experiment.
 
-# ---- ESM-2 embedding caches (huge; rebuild with embed_dms.py) --------------------
-# Covers esm_residue_fp16.npy (~31 GB), esm_residue_len.npy, the maxpool caches, and
-# any future per-scaffold embedding array. The processed *_sequences.csv (the actual
-# dataset) are .csv, so they are NOT matched here and stay tracked.
+# ---- DMS datasets & embedding caches (large; rebuild via transform_*/embed_parallel/build_subsample)
+# Raw tables (.tsv, ortho .csv), processed *_sequences.csv, sub20k/sub40k caches, split CSV,
+# ESM-2 per-residue arrays (~tens of GB) and the max-pool .npz caches. Covers all of DMS_data/.
+DMS_data/*.csv
+DMS_data/*.tsv
 DMS_data/*.npy
+DMS_data/*.npz
 DMS_data/.embed_progress
+DMS_data/.embed_progress.*
 
-# ---- Trained models & cached predictions (rebuild with sweep_brightness.py) ------
+# ---- Trained models & cached predictions (rebuild with sweep_classify_parallel.py) ----------
 trained_models/
 
-# ---- Run logs / scratch ----------------------------------------------------------
+# ---- Archived regression experiment (superseded by the classifier pipeline) -----------------
+archive_regression/
+
+# ---- Superseded regression sweep (replaced by sweep_classify_parallel.py) --------------------
+sweep_brightness.py
+
+# ---- Run logs / scratch ----------------------------------------------------------------------
 logs/
 *.log
 
-# ---- Python / Jupyter cruft ------------------------------------------------------
+# ---- Python / Jupyter cruft ------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
