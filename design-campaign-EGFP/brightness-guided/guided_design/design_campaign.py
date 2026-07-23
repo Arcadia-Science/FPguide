@@ -35,9 +35,9 @@ Usage
 import sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent               # .../design-campaign-EGFP-brightness/guided_design
-CAMPAIGN = HERE.parent                                # .../design-campaign-EGFP-brightness
-REPO = CAMPAIGN.parent                                # .../spectrum-to-fp-design
+HERE = Path(__file__).resolve().parent               # .../design-campaign-EGFP/brightness-guided/guided_design
+CAMPAIGN = HERE.parent                                # .../design-campaign-EGFP/brightness-guided
+REPO = HERE.parents[2]                                # .../spectrum-to-fp-design
 sys.path.insert(0, str(REPO))
 from fpdesign.campaign import CampaignConfig, DEFAULT_BRIGHTNESS, run     # noqa: E402
 
