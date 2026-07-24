@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-"""Build the EGFP design-campaign pairs CSV: scaffold = EGFP, four commercially available
-(patent-expired -> open_likely in licensing/commercial_use_flags.csv), non-LSS targets spanning
-distinct spectral bands blue / green / orange / red -- deliberately NO large-Stokes-shift proteins.
+"""Build the EGFP design-campaign pairs CSV: scaffold = EGFP, two commercially available
+(patent-expired -> open_likely in licensing/commercial_use_flags.csv), non-LSS targets that bracket
+the consolidated campaign -- a near, sequence-similar blue shift and a distant, sequence-far orange
+shift. (The green mEmerald and red mCherry targets were dropped in the consolidation; see archive/.)
 
     EGFP (idx 171, PDB 4EUL, ex 488 / em 507) ->
       EBFP     (156, ex 380 / em 440)  blue    avGFP lineage (Clontech, US5,777,079 expired)
-      mEmerald (407, ex 487 / em 509)  green   avGFP lineage (Clontech, expired) -- near neighbour
       mOrange  (479, ex 548 / em 562)  orange  DsRed/mFruit lineage (Tsien, US7,687,614 expired 2021)
-      mCherry  (389, ex 587 / em 610)  red     DsRed/mFruit lineage (Tsien, US7,687,614 expired 2021)
 
 Output columns match design-campaign-conventional/pairs/campaign_pairs_24.csv so the shared
 fpdesign engine loads it unchanged. ``identity`` is the global scaffold<->target sequence identity
@@ -26,7 +25,7 @@ OUT = HERE / "pairs" / "campaign_pairs_egfp.csv"
 
 SCAFFOLD_IDX = 171          # EGFP
 SCAFFOLD_PDB = "4EUL"       # experimental structure used for the current campaign's EGFP window
-TARGET_IDX = [156, 407, 479, 389]   # EBFP, mEmerald, mOrange, mCherry (spectral order blue->red)
+TARGET_IDX = [156, 479]   # EBFP (blue), mOrange (orange) -- consolidated 2-target focus
 
 _MAT = balign.SubstitutionMatrix.std_protein_matrix()
 

@@ -1,9 +1,0 @@
-device cuda | fp16 True
-surrogate (all-data, diagnostic only) train MAE 5.2 nm
-[1/1] EGFP: 12 trials x 3 iters | 25 editable | mean ident-to-scaffold 0.90 | 130s
-done: 1 scaffolds designed (12 trajectories) -> /home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP/gibbs-sampling/designs | total 130s
-device cuda | fp16 True
-surrogate (all-data, diagnostic only) train MAE 5.2 nm
-backfill: 24 unique sequences need ppl across 1 files
-  ppl 24/24 (114s)
-backfill: filled 24 rows from 24 unique seqs -> /home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP/gibbs-sampling/designs | 114s

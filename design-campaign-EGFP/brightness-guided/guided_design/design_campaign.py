@@ -31,6 +31,10 @@ Usage
     python design_campaign.py --ppl endpoints  # full run, ppl only at scaffold + final round (fast)
     python design_campaign.py --backfill-ppl   # fill the blank intermediate-round ppl cells afterwards
     python design_campaign.py --lam-bright 30  # override the brightness guidance weight
+
+Each run writes to a self-documenting folder named after its guidance weights, e.g.
+``designs_lam-bright60_lam-edit10`` (defaults -> ``designs_lam-bright20_lam-edit0``), so different
+lam settings never mix and lam_edit -- which has no CSV column -- is captured in the folder name.
 """
 import sys
 from pathlib import Path
@@ -50,11 +54,17 @@ CFG = CampaignConfig(
     strategy="guided",
     windows_json=HERE / "design_windows_egfp_tierB.json",
     pairs_csv=CAMPAIGN / "pairs" / "campaign_pairs_egfp.csv",
+    # base output dir; outdir_lambda_suffix appends this run's guidance weights so each lam setting
+    # lands in its own self-documenting folder, e.g. designs_lam-bright60_lam-edit10 (and a default
+    # run -> designs_lam-bright20_lam-edit0). This avoids mixing runs and records lam_edit -- which
+    # has no CSV column -- directly in the folder name.
     outdir=HERE / "designs",
+    outdir_lambda_suffix=True,
     brightness_ckpt=BRIGHTNESS_CKPT,
     default_temp=10.0, default_k=10,
     default_lam_ex=20.0, default_lam_em=20.0, default_lam_bright=20.0,
-    add_lam_args=True, add_lam_bright_arg=True, add_rescore=True,
+    default_lam_edit=0.0,
+    add_lam_args=True, add_lam_bright_arg=True, add_lam_edit_arg=True, add_rescore=True,
     record_lambda=True, record_brightness=True,
     per_trial_rng=True, trial_resume=True,   # per-trial Generator -> guided is trial-reproducible/resumable
     description="EGFP -> 4-colour palette, Tier-B guided (peaks + classifier-brightness) ESM-2 design.",

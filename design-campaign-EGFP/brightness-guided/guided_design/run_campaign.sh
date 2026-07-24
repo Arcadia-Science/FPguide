@@ -28,7 +28,8 @@ echo "=== EGFP brightness-guided campaign start $(date) | ppl=${PPL} | extra arg
 rc=$?
 if [ "$rc" -eq 0 ] && [ "$PPL" = "endpoints" ]; then
     echo "=== backfilling intermediate-round ppl $(date) ==="
-    "$PY" -u design_campaign.py --backfill-ppl
+    # forward "$@" so --lam-bright/--lam-edit resolve to the SAME lam-suffixed designs_* folder
+    "$PY" -u design_campaign.py --backfill-ppl "$@"
     rc=$?
 fi
 echo "=== EGFP brightness-guided campaign done $(date) | rc=${rc} ==="

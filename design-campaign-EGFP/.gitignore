@@ -1,0 +1,9 @@
+# Run logs / job artifacts (regenerable — kept out of git)
+logs/
+.last_log
+*.log
+*.out
+
+# Archived / superseded material (dropped targets, param variants, old shortlists).
+# Also matched by the repo-level `archive/` rule; listed here to be explicit.
+archive/
