@@ -70,12 +70,12 @@ import peak_models as pm            # noqa: E402  (shared ESM-2 + surrogate/orac
 # Default surrogate checkpoint now lives inside the library so every campaign shares one weight.
 DEFAULT_SURROGATE = HERE / "models" / "surrogate_cnn-max-d1_alldata.pt"
 
-# Optional brightness classifier for guided campaigns that also steer on predicted brightness.
-# Any peak_models out=1 checkpoint (self-describing architecture, with train-split mean/std baked
-# into its metadata) works -- swap this for the finalized brightness weight when it is ready. The
-# default points at the avGFP-DMS log10-median-brightness model (same one the post-hoc
-# brightness_shortlist screen uses) so the workflow is runnable end-to-end today.
-DEFAULT_BRIGHTNESS = REPO / "avGFP_DMS" / "trained_models" / "full" / "cnn-max-d1_s0.pt"
+# Optional brightness head for guided campaigns that also steer on predicted brightness. Any
+# peak_models out=1 checkpoint works -- a regression head bakes train-split (mean, std) into its
+# metadata; a CLASSIFIER head (e.g. bright/dim) carries none and is handled as identity below. Swap
+# this for the finalized weight when ready. The default is the sub40k bright/dim classifier
+# (cnn-max-d2, val AUROC 0.98) so the workflow is runnable end-to-end today.
+DEFAULT_BRIGHTNESS = HERE / "models" / "brightness_cnn-max-d2_40k.pt"
 
 SEED = 42
 ESM_BS = 64            # sub-batch for ESM-2 embed / logits forwards
@@ -138,6 +138,20 @@ class CampaignConfig:
     default_lam_bright: float = 20.0
     add_lam_bright_arg: bool = False           # expose --lam-bright (brightness-guided campaigns)
     record_brightness: bool = False            # append pred_bright + lam_bright columns to the CSV
+    # optional edit penalty (guided only): subtract lam_edit*z(is_edit) from each candidate's score,
+    # where is_edit=1 if the candidate residue differs from the SCAFFOLD residue at that position and 0
+    # if it keeps it. This steers the search toward FEWER mutations from the scaffold (staying closer
+    # to the -- typically bright, well-folded -- parent). Only bites where the scaffold residue is
+    # itself among the ESM top-k allowed candidates; forced positions (e.g. pos2->aromatic) are
+    # unaffected. lam_edit=0 preserves the original behaviour exactly.
+    default_lam_edit: float = 0.0
+    add_lam_edit_arg: bool = False             # expose --lam-edit (guided only)
+    # self-documenting output dir (guided brightness/edit campaigns): append the run's guidance
+    # weights to ``outdir`` so each lam setting writes to its OWN folder, e.g. outdir="designs"
+    # -> "designs_lam-bright60_lam-edit10". The suffix is derived from the parsed args, so CLI
+    # overrides (--lam-bright/--lam-edit) are reflected and a plain default run is unambiguous.
+    # Resume/rescore/backfill still line up because identical args resolve to the same folder.
+    outdir_lambda_suffix: bool = False
     # surface flags (keep each folder's CLI + CSV identical to its original hand-written driver)
     add_lam_args: bool = True                  # expose --lam-ex/--lam-em (guided only)
     add_rescore: bool = True                   # expose --rescore (guided only)
@@ -179,7 +193,14 @@ def build_argparser(cfg: CampaignConfig) -> argparse.ArgumentParser:
         ap.add_argument("--lam-bright", type=float, default=cfg.default_lam_bright,
                         help="weight of the z(predicted-brightness) term in the guided score "
                              "(steers toward brighter designs)")
+    if cfg.add_lam_edit_arg:
+        ap.add_argument("--lam-edit", type=float, default=cfg.default_lam_edit,
+                        help="weight of the z(is_edit) penalty in the guided score (steers toward "
+                             "FEWER mutations from the scaffold; 0 disables)")
     ap.add_argument("--pairs-limit", type=int, default=0, help="use only the first N pairs")
+    ap.add_argument("--pairs", type=str, default="",
+                    help="comma-separated target (or scaffold) names to keep, e.g. 'EBFP,mOrange'; "
+                         "default all. Applied before --pairs-limit; lets you pick non-contiguous pairs.")
     ap.add_argument("--ppl", choices=["all", "endpoints"], default="endpoints",
                     help="compute ESM-2 pseudo-perplexity every round ('all') or only scaffold + final ('endpoints')")
     ap.add_argument("--probe", action="store_true",
@@ -201,6 +222,18 @@ class Campaign:
         self.cfg = cfg
         self.args = args
         self.outdir = Path(cfg.outdir)
+        if cfg.outdir_lambda_suffix:
+            # encode the run's guidance weights in the folder name so each lam setting is pinned to
+            # its own self-documenting directory. Only the ACTIVE terms are appended: brightness
+            # campaigns -> designs_lam-bright60_lam-edit10; a peaks-only + edit-penalty campaign
+            # (no brightness model) -> designs_lam-edit10.
+            le = getattr(args, "lam_edit", cfg.default_lam_edit)
+            parts = []
+            if cfg.brightness_ckpt is not None:
+                lb = getattr(args, "lam_bright", cfg.default_lam_bright)
+                parts.append(f"lam-bright{lb:g}")
+            parts.append(f"lam-edit{le:g}")
+            self.outdir = self.outdir.with_name(self.outdir.name + "_" + "_".join(parts))
 
         self.dev = (torch.device("cuda") if torch.cuda.is_available()
                     else torch.device("mps") if (getattr(torch.backends, "mps", None) and torch.backends.mps.is_available())
@@ -213,6 +246,13 @@ class Campaign:
         self.rows, self.seqs, self.peaks = load_dataset()
         self.windows = json.load(open(cfg.windows_json))["windows"]
         pairs = list(csv.DictReader(open(cfg.pairs_csv)))
+        want = (getattr(args, "pairs", "") or "").strip()
+        if want:
+            keep = {s.strip() for s in want.split(",") if s.strip()}
+            pairs = [pr for pr in pairs
+                     if pr.get("target_name") in keep or pr.get("scaffold_name") in keep]
+            if not pairs:
+                raise SystemExit(f"--pairs {want!r} matched no rows in {cfg.pairs_csv}")
         if cfg.target_free:
             # target-independent search: one design effort per UNIQUE scaffold (dedupe the pairs list)
             seen, units = set(), []
@@ -244,12 +284,22 @@ class Campaign:
                     "architecture + train-split mean/std) and drop it at that path, or point "
                     "cfg.brightness_ckpt elsewhere.")
             _bb, b_meta = pm.load_model(str(ckpt), self.dev, out=1)
-            self.brightness_net = pm.wrap(_bb, b_meta["mean"], b_meta["std"], self.dev)
-            b_mae = b_meta.get("val_mae", b_meta.get("train_mae", float("nan")))
-            b_unit = b_meta.get("unit", "brightness")
+            # A regression head bakes (mean, std) to de-standardize to physical units; a brightness
+            # CLASSIFIER emits a raw logit and carries no scaler, so fall back to identity (0, 1).
+            # The guided score z-scores pred_bright across candidates, so any affine transform is
+            # irrelevant to the ranking either way.
+            b_mean = b_meta.get("mean", 0.0)
+            b_std = b_meta.get("std", 1.0)
+            self.brightness_net = pm.wrap(_bb, b_mean, b_std, self.dev)
             b_arch = f"{b_meta.get('arch','?')}-{b_meta.get('pool','?')}-d{b_meta.get('depth','?')}"
-            print(f"brightness classifier ({b_arch}, guides search) val MAE {b_mae:.3f} {b_unit}",
-                  flush=True)
+            if "val_auroc" in b_meta:                # classifier head: report ranking quality, not MAE
+                print(f"brightness classifier ({b_arch}, guides search) val AUROC "
+                      f"{b_meta['val_auroc']:.3f}", flush=True)
+            else:
+                b_mae = b_meta.get("val_mae", b_meta.get("train_mae", float("nan")))
+                b_unit = b_meta.get("unit", "brightness")
+                print(f"brightness model ({b_arch}, guides search) val MAE {b_mae:.3f} {b_unit}",
+                      flush=True)
 
         self.esm_model, self.alphabet, self.bc = pm.get_esm(self.dev)
 
@@ -418,6 +468,7 @@ class Campaign:
             meta.append((t, pos, topv, aas, k_eff))
         Pk, Bk = self.peaks_and_brightness_batched(cand_all)
         lam_bright = getattr(args, "lam_bright", self.cfg.default_lam_bright)
+        lam_edit = getattr(args, "lam_edit", self.cfg.default_lam_edit)
         off = 0
         for (t, pos, topv, aas, k_eff) in meta:
             sl = slice(off, off + k_eff); off += k_eff
@@ -426,14 +477,25 @@ class Campaign:
             scores = _zc(topv) - args.lam_ex * _zc(ex_err) - args.lam_em * _zc(em_err)
             if Bk is not None:                       # steer toward brighter candidates (maximize)
                 scores = scores + lam_bright * _zc(Bk[sl, 0])
+            if lam_edit:                             # penalize candidates that differ from the scaffold
+                scaf_aa = t["scaffold"][pos]
+                is_edit = torch.tensor([0.0 if aa == scaf_aa else 1.0 for aa in aas], device=scores.device)
+                scores = scores - lam_edit * _zc(is_edit)
             gen = t["gen"] if per_trial else None
             ch = (int(torch.multinomial(torch.softmax(scores / args.temp, -1), 1, generator=gen).item())
                   if args.temp > 0 else int(torch.argmax(scores)))
             t["seq"] = t["seq"][:pos] + aas[ch] + t["seq"][pos + 1:]
 
     def _select_gibbs(self, sub, positions, logits):
-        """Pure ESM-2 masked-LM Gibbs draw from the top-k conditional (per-trial Generator)."""
+        """Pure ESM-2 masked-LM Gibbs draw from the top-k conditional (per-trial Generator).
+
+        With lam_edit=0 (default) this is an EXACT Gibbs draw: softmax(topv / T) at T=1 ==
+        p(x_i | x_{-i})|topk. When --lam-edit > 0 is supplied, an opt-in edit penalty biases the
+        draw toward the scaffold residue by z-scoring the top-k log-probs and subtracting
+        lam_edit*z(is_edit) -- mirroring the guided edit penalty so the same lambda scale applies.
+        This is no longer a pure Gibbs draw (by design); lam_edit=0 preserves the original exactly."""
         args = self.args
+        lam_edit = getattr(args, "lam_edit", self.cfg.default_lam_edit)
         for i, t in enumerate(sub):
             pos = positions[i]
             mh = t["pos_allowed"].get(pos, self.AA_MASK)
@@ -443,6 +505,10 @@ class Campaign:
             topv, topi = torch.topk(logp, k_eff)
             aas = [self.alphabet.get_tok(int(x)) for x in topi.tolist()]
             scores = topv     # RAW top-k log-probs: softmax(scores / T) at T=1 == p(x_i | x_{-i})|topk
+            if lam_edit:      # opt-in: penalize candidates that differ from the scaffold (z-scored)
+                scaf_aa = t["scaffold"][pos]
+                is_edit = torch.tensor([0.0 if aa == scaf_aa else 1.0 for aa in aas], device=scores.device)
+                scores = _zc(topv) - lam_edit * _zc(is_edit)
             ch = (int(torch.multinomial(torch.softmax(scores / args.temp, -1), 1, generator=t["gen"]).item())
                   if args.temp > 0 else int(torch.argmax(scores)))
             t["seq"] = t["seq"][:pos] + aas[ch] + t["seq"][pos + 1:]
