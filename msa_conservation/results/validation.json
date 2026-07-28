@@ -1,0 +1,358 @@
+{
+  "aln_chromophore_motif_frac": 0.9921363040629095,
+  "aln_gly67_frac": 0.9986893840104849,
+  "aln_motif_exceptions": [
+    "avGFP454",
+    "HriCFP",
+    "HriGFP",
+    "shBFP",
+    "shBFP-N158K/L173I",
+    "shBFP-N158S/L173I"
+  ],
+  "n_clusters_90": 117,
+  "corr_C_chem_nonredundant": 0.9526748481272159,
+  "corr_C_id_nonredundant": 0.9607826761075574,
+  "clade_corr_C_chem": 0.45659352763829963,
+  "clade_locked_holds_both": 28,
+  "clade_locked_total": 28,
+  "clade_locked_table": [
+    {
+      "ref_pos": 222,
+      "ref_aa": "E",
+      "cls": "acidic",
+      "full": 0.9469719284249962,
+      "aequorea": 0.9174874590180908,
+      "non_aequorea": 0.9518086663968508,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 1,
+      "ref_aa": "M",
+      "cls": "aliphatic",
+      "full": 0.9297962611399632,
+      "aequorea": 0.9726446786997323,
+      "non_aequorea": 0.914297830223878,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 12,
+      "ref_aa": "V",
+      "cls": "aliphatic",
+      "full": 0.9535563922223332,
+      "aequorea": 1.0,
+      "non_aequorea": 0.946166287231752,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 18,
+      "ref_aa": "L",
+      "cls": "aliphatic",
+      "full": 0.9948582070184732,
+      "aequorea": 0.9584906153219583,
+      "non_aequorea": 1.0,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 22,
+      "ref_aa": "V",
+      "cls": "aliphatic",
+      "full": 0.9782944368764586,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9752745494513302,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 53,
+      "ref_aa": "L",
+      "cls": "aliphatic",
+      "full": 0.998400145756128,
+      "aequorea": 0.9999999999999999,
+      "non_aequorea": 0.9982401588177688,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 60,
+      "ref_aa": "L",
+      "cls": "aliphatic",
+      "full": 1.0,
+      "aequorea": 1.0,
+      "non_aequorea": 1.0,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 78,
+      "ref_aa": "M",
+      "cls": "aliphatic",
+      "full": 0.9295673706439372,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9210049153658517,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 136,
+      "ref_aa": "I",
+      "cls": "aliphatic",
+      "full": 0.9779429753840688,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9738593270677341,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 137,
+      "ref_aa": "L",
+      "cls": "aliphatic",
+      "full": 0.9216675270929862,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9091789077003297,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 152,
+      "ref_aa": "I",
+      "cls": "aliphatic",
+      "full": 0.9090855774309464,
+      "aequorea": 1.0,
+      "non_aequorea": 0.8927020098861895,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 161,
+      "ref_aa": "I",
+      "cls": "aliphatic",
+      "full": 0.9850834970208924,
+      "aequorea": 0.938073290152899,
+      "non_aequorea": 0.9922006490223493,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 226,
+      "ref_aa": "A",
+      "cls": "aliphatic",
+      "full": 0.921652161290941,
+      "aequorea": 1.0,
+      "non_aequorea": 0.908217560886478,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 27,
+      "ref_aa": "F",
+      "cls": "aromatic",
+      "full": 1.0,
+      "aequorea": 1.0,
+      "non_aequorea": 1.0,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 66,
+      "ref_aa": "Y",
+      "cls": "aromatic",
+      "full": 0.9448225557647424,
+      "aequorea": 0.9649516887565571,
+      "non_aequorea": 0.9471611862519543,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 71,
+      "ref_aa": "F",
+      "cls": "aromatic",
+      "full": 0.9350783281873478,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9292579947893272,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 100,
+      "ref_aa": "F",
+      "cls": "aromatic",
+      "full": 0.9339224248229836,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9269113462274625,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 130,
+      "ref_aa": "F",
+      "cls": "aromatic",
+      "full": 0.9445302258540468,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9397417307949621,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 96,
+      "ref_aa": "R",
+      "cls": "basic",
+      "full": 1.0,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9999999999999999,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 20,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.9825001797702028,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9782972665842121,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 33,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.9966124792954068,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9964061495532919,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 35,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.9570550774008624,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9496588006865921,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 40,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.9854873132613556,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9835414749739129,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 67,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.9976270043968976,
+      "aequorea": 0.9960804334276334,
+      "non_aequorea": 1.0,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 91,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.9540832865339014,
+      "aequorea": 1.0,
+      "non_aequorea": 0.94858372197391,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 127,
+      "ref_aa": "G",
+      "cls": "glycine",
+      "full": 0.936273902284096,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9245330996156914,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 75,
+      "ref_aa": "P",
+      "cls": "proline",
+      "full": 0.909937827993394,
+      "aequorea": 1.0,
+      "non_aequorea": 0.8920397541445638,
+      "holds_both": true
+    },
+    {
+      "ref_pos": 196,
+      "ref_aa": "P",
+      "cls": "proline",
+      "full": 0.957635622584415,
+      "aequorea": 1.0,
+      "non_aequorea": 0.9523043589894199,
+      "holds_both": true
+    }
+  ],
+  "threshold_sensitivity": [
+    {
+      "occupancy": 0.5,
+      "threshold": 0.9,
+      "n_cols": 233,
+      "n_identity": 15,
+      "n_chemistry": 31
+    },
+    {
+      "occupancy": 0.5,
+      "threshold": 0.8,
+      "n_cols": 233,
+      "n_identity": 30,
+      "n_chemistry": 53
+    },
+    {
+      "occupancy": 0.5,
+      "threshold": 0.7,
+      "n_cols": 233,
+      "n_identity": 39,
+      "n_chemistry": 81
+    },
+    {
+      "occupancy": 0.7,
+      "threshold": 0.9,
+      "n_cols": 211,
+      "n_identity": 14,
+      "n_chemistry": 28
+    },
+    {
+      "occupancy": 0.7,
+      "threshold": 0.8,
+      "n_cols": 211,
+      "n_identity": 26,
+      "n_chemistry": 47
+    },
+    {
+      "occupancy": 0.7,
+      "threshold": 0.7,
+      "n_cols": 211,
+      "n_identity": 34,
+      "n_chemistry": 72
+    },
+    {
+      "occupancy": 0.9,
+      "threshold": 0.9,
+      "n_cols": 208,
+      "n_identity": 14,
+      "n_chemistry": 28
+    },
+    {
+      "occupancy": 0.9,
+      "threshold": 0.8,
+      "n_cols": 208,
+      "n_identity": 26,
+      "n_chemistry": 46
+    },
+    {
+      "occupancy": 0.9,
+      "threshold": 0.7,
+      "n_cols": 208,
+      "n_identity": 34,
+      "n_chemistry": 71
+    },
+    {
+      "occupancy": 0.95,
+      "threshold": 0.9,
+      "n_cols": 207,
+      "n_identity": 14,
+      "n_chemistry": 28
+    },
+    {
+      "occupancy": 0.95,
+      "threshold": 0.8,
+      "n_cols": 207,
+      "n_identity": 26,
+      "n_chemistry": 46
+    },
+    {
+      "occupancy": 0.95,
+      "threshold": 0.7,
+      "n_cols": 207,
+      "n_identity": 34,
+      "n_chemistry": 71
+    }
+  ]
+}
