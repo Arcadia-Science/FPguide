@@ -88,11 +88,13 @@ design-campaign-EGFP/
 │  └─ designs/design_EGFP.csv          #   target-free COLS_FREE schema, one effort per scaffold
 │
 ├─ make_shortlist_case.py              # build ONE per-strategy shortlist xlsx (ID + bright + diverse)
+├─ make_batch.py                       # pick the wet-lab batch out of those shortlists
 ├─ scale_to_96.sh                      # scale the consolidated efforts to 96 trials (resumable)
 ├─ gen_shortlists.sh                   # watcher: emit each shortlist as its run finishes
 ├─ visualize_campaign.ipynb            # cross-strategy analysis + all figures
 ├─ figures/                            # saved PNGs from the notebook
 ├─ shortlists/                         # final wet-lab shortlists: one xlsx per (strategy × target)
+│  └─ FPdesign-batch1.xlsx             #   batch 1: 8 MSA-guide candidates + 2 MSA-gibbs controls
 └─ archive/                            # dropped targets, param variants, old single-file shortlists
 ```
 
@@ -232,7 +234,7 @@ lam_em, pred_ex, pred_em, peak_err, ppl, ident_to_scaffold, designed_seq, scaffo
   true FPs, with a nearest-neighbour distance OOD metric. The reference is **40,000 DMS sequences
   (10k per scaffold: avGFP, amacGFP, cgreGFP, ppluGFP)**; a design is "in-distribution" if its NN
   distance ≤ the DMS 99th percentile (`p99 ≈ 30.2`). One panel per strategy × target (10) plus the
-  OOD metric. The MSA-guide (29–31 % OOD) and DMS-guide (32–38 %) designs stay largely
+  OOD metric. The MSA-guide (29–31 % OOD) and DMS-guide (36–37 %) designs stay largely
   in-distribution; the pure-guided (85–98 %), MSA-gibbs (92 %) and ESM-gibbs (100 %) designs
   extrapolate much further out.
 - **Top-10 per strategy (EBFP, mOrange)** — two bar plots per target (ex and em) that **load the
@@ -246,11 +248,12 @@ lam_em, pred_ex, pred_em, peak_err, ppl, ident_to_scaffold, designed_seq, scaffo
   substitutions from EGFP rather than predicted peaks, against the 25-position window ceiling. The
   ordering tracks the objective exactly: unguided sits near the ceiling (gibbs 22–23, MSA gibbs
   18–19), spectra guide 21.1, +edit penalty 15.5, and the brightness-steered strategies 9–11.
-  **MSA guide is the most parsimonious on both targets** (9.8 EBFP, 8.7 mOrange) as well as the most
-  accurate of the in-distribution strategies, so it is not buying peak accuracy with mutations.
-  Worth staring at: **real EBFP is 2 substitutions from EGFP**, while our best shortlist needs ~10
-  and still misses by 5.6 nm — the winning λ cell runs `λ_edit = 0`, so parsimony was never
-  rewarded, which makes an edit-penalty-weighted rerun worth doing for EBFP specifically.
+  **MSA guide is the most parsimonious on both targets** (9.7 EBFP, 9.6 mOrange) as well as the most
+  accurate in-distribution strategy on mOrange, so it is not buying peak accuracy with mutations.
+  Worth staring at: **real EBFP is 2 substitutions from EGFP**, while our best confidently-bright
+  shortlist entry needs ~10 and still misses by 12.5 nm — the winning λ cell runs `λ_edit = 0`, so
+  parsimony was never rewarded, which makes an edit-penalty-weighted rerun worth doing for EBFP
+  specifically.
 - **Strategy comparison** — mean/best surrogate error per strategy on the two shared pairs, plus a
   uniform `% predicted-bright` scored by the same cnn-max-d2 classifier across every strategy.
 
@@ -285,10 +288,16 @@ Each file starts with the two references (**EGFP** scaffold + the target, with t
 ex/em) followed by the **top-10 diverse** designs (greedy, ≥ 5 residues apart, ranked by surrogate
 peak error). Every case pools **all 3 iteration rounds of every trial** before selecting. The
 **DMS-guide** and **MSA-guide** files then restrict the pool to designs that are both
-**in-distribution** (NN-distance to the 40k reference ≤ p99 ≈ 30.2) **and predicted bright**; the
-other strategies take the plain closest-10. Every design row is annotated with `is_id`, `is_bright`,
-`bright_logit`, predicted ex/em, the `source` run it came from, and an E. coli codon-optimized DNA
-sequence. Build one file (or rebuild all):
+**in-distribution** (NN-distance to the 40k reference ≤ p99 ≈ 30.2) **and confidently predicted
+bright**; the other strategies take the plain closest-10. "Confidently" means classifier
+**logit > 0.5** (`BRIGHT_T` in `make_shortlist_case.py`), not the model's own `> 0` decision
+boundary: designs were clearing 0 by hundredths of a logit, which is a 0.51-probability call and not
+worth a wet-lab slot. `is_bright` in the output still reports the model's plain `> 0` verdict. Every design row is annotated with `is_id`, `is_bright`,
+`bright_logit`, predicted ex/em, `n_mut_vs_EGFP` (substitutions from the scaffold — a plain Hamming
+distance, since designs only ever substitute inside the Tier-B window), the `source` run it came
+from, and an E. coli codon-optimized DNA sequence. The reference rows carry it too, so EGFP reads 0
+and EBFP reads 2; mOrange is left blank because at 236 aa it is a different length from the 239-aa
+scaffold and a Hamming distance would be meaningless. Build one file (or rebuild all):
 
 ```bash
 conda run -n esm2-fp-design python make_shortlist_case.py mOrange_DMS   # -> shortlists/shortlist_mOrange_DMS-guide.xlsx
@@ -301,11 +310,19 @@ The two **gibbs** strategies are target-free, so one 288-design run backs both o
 files and only the ranking differs. Neither produces a single predicted-bright design, so both take
 the plain closest-10 — the ID-and-bright filter would return an empty pool.
 
-The MSA-guide strategy was run as a **125-cell λ sweep** (12 trials × 3 rounds per cell) instead of
-one tuned setting, so its two cases pool **every cell** — 2,635 (mOrange) and 2,835 (EBFP) unique
-designs, of which 851 and 599 are ID & bright. That is a deeper pool than the 288 the single-setting
-strategies draw from, so its top-10 is not an equal-budget comparison; `source` records which λ cell
-each pick came from.
+**Both "- bright" strategies pool their whole λ sweep**, so neither is judged on a single setting.
+MSA guide pools its **125 cells** (12 trials × 3 rounds each) — 2,635 (mOrange) and 2,835 (EBFP)
+unique designs, of which 782 and 572 are ID & confidently bright. DMS guide pools its **27 cells** (λ_ex=λ_em ∈
+10/20/30 × λ_bright ∈ 40/50/60 × λ_edit ∈ 10/15/20) on top of the tuned 96-trial run — 1,110 and 948
+unique, of which 131 and 394 are ID & confidently bright. `source` records which cell every pick came from. Note
+the tuned setting also exists as a sweep cell and the two are byte-identical, so the tuned run is
+listed first and dedupe attributes shared designs to it.
+
+MSA guide still draws from ~2.5× more candidates, so this is not an *equal*-budget comparison — but
+pooling was worth doing precisely because it tests whether pool depth is the explanation. **It is
+not.** Quadrupling the DMS-guide pool (287 → 1,110 for mOrange, 284 → 948 for EBFP) moved its best
+peak error from 24.2 to 23.7 nm and from 7.9 to 7.9 nm. The 3.4-vs-23.7 nm gap on mOrange survives
+giving the ESM-based strategy four times as many candidates to choose from.
 
 Selecting on the same criterion the shortlist uses, this is where the strategies land:
 
@@ -315,17 +332,27 @@ Selecting on the same criterion the shortlist uses, this is where the strategies
 | mOrange | MSA gibbs | 508.8 / 525.1 | 29.2 nm | 0/10 | 0/10 |
 | mOrange | spectra guide | 544.5 / 562.4 | **1.7 nm** | 0/10 | 0/10 |
 | mOrange | constrained spectra guide | 542.6 / 562.4 | **0.8 nm** | 1/10 | 0/10 |
-| mOrange | DMS guide - bright | 511.0 / 536.5 | 24.2 nm | 10/10 | 10/10 |
-| mOrange | **MSA guide - bright** | 541.2 / 563.7 | **3.4 nm** | **10/10** | **10/10** |
+| mOrange | DMS guide - bright | 511.9 / 536.3 | 23.7 nm | 10/10 | 10/10 |
+| mOrange | **MSA guide - bright** | 541.3 / 564.3 | **3.4 nm** | **10/10** | **10/10** |
 | EBFP (380/440) | gibbs | 426.2 / 475.6 | 38.6 nm | 0/10 | 0/10 |
 | EBFP | MSA gibbs | 433.7 / 479.8 | 27.1 nm | 1/10 | 0/10 |
-| EBFP | DMS guide - bright | 404.2 / 464.6 | 7.9 nm | 10/10 | 10/10 |
-| EBFP | **MSA guide - bright** | 392.2 / 458.8 | **5.6 nm** | **10/10** | **10/10** |
+| EBFP | **DMS guide - bright** | 400.5 / 463.7 | **7.9 nm** | **10/10** | **10/10** |
+| EBFP | MSA guide - bright | 395.3 / 460.8 | 12.5 nm | 10/10 | 10/10 |
 
-The MSA guide is the first strategy to be simultaneously on-target *and* in-distribution *and*
-predicted bright. Previously those were mutually exclusive: the strategies that hit the mOrange
-peaks (spectra guide, 1.7 nm) were 0/10 on both filters, and the only strategy that passed both
-filters (DMS guide) missed the peaks by 24 nm.
+On **mOrange** the MSA guide is the first strategy to be simultaneously on-target *and*
+in-distribution *and* confidently bright. Those used to be mutually exclusive: the strategies that
+hit the mOrange peaks (spectra guide, 1.7 nm) were 0/10 on both filters, and the only strategy that
+passed both filters (DMS guide) missed by 24 nm — still 23.7 nm after its whole λ sweep is pooled
+in. At 3.4 nm and 10/10 on both filters, the MSA guide closes that gap.
+
+**On EBFP it does not, and raising the brightness bar is what exposed that.** At the old `logit > 0`
+threshold the MSA guide's best EBFP design was 5.6 nm, comfortably ahead of the DMS guide's 7.9 nm.
+But that design scored a brightness logit of **0.04** — a 0.51-probability call. Requiring `> 0.5`
+drops it and the next MSA-guide design in is 12.5 nm, so the DMS guide's 7.9 nm (logit 2.21) now
+wins the blue target outright. The MSA guide's EBFP advantage was real only if you were willing to
+bet a well on a coin-flip brightness call; its mOrange advantage survives the stricter bar
+untouched. This is worth remembering whenever a strategy wins by a small margin on a filtered pool:
+check the margin on the filter, not just on the objective.
 
 The two unguided rows say which half of that is the proposal's doing. **MSA gibbs beats ESM gibbs
 without any steering at all** — 29.2 vs 44.7 nm on mOrange, 27.1 vs 38.6 nm on EBFP, and the first
@@ -335,6 +362,112 @@ term. Neither ingredient is sufficient alone.
 
 `gen_shortlists.sh` watches a `scale_to_96.sh` run and emits each file automatically as its run
 completes. The barplots in `visualize_campaign.ipynb` load these files directly.
+
+## Batch 1 — first wet-lab order
+
+`shortlists/FPdesign-batch1.xlsx` (built by `make_batch.py`) is the **10 constructs going out
+first** — 8 candidates and 2 controls, all from the two MSA-proposal strategies, because those are
+the only ones that put designs in the on-target *and* in-distribution *and* predicted-bright corner
+at all.
+
+The eight candidates are **stratified by mutation load** rather than taken as ranks 1–N. Ranking
+purely on surrogate error clusters the batch wherever the surrogate happens to be most confident,
+which wastes the chance to ask how many edits the scaffold actually tolerates. Within a tier the
+pick is still the lowest peak error, so quality decides among equals. Tier boundaries are set per
+target because the two top-10s are distributed very differently:
+
+- **mOrange** — 6, 6 │ 9, 9, 9 │ 10, 10, 11, 12, 14. `high` takes the 14, the top of the range; a 10
+  sits one edit above the medium cluster and would not test anything new.
+- **EBFP** — 7, 7, 8, 8 │ 10, 11, 11, 11 │ 12, 12. The low cluster is tight and the upper half
+  crowds into 11–12, so the ladder can only span 8 → 11 → 12.
+
+Note that shortlist design names are **rank-derived** (`<target>_<code>_<NN>` is assigned in
+peak-error order), so a name does not pin a sequence — rebuilding a shortlist under different
+criteria silently repoints the same name at a different design. `make_batch.py` therefore records
+the expected edit count next to each pick and asserts it, turning a shifted shortlist into a loud
+failure rather than a quietly wrong order sheet.
+
+| batch id | design | target | tier | pred ex/em | err | muts | ID | bright logit |
+|---|---|---|---|---|---|---|---|---|
+| B1_01 | mOrange_MSA_03 | mOrange | low | 540.5 / 562.6 | 4.1 nm | **6** | yes | 0.78 |
+| B1_02 | mOrange_MSA_07 | mOrange | low | 540.2 / 563.8 | 4.8 nm | **6** | yes | 0.90 |
+| B1_03 | mOrange_MSA_01 | mOrange | medium | 541.1 / 562.0 | **3.4 nm** | 9 | yes | 1.09 |
+| B1_04 | mOrange_MSA_04 | mOrange | medium | 541.5 / 563.9 | 4.2 nm | 9 | yes | 1.21 |
+| B1_05 | mOrange_MSA_10 | mOrange | high | 538.6 / 562.9 | 5.1 nm | 14 | yes | 1.55 |
+| B1_06 | EBFP_MSA_01 | EBFP | low | 394.7 / 450.4 | **12.5 nm** | 8 | yes | 0.76 |
+| B1_07 | EBFP_MSA_02 | EBFP | medium | 382.9 / 466.4 | 14.6 nm | 11 | yes | 3.11 |
+| B1_08 | EBFP_MSA_06 | EBFP | high | 393.8 / 463.7 | 18.8 nm | 12 | yes | 2.30 |
+| B1_09 | mOrange_MSAgib_01 | mOrange | — | 507.1 / 544.4 | 29.2 nm | 21 | no | −11.70 |
+| B1_10 | mOrange_MSAgib_02 | mOrange | — | 516.1 / 529.8 | 32.1 nm | 20 | no | −9.22 |
+
+**The ladder already pays off before anything is expressed.** Across mOrange, error is flat from 6
+to 14 edits (4.1 / 4.8 / 3.4 / 4.2 / 5.1 nm) — the extra substitutions buy nothing the surrogate can
+see, so if the 6-edit B1_01 works it is strictly the better construct, and the 14-edit B1_05 is
+purely a probe of how much edit load the scaffold tolerates. EBFP behaves the same way here
+(12.5 / 14.6 / 18.8 nm), and in fact slightly *worsens* with load, so its ladder is a pure
+robustness probe rather than an accuracy trade.
+
+All eight guided constructs clear the brightness classifier by a real margin — the minimum logit in
+the batch is **0.76**, against **0.04** in the earlier `> 0` draft. That is the point of the
+stricter bar, and it cost accuracy on the blue target: the 5.6 nm EBFP design that headlined the
+previous batch scored 0.04 and is gone, leaving 12.5 nm as the best confidently-bright EBFP design
+the MSA guide has.
+
+The two controls are both taken from the **mOrange** MSA-gibbs ranking, i.e. the two unguided
+designs that drift furthest toward orange. The brightness bar does not apply to them — MSA gibbs
+produces no predicted-bright designs at all. They are *expected to underperform*: 20–21 substitutions,
+both out-of-distribution, both predicted non-bright (logit −11.7 and −9.2). They are in the batch to
+answer the one thing the surrogates cannot — whether the family profile alone yields folded,
+fluorescent protein. If they light up, the proposal is doing more work than the brightness
+classifier credits it for; if they are dark while the eight guided designs are not, the
+ID-and-bright filter is earning its place.
+
+Substitutions vs the EGFP scaffold (1-based on the 239-aa construct, so the chromophore is
+T66-Y67-G68):
+
+```
+B1_01  F47M L61I T66M Y146F T204H S206M
+B1_02  F47L L65F T66M V69S Y146F T204H
+B1_03  F47L L65F T66M Y93F Q95T V113I Y146F T204H S206T
+B1_04  F47I L61I L65M T66M V69S V113I Y146F H149W T204H
+B1_05  L45V F47M V62G T63C L65M T66M V69M Q95T Y146F V151L F166I I168Q T204H S206T
+B1_06  T63H T64A T66S Y93L Q95T N122S H149D S206A
+B1_07  L43I F47I V62A T63H T64S T66S V69I N122S Y146F N147G S206A
+B1_08  L43V L45I F47I T63H T66S Y93L Q95W N122A Y146M N147A V151I S206N
+B1_09  L45I F47A L61I V62S T63P T64Q L65C T66M V69S Q70R Y93E V113T N122S Y146E H149T V151M
+       F166S I168M T204H S206I L221F
+B1_10  L43I L45S F47L V62S T64S L65F T66M V69S Q70K Y93F Q95W V113I Y146E N147I H149T V151R
+       F166I T204R S206L L221Q
+```
+
+Two things to note before ordering. **Every one of the ten changes position 66** — T66M in all five
+mOrange designs and both controls, T66S in all three EBFP designs — so the chromophore-forming
+residue is the campaign's single most-used lever and a systematic failure there takes out the whole
+batch at once. Each target also has a shared core beyond that: all five mOrange designs carry
+**T66M + Y146F + T204H** (and all edit position 47), and all three EBFP designs carry **T63H +
+T66S** while every one of them also edits 122 and 206, though not always to the same residue
+(S206A/S206A/S206N, N122S/N122S/N122A). Those cores are the batch's real hypotheses; the remaining
+substitutions are variations around them.
+
+Second, **no construct in the batch uses Y67H**, the classic EBFP chromophore substitution. The
+three guided EBFP designs blue-shift through the T63H/T66S route, reshaping the proton-relay network
+instead of replacing the chromophore tyrosine. That is the most interesting claim in the batch and
+also the least precedented — the surrogates predict it, but it is not how EBFP is normally built.
+An earlier draft of batch 1 included an unguided EBFP control that had independently arrived at
+Y67H; moving both controls to the mOrange ranking removed the batch's only Y67H example, so nothing
+here tests the conventional route.
+
+The xlsx carries every column of the source shortlists (`n_mut_vs_EGFP`, `is_id`, `is_bright`,
+`bright_logit`, the λ cell in `source`, the amino-acid sequence and an E. coli codon-optimized DNA
+sequence), plus `batch_id`, `mut_tier`, `pred_peak_err_nm` and the originating `shortlist_file`.
+EGFP, mOrange and EBFP references sit at the top with their TRUE measured peaks. Rebuild with:
+
+```bash
+conda run -n esm2-fp-design python make_batch.py   # -> shortlists/FPdesign-batch1.xlsx
+```
+
+Picks are pinned by shortlist design name, not by rank, so re-running after a shortlist rebuild
+either reproduces the same ten sequences or fails loudly.
 
 ## Reproduce the shared assets
 

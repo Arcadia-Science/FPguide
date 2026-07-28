@@ -9,12 +9,15 @@ where <case> is one of:  mOrange_gibbs     mOrange_spectra  mOrange_constr  mOra
 
 Each file lists the two references (EGFP scaffold + the case's target, with their TRUE dataset ex/em)
 followed by the top-10 DIVERSE designs (greedy, >= 5 residues apart in the edit window, ranked by
-surrogate peak error). Every case pools ALL iteration rounds (>= 1) of ALL trials before selecting.
-For the DMS-guide and MSA-guide cases the pool is first restricted to designs that are both
-IN-DISTRIBUTION (ESM max-pool NN-distance to the 40k GFP-DMS reference <= its 99th pct) AND PREDICTED
-BRIGHT (classifier logit > 0); the other strategies take the plain closest-10. Every design row is
-annotated with `is_id` and `is_bright` (+ the raw brightness logit), the run it came from, and an
-E. coli codon-optimized DNA sequence.
+surrogate peak error). Every case pools ALL iteration rounds (>= 1) of ALL trials before selecting,
+and the two swept strategies (DMS guide, MSA guide) additionally pool EVERY LAMBDA CELL of their
+sweep, so each is judged on everything it produced rather than on one setting.
+For the DMS-guide and MSA-guide cases -- the two brightness-guided strategies -- the pool is first
+restricted to designs that are both IN-DISTRIBUTION (ESM max-pool NN-distance to the 40k GFP-DMS
+reference <= its 99th pct) AND CONFIDENTLY BRIGHT (classifier logit > BRIGHT_T = 0.5, not merely the
+model's > 0 decision boundary); the other strategies take the plain closest-10. Every design row is
+annotated with `is_id` and `is_bright` (+ the raw brightness logit), `n_mut_vs_EGFP` (substitutions
+from the scaffold), the run it came from, and an E. coli codon-optimized DNA sequence.
 """
 import sys
 from pathlib import Path
@@ -27,14 +30,29 @@ sys.path.insert(0, str(REPO / "esm2_design"))
 sys.path.insert(0, str(CAMP))
 import peak_models as pm
 from embed_cache import MaxPoolCache
+from xlsx_io import write_xlsx
 
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 N, MIN_HD = 10, 5
+# Selection bar for the brightness-guided strategies. The classifier's own decision boundary is
+# logit > 0, but that is a 0.51-probability call at the margin and several designs were clearing it
+# by hundredths of a logit. Shortlisting instead requires logit > 0.5 (p ~ 0.62), so a wet-lab slot
+# is only spent on a design that is clear of the boundary. `is_bright` in the output still reports
+# the model's own > 0 verdict; this constant only gates what may enter the pool.
+BRIGHT_T = 0.5
 
 GIBBS = CAMP / "gibbs-sampling" / "designs" / "design_EGFP.csv"
 SPEC  = CAMP / "guided-design" / "designs"
 CONS  = CAMP / "guided-design-constraint" / "designs_lam-edit10"
 DMS   = CAMP / "brightness-guided" / "guided_design" / "designs_lam-bright60_lam-edit10"
+# DMS-guided was ALSO run as a 27-cell lambda sweep (lam_ex=lam_em 10/20/30 x lam_bright 40/50/60 x
+# lam_edit 10/15/20), so -- exactly as for MSA-guided below -- its pool is the union of the tuned run
+# and every sweep cell: everything the strategy produced anywhere. That takes it from ~287 to ~1.1k
+# unique designs and makes the two "- bright" strategies comparable on pool depth. The tuned run is
+# listed FIRST so that designs it shares with the identical sweep cell keep its folder as `source`.
+LSWEEP = CAMP / "lambda_sweep" / "designs"
+def _dms_pool(target):
+    return [DMS / f"design_EGFP-{target}.csv"] + sorted(LSWEEP.glob(f"*/design_EGFP-{target}.csv"))
 # MSA-guided: the family profile replaces ESM-2 as the proposal. This strategy was run as a 125-cell
 # lambda sweep (12 trials x 3 rounds each) rather than at one setting, so its pool is the UNION of
 # every cell -- i.e. every design the strategy produced anywhere in the sweep. That is a far deeper
@@ -58,8 +76,8 @@ CASES = {
     "EBFP_MSAgibbs":   ("EBFP",    "MSA gibbs",                 "MSAgib",  MGIB,                          "gibbs",     "shortlist_EBFP_MSA-gibbs.xlsx"),
     "mOrange_spectra": ("mOrange", "spectra guide",             "spectra", SPEC / "design_EGFP-mOrange.csv", "plain",  "shortlist_mOrange_spectra-guide.xlsx"),
     "mOrange_constr":  ("mOrange", "constrained spectra guide", "constr",  CONS / "design_EGFP-mOrange.csv", "plain",  "shortlist_mOrange_constrained-spectra-guide.xlsx"),
-    "mOrange_DMS":     ("mOrange", "DMS guide - bright",        "DMS",     DMS  / "design_EGFP-mOrange.csv", "id_bright", "shortlist_mOrange_DMS-guide.xlsx"),
-    "EBFP_DMS":        ("EBFP",    "DMS guide - bright",        "DMS",     DMS  / "design_EGFP-EBFP.csv",    "id_bright", "shortlist_EBFP_DMS-guide.xlsx"),
+    "mOrange_DMS":     ("mOrange", "DMS guide - bright",        "DMS",     _dms_pool("mOrange"),          "id_bright", "shortlist_mOrange_DMS-guide.xlsx"),
+    "EBFP_DMS":        ("EBFP",    "DMS guide - bright",        "DMS",     _dms_pool("EBFP"),             "id_bright", "shortlist_EBFP_DMS-guide.xlsx"),
     "mOrange_MSA":     ("mOrange", "MSA guide - bright",        "MSA",     _msa_pool("mOrange"),          "id_bright", "shortlist_mOrange_MSA-guide.xlsx"),
     "EBFP_MSA":        ("EBFP",    "MSA guide - bright",        "MSA",     _msa_pool("EBFP"),             "id_bright", "shortlist_EBFP_MSA-guide.xlsx"),
 }
@@ -141,19 +159,29 @@ def build(case):
     d["_is_id"] = d["_idist"] <= p99
     d["_is_bright"] = d["_blog"] > 0
     if mode == "id_bright":
-        pool = d[d["_is_id"] & d["_is_bright"]]
-        note = f"{len(pool)} ID & bright of {ntot}"
+        pool = d[d["_is_id"] & (d["_blog"] > BRIGHT_T)]
+        note = f"{len(pool)} ID & bright(logit>{BRIGHT_T:g}) of {ntot}"
     else:
         pool = d
         note = f"all {ntot} (unfiltered)"
     sel = diverse_topk(pool, N, MIN_HD).reset_index(drop=True)
 
+    scaffold_seq = ref["scaffold_seq"]
+    def n_mut(seq):
+        """Substitutions vs the EGFP scaffold. Designs only ever substitute inside the Tier-B
+        window, so this is a plain Hamming distance; the target reference can be a different
+        length (mOrange is 236 aa vs EGFP's 239), and is reported as blank rather than a
+        misleading truncated count."""
+        return sum(a != b for a, b in zip(seq, scaffold_seq)) if len(seq) == len(scaffold_seq) else ""
+
     rows = [dict(name="EGFP", role="reference", target="", strategy="",
                  true_ex_nm=int(ref["scaffold_ex"]), true_em_nm=int(ref["scaffold_em"]),
-                 pred_ex_nm="", pred_em_nm="", is_id="", is_bright="", bright_logit="", source="",
-                 aa_sequence=ref["scaffold_seq"], dna_sequence=reverse_translate(ref["scaffold_seq"])),
+                 pred_ex_nm="", pred_em_nm="", n_mut_vs_EGFP=0,
+                 is_id="", is_bright="", bright_logit="", source="",
+                 aa_sequence=scaffold_seq, dna_sequence=reverse_translate(scaffold_seq)),
             dict(name=target, role="reference", target="", strategy="",
                  true_ex_nm=int(tex), true_em_nm=int(tem), pred_ex_nm="", pred_em_nm="",
+                 n_mut_vs_EGFP=n_mut(ref["target_seq"]),
                  is_id="", is_bright="", bright_logit="", source="",
                  aa_sequence=ref["target_seq"], dna_sequence=reverse_translate(ref["target_seq"]))]
     for i, (_, r) in enumerate(sel.iterrows(), 1):
@@ -161,18 +189,19 @@ def build(case):
             name=f"{target}_{code}_{i:02d}", role="design", target=target, strategy=alias,
             true_ex_nm="", true_em_nm="",
             pred_ex_nm=round(float(r["pred_ex"]), 1), pred_em_nm=round(float(r["pred_em"]), 1),
+            n_mut_vs_EGFP=n_mut(r["designed_seq"]),
             is_id="yes" if bool(r["_is_id"]) else "no",
             is_bright="yes" if bool(r["_is_bright"]) else "no",
             bright_logit=round(float(r["_blog"]), 2), source=r["source"],
             aa_sequence=r["designed_seq"], dna_sequence=reverse_translate(r["designed_seq"]),
         ))
     COLS = ["name", "role", "target", "strategy", "true_ex_nm", "true_em_nm", "pred_ex_nm",
-            "pred_em_nm", "is_id", "is_bright", "bright_logit", "source", "aa_sequence",
-            "dna_sequence"]
+            "pred_em_nm", "n_mut_vs_EGFP", "is_id", "is_bright", "bright_logit", "source",
+            "aa_sequence", "dna_sequence"]
     OUTDIR.mkdir(exist_ok=True)
     out = pd.DataFrame(rows)[COLS]
     dest = OUTDIR / fname
-    out.to_excel(dest, index=False, sheet_name="shortlist")
+    write_xlsx(out, dest, sheet_name="shortlist")
     print(f"[{case}] pooled {len(paths)} run(s) | {note} | selected {len(sel)} designs "
           f"-> {dest.name}", flush=True)
     return dest
