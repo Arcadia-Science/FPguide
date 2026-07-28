@@ -11,6 +11,12 @@ identity_matrix.npy
 identity_matrix.meta.json
 # Sequence-keyed ESM-2 max-pool cache for design ID/PCA (regenerate by rerunning the campaign notebook)
 .embed_cache/
+# Whole-FPbase max-pooled ESM-2 map cache (regenerate via dataset_pipeline/embed_fpbase_maxpool.py)
+fpbase_esm2_650M_max.npy
+fpbase_esm2_650M_max.meta.json
+# Atkinson Hyperlegible faces for the Arcadia figure style, cut from the Google Fonts
+# variable originals (regenerate via dataset_pipeline/fetch_arcadia_fonts.py)
+dataset_pipeline/fonts/
 # Trained model binaries (regenerate by re-running the notebooks)
 *.pt
 *.joblib
