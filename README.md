@@ -1,13 +1,14 @@
 # esm2_fp_design
 
-ESM-2–guided design of **fluorescent proteins (FPs)** conditioned on their excitation/emission
-spectra. The project has two parts:
+ESM-2–guided design of **fluorescent proteins (FPs)** conditioned on their photophysical
+properties. The project has three parts:
 
 - **[`fpbase-extractor/`](fpbase-extractor)** — pulls FP sequences, phenotypes, and full
   excitation/emission spectral curves from [FPbase](https://www.fpbase.org).
-- **[`design/`](design)** — builds the `(sequence, spectrum)` dataset, clusters
-  sequences by identity for leakage-safe train/test splits, and designs sequences toward a target
-  spectrum with ESM-2.
+- **[`dataset_pipeline/`](dataset_pipeline)** — curates the raw export into the peak,
+  brightness, and pKa training sets, and builds leakage-safe train/val/test splits.
+- **[`esm2_design/`](esm2_design)** — designs sequences toward target properties with ESM-2
+  and evaluates them against an independent oracle.
 
 ## Environment (one combined conda env)
 
@@ -25,14 +26,18 @@ download to the torch cache on first use.
 ## Pipeline
 
 ```
-fpbase-extractor (fpbase-extract --spectra)
-        └─ fpbase_output/                       raw sequences + ex/em curves
-design/build_fpbase_dataset.py
-        └─ fpbase-extractor/processed_data/ESM-spectrum/   (sequence, spectrum) dataset
-design/fpbase_cluster.ipynb
-        └─ identity clusters  +  training_data/  (surrogate & oracle train/val/test splits)
-design/guided_design_approach1.ipynb
-        └─ surrogate-guided design  +  independent-oracle evaluation
+fpbase-extractor (fpbase-extract)
+        └─ fpbase_output/fpbase_proteins.json    raw sequences + phenotypes
+dataset_pipeline/build_dataset.py
+        └─ data/<trait>/curated/                 curated peak / brightness / pKa sets
+dataset_pipeline/make_dual_split.py
+        └─ dual_splits.csv                       coordinated surrogate & oracle splits
+esm2_design/
+        └─ property-guided design  +  independent-oracle evaluation
 ```
 
 See each subfolder's `README.md` for details.
+
+The earlier `(sequence, spectrum)` lineage — `design/build_fpbase_dataset.py` feeding
+`fpbase-extractor/processed_data/ESM-spectrum/` — has been archived to
+`fpbase-extractor/archive/esm_spectrum/`.

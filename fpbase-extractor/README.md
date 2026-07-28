@@ -98,17 +98,21 @@ With `--spectra` (only for proteins that have measured curves):
   `spectrum_type` (excitation/emission), `max`, and `data` array of
   `[wavelength, intensity]` pairs.
 
-## Explore the data (notebook)
+The spectra exports are ~20 MB and nothing downstream reads them, so they are no
+longer kept in `fpbase_output/`. Rerun with `--spectra` if you need them.
 
-`explore_fpbase.ipynb` gives quick visual summaries — oligomerization
-breakdown, excitation/emission distributions, their correlation, spectral-data
-completeness, and the brightness distribution. It loads a local export if one
-exists (`data/` or `fpbase_output/`), otherwise fetches live.
+## Downstream
 
-```bash
-conda activate esm2-fp-design
-jupyter notebook explore_fpbase.ipynb
-```
+`fpbase_output/fpbase_proteins.json` is the input to
+[`dataset_pipeline/build_dataset.py`](../dataset_pipeline), which curates it into the
+peak / brightness / pKa training sets. That is the only consumer of this folder.
+
+## Archived material
+
+Exploratory work that is not part of the dataset-building path lives in
+[`archive/`](archive) (untracked): the mutual-information study, the ESM-2 embedding map
+and its caches, the older `(sequence, spectrum)` dataset lineage, and the phenotype
+coverage scripts. See `archive/README.md` for what each group was and how to regenerate it.
 
 ## Use as a library
 
