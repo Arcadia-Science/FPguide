@@ -44,7 +44,7 @@ unsupported op. ESM-2 weights download on first use.
 | [`sweep_peak_oracle.py`](sweep_peak_oracle.py) | Role-specific architecture sweep — **surrogate on ESM-2** (`surrogate_role` split) and **oracle on ProstT5** (`oracle_role` split), one sweep each. Sweeps backbone (mlp/cnn/transformer) × pooling (`mean/max/concat/concatstd/attn` + a `cov` covariance-probe pool on CNN d1–3) × depth × seeds → `trained_models/{surrogate_sweep,oracle_sweep}/*.pt` + per-role leaderboards. |
 | [`sweep_results.ipynb`](sweep_results.ipynb) | Reads each sweep straight from its checkpoints (surrogate=ESM-2, oracle=ProstT5) and reports val/test MAE bars, val-vs-test scatter, and top-config pred-vs-truth, plus an embedding-NN null baseline. Also covers the brightness/pKa scalar sweeps. |
 | Data & splits | Built and curated in [`../dataset_pipeline/`](../dataset_pipeline); the curated peak set + coordinated dual split + per-residue embedding caches (ESM-2 `esm_residue_fp16.npy`, ProstT5 `prostt5_residue_fp16.npy`) live in `../dataset_pipeline/data/peak/curated/`. |
-| [`archive/`](archive) | Superseded notebooks kept for reference (the ESM-2-both `surrogate_oracle_peak_dual.ipynb` trainer and its `guided_design_peak.ipynb` usage). See [`archive/README.md`](archive/README.md). |
+| [`archive/`](archive) | Superseded notebooks and closed-out efforts kept for reference (the ESM-2-both `surrogate_oracle_peak_dual.ipynb` trainer and its `guided_design_peak.ipynb` usage, plus the large-Stokes-shift branch in [`archive/lss/`](archive/lss)). See [`archive/README.md`](archive/README.md). |
 
 ## Typical order
 
