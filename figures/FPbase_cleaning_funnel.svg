@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="490pt" height="325pt" viewBox="0 0 490 325" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-07-30T11:38:49.427466</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 325 
+L 490 325 
+L 490 0 
+L 0 0 
+L 0 325 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 205.8 279.5 
+L 475.3 279.5 
+L 475.3 9.75 
+L 205.8 9.75 
+L 205.8 279.5 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 205.8 19.740741 
+L 413.107692 19.740741 
+L 413.107692 39.42567 
+L 205.8 39.42567 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 205.8 58.088006 
+L 402.951408 58.088006 
+L 402.951408 77.772935 
+L 205.8 77.772935 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 205.8 96.43527 
+L 400.163408 96.43527 
+L 400.163408 116.1202 
+L 205.8 116.1202 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 205.8 134.782535 
+L 386.422552 134.782535 
+L 386.422552 154.467465 
+L 205.8 154.467465 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 205.8 173.1298 
+L 358.940841 173.1298 
+L 358.940841 192.81473 
+L 205.8 192.81473 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 205.8 211.477065 
+L 357.347698 211.477065 
+L 357.347698 231.161994 
+L 205.8 231.161994 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 205.8 249.82433 
+L 356.75027 249.82433 
+L 356.75027 269.509259 
+L 205.8 269.509259 
+z
+" clip-path="url(#p421e87cde5)" style="fill: #5088c5"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mf52250e549" d="M 0 0 
+L 0 5 
+" style="stroke: #000000; stroke-width: 0.75"/>
+      </defs>
+      <g>
+       <use xlink:href="#mf52250e549" x="205.8" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="205.8" y="296.579687" transform="rotate(-0 205.8 296.579687)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mf52250e549" x="245.628567" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="245.628567" y="296.579687" transform="rotate(-0 245.628567 296.579687)">200</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mf52250e549" x="285.457134" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="285.457134" y="296.579687" transform="rotate(-0 285.457134 296.579687)">400</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#mf52250e549" x="325.285702" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="325.285702" y="296.579687" transform="rotate(-0 325.285702 296.579687)">600</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#mf52250e549" x="365.114269" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="365.114269" y="296.579687" transform="rotate(-0 365.114269 296.579687)">800</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#mf52250e549" x="404.942836" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="404.942836" y="296.579687" transform="rotate(-0 404.942836 296.579687)">1000</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#mf52250e549" x="444.771403" y="279.5" style="stroke: #000000; stroke-width: 0.75"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle" x="444.771403" y="296.579687" transform="rotate(-0 444.771403 296.579687)">1200</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-weight: 500; font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle" x="340.55" y="315.479687" transform="rotate(-0 340.55 315.479687)"># of proteins</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_8"/>
+     <g id="text_9">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="33.123049" transform="rotate(-0 195.8 33.123049)">FPbase entries</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_9"/>
+     <g id="text_10">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="71.415627" transform="rotate(-0 195.8 71.415627)">Has a sequence</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_10"/>
+     <g id="text_11">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="109.848048" transform="rotate(-0 195.8 109.848048)">Standard amino acids only</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_11"/>
+     <g id="text_12">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="148.214844" transform="rotate(-0 195.8 148.214844)">Drop cofactor / FAST / opsin</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_12"/>
+     <g id="text_13">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="186.512109" transform="rotate(-0 195.8 186.512109)">Has both ex and em peaks</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_13"/>
+     <g id="text_14">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="224.859373" transform="rotate(-0 195.8 224.859373)">Resolve state</text>
+     </g>
+    </g>
+    <g id="ytick_7">
+     <g id="line2d_14"/>
+     <g id="text_15">
+      <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="195.8" y="263.237107" transform="rotate(-0 195.8 263.237107)">Drop sequence-isolated rows</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_10">
+    <path d="M 205.8 279.5 
+L 205.8 9.75 
+" style="fill: none; stroke: #000000; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 205.8 279.5 
+L 475.3 279.5 
+" style="fill: none; stroke: #000000; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="415.497406" y="32.312893" transform="rotate(-0 415.497406 32.312893)">1041</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="405.341122" y="70.660158" transform="rotate(-0 405.341122 70.660158)">990  (−51)</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="402.553122" y="109.007423" transform="rotate(-0 402.553122 109.007423)">976  (−14)</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="388.812266" y="147.354688" transform="rotate(-0 388.812266 147.354688)">907  (−69)</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="361.330555" y="185.701952" transform="rotate(-0 361.330555 185.701952)">769  (−138)</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="359.737412" y="224.049217" transform="rotate(-0 359.737412 224.049217)">761  (−8)</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 10px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: start" x="359.139984" y="262.396482" transform="rotate(-0 359.139984 262.396482)">758  (−3)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p421e87cde5">
+   <rect x="205.8" y="9.75" width="269.5" height="269.75"/>
+  </clipPath>
+ </defs>
+</svg>
