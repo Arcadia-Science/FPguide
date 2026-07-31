@@ -1,4 +1,0 @@
-=== campaign start Mon Jul 20 23:33:48 UTC 2026 | ppl=endpoints | extra args: --pairs-limit 5 ===
-device cuda | fp16 True
-surrogate (all-data, diagnostic only) train MAE 5.2 nm
-[1/5] mTagBFP2-Crimson: 6 trials | scaffold err 186.6 -> mean 126.5 / best 114.8 nm (diag, over new trials) | 23 editable | 66s

@@ -1,4 +1,0 @@
-device cuda | fp16 True
-surrogate (all-data) train MAE 5.2 nm | oracle val MAE 13.7 nm
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 25525.54it/s]

@@ -50,10 +50,10 @@ sibling of `esm2_design/`) is:
 - **[`design/`](design)** — the full-spectrum-conditioned predecessor of `esm2_design/`: same
   ESM-2 surrogate-guided design idea, but conditioned on the whole 1002-dim ex/em curve instead
   of just the peaks. Superseded by `esm2_design/`, kept for reference (not actively developed).
-- **[`scalar_design/`](scalar_design)** — the scalar-trait (brightness, pKa) counterpart of
-  `esm2_design/`'s peak-conditioned sweeps. Exploratory and currently orphaned: it imports from a
-  sibling `peak_design/` path left over from before `esm2_design/` was renamed, so it isn't
-  currently wired into the active pipeline.
+- **`archive/scalar_design/`** — the scalar-trait (brightness, pKa) counterpart of
+  `esm2_design/`'s peak-conditioned sweeps. Exploratory and orphaned (it imports from a sibling
+  `peak_design/` path left over from before `esm2_design/` was renamed, so it doesn't currently
+  run); archived and untracked, kept for reference only.
 
 ## Design campaigns
 
@@ -62,16 +62,20 @@ surrogate/oracle/pocket machinery from `esm2_design/`:
 
 - **[`fpdesign/`](fpdesign)** — shared library extracted from the campaign scripts (`Campaign`,
   `CampaignConfig`, edit-window construction). Reuses `esm2_design/pockets.py`'s pocket rules.
-  Not a campaign itself — the engine the campaigns below import.
-- **[`design-campaign-conventional/`](design-campaign-conventional)** — the original campaign:
-  24 scaffold→target pairs among popular, structurally-characterized, non-large-Stokes-shift FPs,
-  compared across gibbs-sampling and guided-design strategies.
+  Not a campaign itself — the engine the active campaign below imports.
 - **[`design-campaign-EGFP/`](design-campaign-EGFP)** — six parallel strategies (gibbs, guided,
   guided+constraint, brightness-guided, MSA-guided, MSA-gibbs) recoloring EGFP toward EBFP/mOrange.
-  The most actively developed campaign; draws on `GFP_DMS`'s brightness classifier and
-  `msa_conservation`'s alignment/PSSM.
-- **`design-campaign-avGFP/`** — the same head-to-head comparison on the avGFP scaffold, toward
-  EBFP/mEmerald/mOrange/mCherry. Kept local (not published in this repo — see `.gitignore`).
+  The active campaign; draws on `GFP_DMS`'s brightness classifier and `msa_conservation`'s
+  alignment/PSSM.
+
+Two earlier/parallel campaigns have been archived (moved to `archive/`, untracked) and are kept
+locally for reference only:
+
+- **`archive/design-campaign-conventional/`** — the original campaign: 24 scaffold→target pairs
+  among popular, structurally-characterized, non-large-Stokes-shift FPs, compared across
+  gibbs-sampling and guided-design strategies. `fpdesign/` was extracted from its scripts.
+- **`archive/design-campaign-avGFP/`** — the same head-to-head comparison on the avGFP scaffold,
+  toward EBFP/mEmerald/mOrange/mCherry.
 
 ## Supporting analyses
 
