@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="266.666667pt" height="266.666667pt" viewBox="0 0 266.666667 266.666667" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="333.333333pt" height="333.333333pt" viewBox="0 0 333.333333 333.333333" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-07-31T20:39:32.199468</dc:date>
+    <dc:date>2026-07-31T22:31:10.054508</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -21,116 +21,186 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 266.666667 
-L 266.666667 266.666667 
-L 266.666667 0 
+   <path d="M 0 333.333333 
+L 333.333333 333.333333 
+L 333.333333 0 
 L 0 0 
-L 0 266.666667 
+L 0 333.333333 
 z
 " style="fill: none"/>
   </g>
   <g id="axes_1">
-   <g id="patch_2">
-    <path d="M 72 194.666667 
-L 253.333333 194.666667 
-L 253.333333 13.333333 
-L 72 13.333333 
-L 72 194.666667 
+   <g id="line2d_1">
+    <path d="M 124.691358 125.416667 
+L 208.641975 125.416667 
+" clip-path="url(#p3efed5f4da)" style="fill: none; stroke: #dbd1c3; stroke-opacity: 0.6; stroke-width: 10.2; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 124.691358 125.416667 
+L 208.641975 193.75 
+" clip-path="url(#p3efed5f4da)" style="fill: none; stroke: #dbd1c3; stroke-opacity: 0.6; stroke-width: 4.515789; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 124.691358 125.416667 
+L 208.641975 262.083333 
+" clip-path="url(#p3efed5f4da)" style="fill: none; stroke: #dbd1c3; stroke-opacity: 0.6; stroke-width: 4.515789; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 124.691358 193.75 
+L 208.641975 125.416667 
+" clip-path="url(#p3efed5f4da)" style="fill: none; stroke: #dbd1c3; stroke-opacity: 0.6; stroke-width: 4.515789; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 124.691358 262.083333 
+L 208.641975 125.416667 
+" clip-path="url(#p3efed5f4da)" style="fill: none; stroke: #dbd1c3; stroke-opacity: 0.6; stroke-width: 4.693421; stroke-linecap: round"/>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="m599a2c7561" d="M 0 24.372115 
+C 6.463561 24.372115 12.66326 21.804115 17.233688 17.233688 
+C 21.804115 12.66326 24.372115 6.463561 24.372115 0 
+C 24.372115 -6.463561 21.804115 -12.66326 17.233688 -17.233688 
+C 12.66326 -21.804115 6.463561 -24.372115 0 -24.372115 
+C -6.463561 -24.372115 -12.66326 -21.804115 -17.233688 -17.233688 
+C -21.804115 -12.66326 -24.372115 -6.463561 -24.372115 0 
+C -24.372115 6.463561 -21.804115 12.66326 -17.233688 17.233688 
+C -12.66326 21.804115 -6.463561 24.372115 0 24.372115 
 z
-" style="fill: none"/>
-   </g>
-   <g clip-path="url(#p9a86bbeb83)">
-    <image xlink:href="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAALYAAAC2CAYAAAB08HcEAAACI0lEQVR4nO3UQQ3CQBRF0RaqAyUkuMATJljhg+AEJ8UEk0luzzHw3+Lmr8/3d18O5n69zJ7AYKfRB2AGYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETdK2ndfZG+DvfGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEkSNknCJknYJAmbJGGTJGyShE2SsEnaHq/Pcjy32QMYzMcmSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYZMkbJKETZKwSRI2ScImSdgkCZskYbMU/QCLsgeRFdtR1QAAAABJRU5ErkJggg==" id="image0270ab9371" transform="scale(1 -1) translate(0 -182)" x="72" y="-12.666667" width="182" height="182"/>
-   </g>
-   <g id="matplotlib.axis_1">
-    <g id="xtick_1">
-     <g id="line2d_1"/>
-     <g id="text_1">
-      <text style="font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle" x="102.222222" y="215.286198" transform="rotate(-0 102.222222 215.286198)">Train</text>
-     </g>
-    </g>
-    <g id="xtick_2">
-     <g id="line2d_2"/>
-     <g id="text_2">
-      <text style="font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle" x="162.666667" y="215.286198" transform="rotate(-0 162.666667 215.286198)">Val</text>
-     </g>
-    </g>
-    <g id="xtick_3">
-     <g id="line2d_3"/>
-     <g id="text_3">
-      <text style="font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle" x="223.111111" y="215.286198" transform="rotate(-0 223.111111 215.286198)">Test</text>
-     </g>
-    </g>
-    <g id="text_4">
-     <text style="font-weight: 500; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle" x="162.666667" y="238.336198" transform="rotate(-0 162.666667 238.336198)">Oracle data</text>
+" style="stroke: #484b50; stroke-width: 1.2"/>
+    </defs>
+    <g clip-path="url(#p3efed5f4da)">
+     <use xlink:href="#m599a2c7561" x="124.691358" y="125.416667" style="fill: #5088c5; stroke: #484b50; stroke-width: 1.2"/>
     </g>
    </g>
-   <g id="matplotlib.axis_2">
-    <g id="ytick_1">
-     <g id="line2d_4"/>
-     <g id="text_5">
-      <text style="font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="62" y="48.865321" transform="rotate(-0 62 48.865321)">Train</text>
-     </g>
-    </g>
-    <g id="ytick_2">
-     <g id="line2d_5"/>
-     <g id="text_6">
-      <text style="font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="62" y="109.309766" transform="rotate(-0 62 109.309766)">Val</text>
-     </g>
-    </g>
-    <g id="ytick_3">
-     <g id="line2d_6"/>
-     <g id="text_7">
-      <text style="font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: end" x="62" y="169.75421" transform="rotate(-0 62 169.75421)">Test</text>
-     </g>
-    </g>
-    <g id="text_8">
-     <text style="font-weight: 500; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle" x="15.55" y="104" transform="rotate(-90 15.55 104)">Surrogate data</text>
+   <g id="PathCollection_2">
+    <defs>
+     <path id="m699554fdd5" d="M 0 11.224972 
+C 2.976897 11.224972 5.83227 10.042238 7.937254 7.937254 
+C 10.042238 5.83227 11.224972 2.976897 11.224972 0 
+C 11.224972 -2.976897 10.042238 -5.83227 7.937254 -7.937254 
+C 5.83227 -10.042238 2.976897 -11.224972 0 -11.224972 
+C -2.976897 -11.224972 -5.83227 -10.042238 -7.937254 -7.937254 
+C -10.042238 -5.83227 -11.224972 -2.976897 -11.224972 0 
+C -11.224972 2.976897 -10.042238 5.83227 -7.937254 7.937254 
+C -5.83227 10.042238 -2.976897 11.224972 0 11.224972 
+z
+" style="stroke: #484b50; stroke-width: 1.2"/>
+    </defs>
+    <g clip-path="url(#p3efed5f4da)">
+     <use xlink:href="#m699554fdd5" x="124.691358" y="193.75" style="fill: #5088c5; stroke: #484b50; stroke-width: 1.2"/>
     </g>
    </g>
-   <g id="patch_3">
-    <path d="M 72 194.666667 
-L 72 13.333333 
-" style="fill: none; stroke: #000000; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   <g id="PathCollection_3">
+    <defs>
+     <path id="md425ba0659" d="M 0 11.521719 
+C 3.055595 11.521719 5.986453 10.307718 8.147085 8.147085 
+C 10.307718 5.986453 11.521719 3.055595 11.521719 0 
+C 11.521719 -3.055595 10.307718 -5.986453 8.147085 -8.147085 
+C 5.986453 -10.307718 3.055595 -11.521719 0 -11.521719 
+C -3.055595 -11.521719 -5.986453 -10.307718 -8.147085 -8.147085 
+C -10.307718 -5.986453 -11.521719 -3.055595 -11.521719 0 
+C -11.521719 3.055595 -10.307718 5.986453 -8.147085 8.147085 
+C -5.986453 10.307718 -3.055595 11.521719 0 11.521719 
+z
+" style="stroke: #484b50; stroke-width: 1.2"/>
+    </defs>
+    <g clip-path="url(#p3efed5f4da)">
+     <use xlink:href="#md425ba0659" x="124.691358" y="262.083333" style="fill: #5088c5; stroke: #484b50; stroke-width: 1.2"/>
+    </g>
    </g>
-   <g id="patch_4">
-    <path d="M 72 194.666667 
-L 253.333333 194.666667 
-" style="fill: none; stroke: #000000; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   <g id="PathCollection_4">
+    <defs>
+     <path id="m07da5ce937" d="M 0 24.510202 
+C 6.500182 24.510202 12.735008 21.927652 17.33133 17.33133 
+C 21.927652 12.735008 24.510202 6.500182 24.510202 0 
+C 24.510202 -6.500182 21.927652 -12.735008 17.33133 -17.33133 
+C 12.735008 -21.927652 6.500182 -24.510202 0 -24.510202 
+C -6.500182 -24.510202 -12.735008 -21.927652 -17.33133 -17.33133 
+C -21.927652 -12.735008 -24.510202 -6.500182 -24.510202 0 
+C -24.510202 6.500182 -21.927652 12.735008 -17.33133 17.33133 
+C -12.735008 21.927652 -6.500182 24.510202 0 24.510202 
+z
+" style="stroke: #484b50; stroke-width: 1.2"/>
+    </defs>
+    <g clip-path="url(#p3efed5f4da)">
+     <use xlink:href="#m07da5ce937" x="208.641975" y="125.416667" style="fill: #f28360; stroke: #484b50; stroke-width: 1.2"/>
+    </g>
+   </g>
+   <g id="PathCollection_5">
+    <defs>
+     <path id="m72389673c8" d="M 0 11.224972 
+C 2.976897 11.224972 5.83227 10.042238 7.937254 7.937254 
+C 10.042238 5.83227 11.224972 2.976897 11.224972 0 
+C 11.224972 -2.976897 10.042238 -5.83227 7.937254 -7.937254 
+C 5.83227 -10.042238 2.976897 -11.224972 0 -11.224972 
+C -2.976897 -11.224972 -5.83227 -10.042238 -7.937254 -7.937254 
+C -10.042238 -5.83227 -11.224972 -2.976897 -11.224972 0 
+C -11.224972 2.976897 -10.042238 5.83227 -7.937254 7.937254 
+C -5.83227 10.042238 -2.976897 11.224972 0 11.224972 
+z
+" style="stroke: #484b50; stroke-width: 1.2"/>
+    </defs>
+    <g clip-path="url(#p3efed5f4da)">
+     <use xlink:href="#m72389673c8" x="208.641975" y="193.75" style="fill: #f28360; stroke: #484b50; stroke-width: 1.2"/>
+    </g>
+   </g>
+   <g id="PathCollection_6">
+    <g clip-path="url(#p3efed5f4da)">
+     <use xlink:href="#m72389673c8" x="208.641975" y="262.083333" style="fill: #f28360; stroke: #484b50; stroke-width: 1.2"/>
+    </g>
+   </g>
+   <g id="text_1">
+    <g id="patch_2">
+     <path d="M 152.919987 133.899167 
+L 180.413346 133.899167 
+Q 182.588346 133.899167 182.588346 131.724167 
+L 182.588346 119.109167 
+Q 182.588346 116.934167 180.413346 116.934167 
+L 152.919987 116.934167 
+Q 150.744987 116.934167 150.744987 119.109167 
+L 150.744987 131.724167 
+Q 150.744987 133.899167 152.919987 133.899167 
+z
+" style="fill: #ffffff; opacity: 0.85"/>
+    </g>
+    <text style="font-size: 14.5px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="166.666667" y="129.374714" transform="rotate(-0 166.666667 129.374714)">304</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(60.812346 121.924245)">train</text>
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(63.273283 137.098151)">528</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(71.701408 190.257578)">val</text>
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(69.245158 205.431484)">112</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(65.654533 258.590911)">test</text>
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(68.134221 273.764818)">118</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(244.320988 121.924245)">train</text>
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(244.320988 137.098151)">534</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(244.320988 190.257578)">val</text>
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(244.320988 205.431484)">112</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(244.320988 258.590911)">test</text>
+    <text style="font-weight: 100; font-size: 15px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; fill: #484b50" transform="translate(244.320988 273.764818)">112</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 600; font-size: 14px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle; fill: #5088c5" x="124.691358" y="56.4" transform="rotate(-0 124.691358 56.4)">Surrogate</text>
    </g>
    <g id="text_9">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #ffffff" x="102.222222" y="47.377118" transform="rotate(-0 102.222222 47.377118)">304</text>
-   </g>
-   <g id="text_10">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="162.666667" y="47.377118" transform="rotate(-0 162.666667 47.377118)">112</text>
-   </g>
-   <g id="text_11">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="223.111111" y="47.377118" transform="rotate(-0 223.111111 47.377118)">112</text>
-   </g>
-   <g id="text_12">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="102.222222" y="107.821563" transform="rotate(-0 102.222222 107.821563)">112</text>
-   </g>
-   <g id="text_13">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="162.666667" y="107.821563" transform="rotate(-0 162.666667 107.821563)">0</text>
-   </g>
-   <g id="text_14">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="223.111111" y="107.821563" transform="rotate(-0 223.111111 107.821563)">0</text>
-   </g>
-   <g id="text_15">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="102.222222" y="168.266007" transform="rotate(-0 102.222222 168.266007)">118</text>
-   </g>
-   <g id="text_16">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="162.666667" y="168.266007" transform="rotate(-0 162.666667 168.266007)">0</text>
-   </g>
-   <g id="text_17">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="223.111111" y="168.266007" transform="rotate(-0 223.111111 168.266007)">0</text>
+    <text style="font-weight: 600; font-size: 14px; font-family: 'Atkinson Hyperlegible Next', 'Noto Sans', 'DejaVu Sans'; text-anchor: middle; fill: #f28360" x="208.641975" y="56.4" transform="rotate(-0 208.641975 56.4)">Oracle</text>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="p9a86bbeb83">
-   <rect x="72" y="13.333333" width="181.333333" height="181.333333"/>
+  <clipPath id="p3efed5f4da">
+   <rect x="53.333333" y="40" width="226.666667" height="273.333333"/>
   </clipPath>
  </defs>
 </svg>
