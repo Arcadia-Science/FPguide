@@ -1,7 +1,7 @@
 # esm2_fp_design
 
 ESM-2–guided design of **fluorescent proteins (FPs)** conditioned on their photophysical
-properties. The project has three parts:
+properties. The core pipeline has three parts:
 
 - **[`fpbase-extractor/`](fpbase-extractor)** — pulls FP sequences, phenotypes, and full
   excitation/emission spectral curves from [FPbase](https://www.fpbase.org).
@@ -9,6 +9,10 @@ properties. The project has three parts:
   brightness, and pKa training sets, and builds leakage-safe train/val/test splits.
 - **[`esm2_design/`](esm2_design)** — designs sequences toward target properties with ESM-2
   and evaluates them against an independent oracle.
+
+On top of that core, a design-campaign layer applies the same surrogate/oracle machinery to
+specific scaffold-recoloring goals, backed by a few supporting datasets/analyses. See
+"[Design campaigns](#design-campaigns)" and "[Supporting analyses](#supporting-analyses)" below.
 
 ## Environment (one combined conda env)
 
@@ -40,4 +44,45 @@ See each subfolder's `README.md` for details.
 
 The earlier `(sequence, spectrum)` lineage — `design/build_fpbase_dataset.py` feeding
 `fpbase-extractor/processed_data/ESM-spectrum/` — has been archived to
-`fpbase-extractor/archive/esm_spectrum/`.
+`fpbase-extractor/archive/esm_spectrum/`. The full lineage (including the earlier full-spectrum
+sibling of `esm2_design/`) is:
+
+- **[`design/`](design)** — the full-spectrum-conditioned predecessor of `esm2_design/`: same
+  ESM-2 surrogate-guided design idea, but conditioned on the whole 1002-dim ex/em curve instead
+  of just the peaks. Superseded by `esm2_design/`, kept for reference (not actively developed).
+- **[`scalar_design/`](scalar_design)** — the scalar-trait (brightness, pKa) counterpart of
+  `esm2_design/`'s peak-conditioned sweeps. Exploratory and currently orphaned: it imports from a
+  sibling `peak_design/` path left over from before `esm2_design/` was renamed, so it isn't
+  currently wired into the active pipeline.
+
+## Design campaigns
+
+A second layer runs concrete "recolor this scaffold toward a target FP" campaigns using the
+surrogate/oracle/pocket machinery from `esm2_design/`:
+
+- **[`fpdesign/`](fpdesign)** — shared library extracted from the campaign scripts (`Campaign`,
+  `CampaignConfig`, edit-window construction). Reuses `esm2_design/pockets.py`'s pocket rules.
+  Not a campaign itself — the engine the campaigns below import.
+- **[`design-campaign-conventional/`](design-campaign-conventional)** — the original campaign:
+  24 scaffold→target pairs among popular, structurally-characterized, non-large-Stokes-shift FPs,
+  compared across gibbs-sampling and guided-design strategies.
+- **[`design-campaign-EGFP/`](design-campaign-EGFP)** — six parallel strategies (gibbs, guided,
+  guided+constraint, brightness-guided, MSA-guided, MSA-gibbs) recoloring EGFP toward EBFP/mOrange.
+  The most actively developed campaign; draws on `GFP_DMS`'s brightness classifier and
+  `msa_conservation`'s alignment/PSSM.
+- **`design-campaign-avGFP/`** — the same head-to-head comparison on the avGFP scaffold, toward
+  EBFP/mEmerald/mOrange/mCherry. Kept local (not published in this repo — see `.gitignore`).
+
+## Supporting analyses
+
+Datasets and analyses that feed the design campaigns rather than the core pipeline directly:
+
+- **[`GFP_DMS/`](GFP_DMS)** — curates two published deep-mutational-scanning datasets
+  (avGFP, amacGFP/cgreGFP/ppluGFP) into ~141k sequence→brightness rows and trains an ESM-2
+  brightness classifier/regressor. Its checkpoint and in-distribution embedding cloud are used by
+  `design-campaign-EGFP`'s brightness-guided strategy and to vet shortlisted designs.
+- **[`msa_conservation/`](msa_conservation)** — MAFFT alignment of the curated FP set with
+  per-position conservation analysis. Its family MSA/PSSM backs the MSA-guided and MSA-gibbs
+  strategies in `design-campaign-EGFP`.
+- **`licensing/`** — flags which curated FPs are likely patent-expired/open for commercial use
+  (used to pick campaign targets). Kept local (not published in this repo — see `.gitignore`).
