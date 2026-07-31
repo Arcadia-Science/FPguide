@@ -36,15 +36,34 @@ unsupported op. ESM-2 weights download on first use.
 
 | File | Role |
 |------|------|
-| [`build_peak_dataset.py`](build_peak_dataset.py) | Build the **raw** dataset from `../fpbase-extractor/fpbase_output/fpbase_proteins.json` → `training_data/` (`peaks.npy` (N,2), `sequences.fasta`, `peak_assignments.csv`, `peak_meta.json`). One sample per (protein, state) with a standard-AA sequence and reported `ex_max`/`em_max`. Raw-build only — no curation or splitting. |
 | [`peak_models.py`](peak_models.py) | Shared models: `PeakCNN`, `PeakTransformer` with `mean/min/max/std/concat/concatstd` masked pooling plus a learned `attn` pool and a learned second-order `cov` (covariance-probe) pool, a `StandardizedPeaks` wrapper (returns nm), checkpoint save/load, and ESM-2 per-residue embedding utilities. `build_base` takes `d_in` so the same backbones run on ESM-2 (1280-d) or ProstT5 (1024-d) embeddings. |
+| [`pockets.py`](pockets.py) | Structure-based edit-window module (imported, not run directly). Given an experimental RCSB structure in `structures/`, defines the editable window as the chromophore tripeptide + all residues with a heavy atom within 5 Å, mapped onto the dataset sequence by alignment. Provides the original 3-scaffold `struct_pocket_experimental()` plus the generalized `experimental_window(name, seq, pdb_id)` (with an alignment-quality gate) used by [`guided_design_peak_structure_multiscaffold.ipynb`](guided_design_peak_structure_multiscaffold.ipynb) and [`parallel_pipeline/`](parallel_pipeline). |
 | [`prostt5_embed.py`](prostt5_embed.py) | ProstT5 (`Rostlab/ProstT5`, MIT) encoder-only per-residue embeddings (**1024-d**, structure-aware), `<AA2fold>`-prefixed, drop-in analog of `peak_models.resid_embed`. Backs the **ProstT5 oracle** — a genuinely independent evaluator (different pLM *and* architecture family from the ESM-2 surrogate). |
 | [`embed_prostt5.py`](embed_prostt5.py) | Cache ProstT5 embeddings for the curated peak set → `data/peak/curated/prostt5_residue_fp16.npy` (N,Lmax,1024) + `prostt5_residue_len.npy`, row-aligned to `peaks_assignments.csv`. |
 | [`train_oracle_prostt5.py`](train_oracle_prostt5.py) | Retrain the oracle (`cnn-concatstd-d1`) on ProstT5 embeddings (or `--emb esm` for the ESM-2 baseline, identical protocol) on the dual **oracle** split → `trained_models/dual_oracle_{prostt5,esm}_net.pt` + `_scaler.npz` + `_results.json`. |
 | [`sweep_peak_oracle.py`](sweep_peak_oracle.py) | Role-specific architecture sweep — **surrogate on ESM-2** (`surrogate_role` split) and **oracle on ProstT5** (`oracle_role` split), one sweep each. Sweeps backbone (mlp/cnn/transformer) × pooling (`mean/max/concat/concatstd/attn` + a `cov` covariance-probe pool on CNN d1–3) × depth × seeds → `trained_models/{surrogate_sweep,oracle_sweep}/*.pt` + per-role leaderboards. |
+| [`add_seeds.py`](add_seeds.py) | Patch a role's sweep (`--role {surrogate,oracle}`) with a fixed extra list of 5 CNN configs × 3 seeds, skipping checkpoints that already exist, then prints a mean±std leaderboard — extends a sweep without rerunning it wholesale. |
+| [`confirm_top3.py`](confirm_top3.py) | Seed-robustness check (`--role`): retrains the sweep's 3 top configs at 3 seeds (reusing existing seed-0 checkpoints) and writes `results_top3.csv` alongside the role's sweep, without touching the main `results.csv`. |
 | [`sweep_results.ipynb`](sweep_results.ipynb) | Reads each sweep straight from its checkpoints (surrogate=ESM-2, oracle=ProstT5) and reports val/test MAE bars, val-vs-test scatter, and top-config pred-vs-truth, plus an embedding-NN null baseline. Also covers the brightness/pKa scalar sweeps. |
-| Data & splits | Built and curated in [`../dataset_pipeline/`](../dataset_pipeline); the curated peak set + coordinated dual split + per-residue embedding caches (ESM-2 `esm_residue_fp16.npy`, ProstT5 `prostt5_residue_fp16.npy`) live in `../dataset_pipeline/data/peak/curated/`. |
-| [`archive/`](archive) | Superseded notebooks and closed-out efforts kept for reference (the ESM-2-both `surrogate_oracle_peak_dual.ipynb` trainer and its `guided_design_peak.ipynb` usage, plus the large-Stokes-shift branch in [`archive/lss/`](archive/lss)). See [`archive/README.md`](archive/README.md). |
+| [`guided_design_peak_structure_multiscaffold.ipynb`](guided_design_peak_structure_multiscaffold.ipynb) | Guided design against real scaffolds (DsRed, avGFP, eqFP578, + LSS/other targets) with the edit window defined by an experimental structure's 5 Å chromophore pocket (`pockets.py`) rather than sequence position. Produces per-task refinement trajectories, edited-residue maps, best-design-vs-target bars, and a diagnostic on why large-Stokes-shift designs plateau short of target (the LSS phenotype sits outside the editable pocket). |
+| [`learning_curve.ipynb`](learning_curve.ipynb) | Two analyses on the sweep-winning surrogate (ESM-2 cnn-max-d1) and oracle (ProstT5 cnn-concatstd/max-d2): a data-scaling curve (test peak MAE vs. training-set fraction) and a sequence→peak landscape-ruggedness check (Δpeak vs. pairwise sequence identity, for ground truth and for surrogate predictions). Writes its outputs into `trained_models/` (`learning_curve_dual.png`, `ruggedness.png`, `pairsim_by_split_100pool.png`, ...). |
+| [`visualization.ipynb`](visualization.ipynb) | Peak-landscape figures over the 758 curated FPs: a t-SNE re-embedding, excitation/emission raised into 3D "terrain" surfaces (static + interactive Plotly), and a true-colour t-SNE where each point is painted its own visible-light color. Writes to `figures/` (`landscape_ruggedness_*`, `landscape_truecolour_*`). |
+| [`cluster_split/`](cluster_split) | Split-robustness experiments, independent of the main dual split: `run_oracle_cv.py` (populates `oracle_cv_cache/`) plus notebooks that replace the random split with 70%/85%-sequence-identity-clustered splits (`seqid70/85_cluster_split.ipynb`), retrain the fixed surrogate/oracle configs on them and compare to random (`surrogate_oracle_peak_seqid70/85.ipynb`), and run 5-fold grouped CV at both thresholds (`oracle_cross_cluster_cv.ipynb`). |
+| [`parallel_pipeline/`](parallel_pipeline) | Standalone batched (CUDA fp16) known-structure design campaign: `curate_knownstruct.py` (find scaffolds with an experimental PDB + pair to train-split targets at ~80% identity), `select_knownstruct.py` (split into train/test-scaffold cohorts), `design_knownstruct.py` (guided design via `pockets.experimental_window`, resumable, `--smoke N` for wiring tests), `summarize_knownstruct.py` (per-cohort + aggregate summary tables), `visualize_knownstruct.ipynb`. Outputs land in `peak_designs/structure/parallel_pipeline/`. |
+| Data & splits | Built and curated in [`../dataset_pipeline/`](../dataset_pipeline) (this replaces an earlier standalone `build_peak_dataset.py`, now merged into `../dataset_pipeline/build_dataset.py`); the curated peak set + coordinated dual split + per-residue embedding caches (ESM-2 `esm_residue_fp16.npy`, ProstT5 `prostt5_residue_fp16.npy`) live in `../dataset_pipeline/data/peak/curated/`. |
+| [`archive/`](archive) | Superseded notebooks and closed-out efforts kept for reference (the ESM-2-both `surrogate_oracle_peak_dual.ipynb` trainer and its `guided_design_peak.ipynb` / `guided_design_peak_chromophore_multiscaffold.ipynb` usage, plus the large-Stokes-shift branch in [`archive/lss/`](archive/lss)). See [`archive/README.md`](archive/README.md). |
+
+## Outputs & caches
+
+Generated data, not checked-in logic — regenerate by rerunning the script/notebook noted.
+
+| Directory | Contents |
+|---|---|
+| [`trained_models/`](trained_models) | Checkpoint store. `surrogate_sweep/` + `oracle_sweep/` (per-config `.pt` + `results.csv/json`, from `sweep_peak_oracle.py`, extended by `add_seeds.py`/`confirm_top3.py`); `lc_models/` (checkpoints at 5 training-fraction points × 3 seeds per role, from `learning_curve.ipynb`); loose learning-curve/ruggedness outputs (`learning_curve_dual.png`, `ruggedness.png`, `pairsim_by_split_100pool.png`, ...); `dual_oracle_*_net.pt` + `_scaler.npz` from `train_oracle_prostt5.py`. |
+| [`peak_designs/`](peak_designs) | Guided-design CSV/PNG outputs. `chromophore/` (sequence-position-anchored window runs), `structure/` (structure-anchored runs mirroring `guided_design_peak_structure_multiscaffold.ipynb`, incl. `structure/parallel_pipeline/` = the batched known-structure campaign), `backbone/dsred/` (backbone-only ablation), `moderate/`/`temp5/` (parameter-variant reruns), plus loose early single-pair CSVs. |
+| [`structures/`](structures) | Cached RCSB `.pdbx` files. Top level: the 3 hand-picked scaffolds (`1G7K` DsRed, `1GFL` avGFP, `3M22` eqFP578); `structures/experimental/` holds the ~85 additional structures for the known-structure cohort. Populated by `pockets.py`'s RCSB fetch and `parallel_pipeline/curate_knownstruct.py`. |
+| [`figures/`](figures) | Plots for reporting: sweep/training-curve PNGs, design-quality diagnostics (`design_error_*`), and `visualization.ipynb`'s landscape figures. Mixed provenance across notebooks/scripts. |
+| [`oracle_cv_cache/`](oracle_cv_cache) | Per-fold `.npz` (`fold_{group70,group85,random}_N.npz`) and pooled out-of-fold predictions (`oof_{group70,group85,random}.npz`) from `cluster_split/run_oracle_cv.py`, consumed by `cluster_split/oracle_cross_cluster_cv.ipynb`. |
 
 ## Typical order
 
@@ -53,13 +72,19 @@ Dataset build, curation, the coordinated dual split, and the ESM-2 embedding cac
 curated set lives in `../dataset_pipeline/data/peak/curated/`. From this folder:
 
 1. `python embed_prostt5.py` → cache the ProstT5 (structure-aware) per-residue embeddings for the oracle.
-2. `python sweep_peak_oracle.py --role both` → train the surrogate (ESM-2) and oracle (ProstT5) sweeps → `trained_models/{surrogate_sweep,oracle_sweep}/`.
+2. `python sweep_peak_oracle.py --role both` → train the surrogate (ESM-2) and oracle (ProstT5) sweeps → `trained_models/{surrogate_sweep,oracle_sweep}/`. Optionally patch/confirm with `add_seeds.py` / `confirm_top3.py`.
 3. `sweep_results.ipynb` → inspect the leaderboards / pred-vs-truth and pick the surrogate + oracle configs.
 4. `python train_oracle_prostt5.py` → finalize the chosen oracle on ProstT5 → `trained_models/dual_oracle_prostt5_net.pt` (+ scaler).
 
+From there, three optional branches build on the finalized surrogate/oracle:
+
+- **Structure-anchored design** — `guided_design_peak_structure_multiscaffold.ipynb` for a handful of scaffolds, or `parallel_pipeline/` for the batched known-structure campaign across ~85 structures (`curate_knownstruct.py` → `select_knownstruct.py` → `design_knownstruct.py` → `summarize_knownstruct.py`).
+- **Split robustness** — `cluster_split/` reruns the surrogate/oracle protocol on sequence-identity-clustered splits (70%/85%) instead of the random dual split, to check the reported MAE isn't inflated by near-duplicate train/test leakage.
+- **Reporting** — `learning_curve.ipynb` (data-scaling + landscape ruggedness) and `visualization.ipynb` (peak-landscape figures) for write-up figures.
+
 > The original single-notebook flow that trained **both** roles on ESM-2
-> (`surrogate_oracle_peak_dual.ipynb`) and its ESM-2-oracle design notebook (`guided_design_peak.ipynb`)
-> now live in [`archive/`](archive).
+> (`surrogate_oracle_peak_dual.ipynb`) and its ESM-2-oracle design notebooks (`guided_design_peak.ipynb`,
+> `guided_design_peak_chromophore_multiscaffold.ipynb`) now live in [`archive/`](archive).
 
 ## Notes
 
