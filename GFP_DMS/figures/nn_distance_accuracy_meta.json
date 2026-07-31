@@ -1,0 +1,8 @@
+{
+  "stem": "sub40k",
+  "ckpt": "trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt",
+  "threshold": 0.3266126291160785,
+  "id_cutoff_p99": 30.208415794372563,
+  "heldout_acc": 0.9455,
+  "heldout_auroc": 0.9812763641646005
+}
