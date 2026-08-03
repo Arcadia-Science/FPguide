@@ -31,7 +31,12 @@ Usage:
     python build_dataset.py --target peak       --outdir data/peak/curated
     python build_dataset.py --target brightness --outdir data/brightness/curated
     python build_dataset.py --target pka        --outdir data/pka/curated
-    python build_dataset.py --all               # build all three under ./data/<trait>/curated
+    python build_dataset.py --all               # build peak (the maintained target) under ./data/peak/curated
+
+brightness and pKa are no longer part of the actively maintained pipeline -- their previously
+generated data now lives under archive/data_brightness/ and archive/data_pka/ (see README). The
+rules above still build them on request via --target; --all does not, so it doesn't regenerate
+data the project has moved away from.
 """
 from __future__ import annotations
 
@@ -322,11 +327,11 @@ def main():
     ap.add_argument("--target", choices=list(TRAITS), help="which trait to build")
     ap.add_argument("--proteins", default=DEF_PROTEINS)
     ap.add_argument("--outdir", default=None)
-    ap.add_argument("--all", action="store_true", help="build peak, brightness, pka under ./data/<trait>/curated")
+    ap.add_argument("--all", action="store_true",
+                     help="build peak (the maintained target) under ./data/peak/curated")
     a = ap.parse_args()
     if a.all:
-        for t in TRAITS:
-            build(t, a.proteins, os.path.join(HERE, "data", t, "curated"))
+        build("peak", a.proteins, os.path.join(HERE, "data", "peak", "curated"))
     else:
         if not a.target:
             ap.error("give --target or --all")
