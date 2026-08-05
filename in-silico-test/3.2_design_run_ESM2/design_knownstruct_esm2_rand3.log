@@ -1,0 +1,14 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+device cuda | fp16 True
+108 tasks across 3 cohort(s): knownstruct_Strain=36, knownstruct_Sval=36, knownstruct_Stest=36
+surrogate (surrogate_final) test MAE 17.6 nm (n_train=515) | oracle val MAE 8.7 nm
+running 108 tasks x 3 trials = 324 searches | 2 iters x (chromo -> pocket) | k=10 T=1.0 lam_prior=1.0 lam_ex=1.0 lam_em=1.0 | editable min/med/max = 14/26/34 (Tier-B, same windows as 3.1_design_run_MSA) | visit order = random | ppl = off | proposal = ESM-2 masked-LM (family PSSM not used for selection; 431 structurally constrained positions across tasks, rest = 20 AAs)
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 37324.39it/s]
+  round 0 (scaffold): mean oracle err 133.2 nm | 8s
+  it1 [chromo+pocket]: mean oracle err 94.0 nm | mean id 0.90 | 752s
+  it2 [chromo+pocket]: mean oracle err 92.8 nm | mean id 0.90 | 1507s
+  trial 0: mean final oracle err 91.3 nm
+  trial 1: mean final oracle err 93.0 nm
+  trial 2: mean final oracle err 94.1 nm
+  within-task spread across trials: mean 24.4 nm, median 18.4 nm, max 82.1 nm
+wrote 108 design CSVs (324 trajectories) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_esm2_rand3 | total 1507s

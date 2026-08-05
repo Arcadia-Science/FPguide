@@ -1,0 +1,37 @@
+scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity,dist_nm,delta_ex_nm,delta_em_nm,scaffold_pdb
+130,dLanYFP,11,train,339,laRFP,71,train,0.6835,68.5,8.0,68.0,5LTQ
+65,bfloGFPc1,28,train,339,laRFP,71,train,0.6636,76.3,28.0,71.0,4DKM
+471,mNeonGreen,11,train,339,laRFP,71,train,0.6456,76.5,15.0,75.0,5LTR
+339,laRFP,71,train,335,LanFP1,10,train,0.5044,84.6,-21.0,-82.0,4JEO
+46,Aquamarine,44,train,672,ShadowY,12,train,0.9163,105.7,89.0,57.0,2YE1
+381,mCerulean2.D3,38,train,690,Sumire,71,train,0.9025,107.9,-91.0,-58.0,4EN1
+384,mCerulean3,42,train,690,Sumire,71,train,0.9068,108.7,-90.0,-61.0,4EN1
+78,ccGFP E6,19,train,15,AdRed,45,train,0.5217,113.2,66.0,92.0,8U21
+648,SAASoti,9,train,170,eforCP,20,train,0.5000,119.8,79.0,90.0,8PEI
+755,ZsGreen1,12,train,15,AdRed,45,train,0.8442,130.1,74.0,107.0,2OJK
+177,Enhanced Cyan-Emitting GFP,27,train,690,Sumire,71,train,0.9170,135.2,-115.0,-71.0,2WSN
+86,CGFP,43,train,690,Sumire,71,train,0.9153,151.2,-120.0,-92.0,5N9O
+16,AdRed-C148S,39,train,24,amFP486,28,train,0.5128,152.2,-102.0,-113.0,6AA7
+567,P11,31,train,690,Sumire,71,train,0.9153,155.3,-128.0,-88.0,1W7S
+640,rsFolder2,25,train,690,Sumire,71,train,0.9534,161.7,-135.0,-89.0,4J8A
+645,rsKame,14,train,152,E2-Crimson,35,train,0.5614,168.2,108.0,129.0,4EMQ
+556,NowGFP,8,train,690,Sumire,71,train,0.8686,174.8,-151.0,-88.0,9FGI
+420,mEosFP-M159A,27,train,152,E2-Crimson,35,train,0.5130,181.1,124.0,132.0,4R6B
+7,AausFP1,6,train,690,Sumire,71,train,0.5085,187.4,-161.0,-96.0,6S67
+483,moxDendra2,14,train,373,mCardinal,55,train,0.5021,192.4,114.0,155.0,2VZX
+701,super-TagRFP,24,train,362,mBlueberry1,54,train,0.5403,201.9,-157.0,-127.0,5JVA
+434,mGold,16,train,690,Sumire,71,train,0.9153,208.0,-172.0,-117.0,4NDJ
+555,NijiFP,38,train,374,mCarmine,72,train,0.5021,214.9,134.0,168.0,2VZX
+517,mScarlet-2A,24,train,362,mBlueberry1,54,train,0.8136,220.2,-170.0,-140.0,7ZCT
+531,mStrawberry,22,train,362,mBlueberry1,54,train,0.9364,227.4,-176.0,-144.0,2H5P
+136,dsFP483,40,train,152,E2-Crimson,35,train,0.5647,234.1,168.0,163.0,3CGL
+643,rsFusionRed3,27,train,362,mBlueberry1,54,train,0.5439,239.1,-182.0,-155.0,6U1A
+461,mLumin,34,train,362,mBlueberry1,54,train,0.5021,253.5,-189.0,-169.0,4KPI
+623,RFP630,47,train,70,Bluebonnet2,55,train,0.6853,254.6,-184.0,-176.0,1UIS
+647,Rtms5,34,train,362,mBlueberry1,54,train,0.5636,260.6,-194.0,-174.0,3VIC
+93,cjBlue,10,train,70,Bluebonnet2,55,train,0.5830,268.5,-211.0,-166.0,2IB5
+508,mRouge,37,train,362,mBlueberry1,54,train,0.9407,273.9,-202.0,-185.0,3NED
+472,mNeptune,50,train,362,mBlueberry1,54,train,0.5403,282.9,-202.0,-198.0,3IP2
+44,AQ14,68,train,70,Bluebonnet2,55,train,0.5660,286.5,-196.0,-209.0,4OHS
+423,mGarnet,72,train,70,Bluebonnet2,55,train,0.6496,293.7,-199.0,-216.0,9V56
+532,mTagBFP2,55,train,374,mCarmine,72,train,0.9156,300.8,204.0,221.0,3M24

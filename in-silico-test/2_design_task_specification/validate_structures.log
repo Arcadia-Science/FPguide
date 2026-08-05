@@ -1,0 +1,120 @@
+358 candidate scaffolds across 154 unique PDB entries
+already validated: 0 | to validate now: 358
+loading family alignment (for the PSSM-precondition check) ...
+  [3/358] BAD 5B [9NA8] -- ValueError: 5B[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not clea | 5s
+  [6/358] BAD Achilles [3AKO] -- ValueError: Achilles[3AKO]: best chain A matches dataset seq at only local id 95% / coverage 64% (need >= 90% id, >= 70% cov) -- structure does no | 16s
+  [25/358] ok  CFP [1W7S] | 99s
+  [27/358] BAD Citrine [7SUN] -- ValueError: Citrine[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not | 104s
+  [29/358] BAD Clomeleon [7SUN] -- ValueError: Clomeleon[7SUN]: best chain A matches dataset seq at only local id 19% / coverage 37% (need >= 90% id, >= 70% cov) -- structure does n | 114s
+  [38/358] BAD deGFP2 [9NA8] -- ValueError: deGFP2[9NA8]: best chain D matches dataset seq at only local id 24% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not  | 138s
+  [39/358] BAD deGFP3 [9NA8] -- ValueError: deGFP3[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not  | 138s
+  [40/358] BAD deGFP4 [9NA8] -- ValueError: deGFP4[9NA8]: best chain D matches dataset seq at only local id 24% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not  | 138s
+  [45/358] BAD DimVenus [7VCF] -- ValueError: DimVenus[7VCF]: best chain F matches dataset seq at only local id 30% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does no | 179s
+  [48/358] BAD Dreiklang [7SUN] -- ValueError: Dreiklang[7SUN]: best chain A matches dataset seq at only local id 30% / coverage 11% (need >= 90% id, >= 70% cov) -- structure does n | 180s
+  [50/358] ok  Dronpa [4EMQ] | 180s
+  [64/358] BAD EBFP1.2 [8UBG] -- ValueError: EBFP1.2[8UBG]: best chain A matches dataset seq at only local id 46% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not  | 237s
+  [75/358] ok  eqFP650 [4EDO] | 260s
+  [77/358] BAD EYFP [7SUN] -- ValueError: EYFP[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cl | 260s
+  [78/358] BAD EYFP-Q69K [7SUN] -- ValueError: EYFP-Q69K[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does n | 260s
+  [82/358] BAD Folding Reporter GFP [9LK2] -- ValueError: Folding Reporter GFP[9LK2]: best chain A matches dataset seq at only local id 24% / coverage 26% (need >= 90% id, >= 70% cov) -- struc | 266s
+  [91/358] BAD GFPmut3 [9SDL] -- ValueError: GFPmut3[9SDL]: best chain A matches dataset seq at only local id 36% / coverage 18% (need >= 90% id, >= 70% cov) -- structure does not | 295s
+  [92/358] BAD GFP (S65T) [9NA8] -- ValueError: GFP (S65T)[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does  | 295s
+  [98/358] BAD htFuncLib_acid.1 [2G2S] -- ValueError: htFuncLib_acid.1[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [99/358] BAD htFuncLib_acid.3 [2G2S] -- ValueError: htFuncLib_acid.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [100/358] BAD htFuncLib_basic.2 [2G2S] -- ValueError: htFuncLib_basic.2[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structur | 310s
+  [101/358] BAD htFuncLib_basic.3 [2G2S] -- ValueError: htFuncLib_basic.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structur | 310s
+  [102/358] BAD htFuncLib_basic.4 [2G2S] -- ValueError: htFuncLib_basic.4[2G2S]: best chain B matches dataset seq at only local id 88% / coverage 66% (need >= 90% id, >= 70% cov) -- structur | 310s
+  [103/358] BAD htFuncLib_bleach.1 [2G2S] -- ValueError: htFuncLib_bleach.1[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structu | 310s
+  [104/358] BAD htFuncLib_bleach.3 [2G2S] -- ValueError: htFuncLib_bleach.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structu | 310s
+  [105/358] BAD htFuncLib_bleach.4 [2G2S] -- ValueError: htFuncLib_bleach.4[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structu | 310s
+  [106/358] BAD htFuncLib_em-blue-shift.1 [2G2S] -- ValueError: htFuncLib_em-blue-shift.1[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) --  | 310s
+  [107/358] BAD htFuncLib_em-blue-shift.2 [2G2S] -- ValueError: htFuncLib_em-blue-shift.2[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) --  | 310s
+  [108/358] BAD htFuncLib_fast.1 [2G2S] -- ValueError: htFuncLib_fast.1[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [109/358] BAD htFuncLib_fast.2 [2G2S] -- ValueError: htFuncLib_fast.2[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [110/358] BAD htFuncLib_fast.4 [2G2S] -- ValueError: htFuncLib_fast.4[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [111/358] BAD htFuncLib_mid.11 [6XU4] -- ValueError: htFuncLib_mid.11[6XU4]: best chain A matches dataset seq at only local id 85% / coverage 67% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [112/358] BAD htFuncLib_mid.12 [2G2S] -- ValueError: htFuncLib_mid.12[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [113/358] BAD htFuncLib_mid.13 [2G2S] -- ValueError: htFuncLib_mid.13[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 310s
+  [114/358] BAD htFuncLib_mid.2 [2G2S] -- ValueError: htFuncLib_mid.2[2G2S]: best chain B matches dataset seq at only local id 91% / coverage 66% (need >= 90% id, >= 70% cov) -- structure  | 310s
+  [115/358] BAD htFuncLib_mid.3 [2G2S] -- ValueError: htFuncLib_mid.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure  | 310s
+  [116/358] BAD htFuncLib_mid.5 [2G2S] -- ValueError: htFuncLib_mid.5[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure  | 310s
+  [117/358] BAD htFuncLib_mid.6 [2G2S] -- ValueError: htFuncLib_mid.6[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure  | 310s
+  [122/358] BAD htFuncLib_sf:em-blue-shift.2 [7EDJ] -- ValueError: htFuncLib_sf:em-blue-shift.2[7EDJ]: best chain I matches dataset seq at only local id 33% / coverage 43% (need >= 90% id, >= 70% cov)  | 328s
+  [125/358] ok  htFuncLib_sf:mid.12 [4J8A] | 335s
+  [130/358] BAD htFuncLib_slow.1 [2G2S] -- ValueError: htFuncLib_slow.1[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 335s
+  [131/358] BAD htFuncLib_slow.2 [2G2S] -- ValueError: htFuncLib_slow.2[2G2S]: best chain B matches dataset seq at only local id 88% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 335s
+  [132/358] BAD htFuncLib_slow.3 [2G2S] -- ValueError: htFuncLib_slow.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure | 335s
+  [133/358] BAD htFuncLib_thermo.1 [6XU4] -- ValueError: htFuncLib_thermo.1[6XU4]: best chain A matches dataset seq at only local id 86% / coverage 67% (need >= 90% id, >= 70% cov) -- structu | 335s
+  [134/358] BAD htFuncLib_thermo.2 [6XU4] -- ValueError: htFuncLib_thermo.2[6XU4]: best chain A matches dataset seq at only local id 86% / coverage 67% (need >= 90% id, >= 70% cov) -- structu | 335s
+  [135/358] BAD htFuncLib_thermo.3 [2G2S] -- ValueError: htFuncLib_thermo.3[2G2S]: best chain B matches dataset seq at only local id 91% / coverage 66% (need >= 90% id, >= 70% cov) -- structu | 335s
+  [136/358] BAD htFuncLib_thermo.9 [6XU4] -- ValueError: htFuncLib_thermo.9[6XU4]: best chain A matches dataset seq at only local id 85% / coverage 67% (need >= 90% id, >= 70% cov) -- structu | 335s
+  [150/358] ok  KikGR1 [4P76] | 360s
+  [159/358] BAD mBlueberry1 [3LF4] -- ValueError: mBlueberry1[3LF4]: best chain B matches dataset seq at only local id 96% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does | 371s
+  [161/358] BAD mCerulean [7VQQ] -- ValueError: mCerulean[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does n | 382s
+  [166/358] BAD mCerulean.B [7VQQ] -- ValueError: mCerulean.B[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does | 382s
+  [167/358] BAD mCerulean.B2 [7VQQ] -- ValueError: mCerulean.B2[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure doe | 382s
+  [170/358] BAD mCherry [22MM] -- ValueError: mCherry[22MM]: best chain R matches dataset seq at only local id 28% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not | 386s
+  [171/358] BAD mCherry2 [6V00] -- ValueError: mCherry2[6V00]: best chain B matches dataset seq at only local id 31% / coverage 14% (need >= 90% id, >= 70% cov) -- structure does no | 386s
+  [172/358] BAD mCherry_I202T [22MM] -- ValueError: mCherry_I202T[22MM]: best chain R matches dataset seq at only local id 28% / coverage 45% (need >= 90% id, >= 70% cov) -- structure do | 387s
+  [173/358] BAD mCherry_I202Y [22MM] -- ValueError: mCherry_I202Y[22MM]: best chain R matches dataset seq at only local id 28% / coverage 50% (need >= 90% id, >= 70% cov) -- structure do | 388s
+  [174/358] BAD mCherry_M10L [22MM] -- ValueError: mCherry_M10L[22MM]: best chain R matches dataset seq at only local id 28% / coverage 45% (need >= 90% id, >= 70% cov) -- structure doe | 389s
+  [175/358] BAD mCherry-XL [8K9R] -- ValueError: mCherry-XL[8K9R]: best chain A matches dataset seq at only local id 23% / coverage 18% (need >= 90% id, >= 70% cov) -- structure does  | 394s
+  [176/358] BAD mCitrine [7SUN] -- ValueError: mCitrine[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does no | 394s
+  [196/358] BAD mGFPmut3 [9SDL] -- ValueError: mGFPmut3[9SDL]: best chain A matches dataset seq at only local id 36% / coverage 18% (need >= 90% id, >= 70% cov) -- structure does no | 417s
+  [200/358] ok  mKate2 [8SXC] | 417s
+  [214/358] BAD mPlum [8TC3] -- ValueError: mPlum[8TC3]: best chain A matches dataset seq at only local id 28% / coverage 27% (need >= 90% id, >= 70% cov) -- structure does not c | 468s
+  [216/358] BAD mRed7Q1S1BM [9DZE] -- ValueError: mRed7Q1S1BM[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does  | 470s
+  [218/358] BAD mRojoB [22MM] -- ValueError: mRojoB[22MM]: best chain R matches dataset seq at only local id 29% / coverage 50% (need >= 90% id, >= 70% cov) -- structure does not  | 480s
+  [225/358] BAD mScarlet [9DZE] -- ValueError: mScarlet[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not | 506s
+  [226/358] BAD mScarlet-220A [9DZE] -- ValueError: mScarlet-220A[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure doe | 506s
+  [231/358] BAD mScarlet-I [9DZE] -- ValueError: mScarlet-I[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does n | 507s
+  [232/358] BAD mScarlet-I-220A [9DZE] -- ValueError: mScarlet-I-220A[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure d | 507s
+  [233/358] BAD mScarlet-I3 [9VUS] -- ValueError: mScarlet-I3[9VUS]: best chain C matches dataset seq at only local id 50% / coverage 7% (need >= 90% id, >= 70% cov) -- structure does  | 513s
+  [234/358] BAD mScarlet-I3-NCwt [9VUS] -- ValueError: mScarlet-I3-NCwt[9VUS]: best chain C matches dataset seq at only local id 50% / coverage 7% (need >= 90% id, >= 70% cov) -- structure  | 513s
+  [235/358] BAD msGFP2 [9QKS] -- ValueError: msGFP2[9QKS]: best chain C matches dataset seq at only local id 26% / coverage 42% (need >= 90% id, >= 70% cov) -- structure does not  | 522s
+  [250/358] ok  NowGFP [9FGI] | 539s
+  [251/358] BAD Nữ [7SUN] -- ValueError: Nữ[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not clea | 539s
+  [257/358] BAD P4-1 [9NA8] -- ValueError: P4-1[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cl | 539s
+  [268/358] BAD pH-tdGFP [8OVY] -- ValueError: pH-tdGFP[8OVY]: best chain A matches dataset seq at only local id 100% / coverage 46% (need >= 90% id, >= 70% cov) -- structure does n | 584s
+  [270/358] BAD PROSS-eGFP [6XU4] -- ValueError: PROSS-eGFP[6XU4]: best chain A matches dataset seq at only local id 85% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does  | 589s
+  [273/358] BAD RDSmCherry0.1 [22MM] -- ValueError: RDSmCherry0.1[22MM]: best chain R matches dataset seq at only local id 30% / coverage 45% (need >= 90% id, >= 70% cov) -- structure do | 596s
+  [274/358] BAD RDSmCherry0.2 [22MM] -- ValueError: RDSmCherry0.2[22MM]: best chain R matches dataset seq at only local id 29% / coverage 50% (need >= 90% id, >= 70% cov) -- structure do | 596s
+  [275/358] BAD RDSmCherry0.5 [22MM] -- ValueError: RDSmCherry0.5[22MM]: best chain R matches dataset seq at only local id 29% / coverage 50% (need >= 90% id, >= 70% cov) -- structure do | 597s
+  [276/358] BAD RDSmCherry1 [22MM] -- ValueError: RDSmCherry1[22MM]: best chain R matches dataset seq at only local id 30% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does | 598s
+  [277/358] BAD REACh1 [7SUN] -- ValueError: REACh1[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not  | 598s
+  [278/358] BAD REACh2 [7SUN] -- ValueError: REACh2[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not  | 598s
+  [300/358] ok  SCFP2 [4AR7] | 626s
+  [302/358] BAD SCFP3B [7VQQ] -- ValueError: SCFP3B[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does not  | 626s
+  [303/358] BAD SEYFP [7VCF] -- ValueError: SEYFP[7VCF]: best chain F matches dataset seq at only local id 29% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does not c | 626s
+  [304/358] BAD SGFP2 [6T90] -- ValueError: SGFP2[6T90]: best chain D matches dataset seq at only local id 26% / coverage 19% (need >= 90% id, >= 70% cov) -- structure does not c | 633s
+  [306/358] BAD SGFP2(E222Q) [6T90] -- ValueError: SGFP2(E222Q)[6T90]: best chain D matches dataset seq at only local id 26% / coverage 19% (need >= 90% id, >= 70% cov) -- structure doe | 633s
+  [308/358] BAD ShadowG [7SUN] -- ValueError: ShadowG[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not | 633s
+  [309/358] BAD ShadowY [6ZUI] -- ValueError: ShadowY[6ZUI]: best chain A matches dataset seq at only local id 98% / coverage 58% (need >= 90% id, >= 70% cov) -- structure does not | 637s
+  [310/358] BAD SHardonnay [7SUN] -- ValueError: SHardonnay[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does  | 637s
+  [316/358] BAD sREACh1 [6ZUI] -- ValueError: sREACh1[6ZUI]: best chain A matches dataset seq at only local id 98% / coverage 58% (need >= 90% id, >= 70% cov) -- structure does not | 645s
+  [319/358] BAD Sumire [8OVN] -- ValueError: Sumire[8OVN]: best chain A matches dataset seq at only local id 99% / coverage 59% (need >= 90% id, >= 70% cov) -- structure does not  | 648s
+  [325/358] ok  SuperNova2 [3WCK] | 655s
+  [335/358] BAD td5oxStayGold [8BXT] -- ValueError: td5oxStayGold[8BXT]: best chain A matches dataset seq at only local id 99% / coverage 43% (need >= 90% id, >= 70% cov) -- structure do | 667s
+  [336/358] BAD td5StayGold [8BXT] -- ValueError: td5StayGold[8BXT]: best chain A matches dataset seq at only local id 100% / coverage 43% (need >= 90% id, >= 70% cov) -- structure doe | 667s
+  [338/358] BAD tdLanYFP [5LTQ] -- ValueError: tdLanYFP[5LTQ]: best chain F matches dataset seq at only local id 99% / coverage 47% (need >= 90% id, >= 70% cov) -- structure does no | 667s
+  [339/358] BAD tdoxStayGold [8BXT] -- ValueError: tdoxStayGold[8BXT]: best chain A matches dataset seq at only local id 99% / coverage 36% (need >= 90% id, >= 70% cov) -- structure doe | 667s
+  [342/358] BAD TripartiteGFP [4W6R] -- ValueError: TripartiteGFP[4W6R]: could not locate chromophore atoms | 703s
+  [348/358] BAD Venus [7VCF] -- ValueError: Venus[7VCF]: best chain F matches dataset seq at only local id 30% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does not c | 708s
+  [349/358] BAD vsfGFP-0 [5MFC] -- ValueError: vsfGFP-0[5MFC]: best chain B matches dataset seq at only local id 100% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does n | 708s
+  [350/358] BAD vsfGFP-9 [9HAA] -- ValueError: vsfGFP-9[9HAA]: best chain A matches dataset seq at only local id 31% / coverage 26% (need >= 90% id, >= 70% cov) -- structure does no | 715s
+
+266/358 scaffolds usable -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/structure_validation.json
+  92 failed the structure gate (local id >= 90%, coverage >= 70%)
+  0 failed the family-alignment precondition
+
+  worst offending PDB entries (one bad structure can eliminate a whole family):
+    2G2S: 23 scaffold(s) -- e.g. ['htFuncLib_acid.1', 'htFuncLib_acid.3', 'htFuncLib_basic.2']
+    7SUN: 11 scaffold(s) -- e.g. ['Citrine', 'Clomeleon', 'Dreiklang']
+    22MM: 9 scaffold(s) -- e.g. ['mCherry', 'mCherry_I202T', 'mCherry_I202Y']
+    9NA8: 6 scaffold(s) -- e.g. ['5B', 'deGFP2', 'deGFP3']
+    6XU4: 5 scaffold(s) -- e.g. ['htFuncLib_mid.11', 'htFuncLib_thermo.1', 'htFuncLib_thermo.2']
+    9DZE: 5 scaffold(s) -- e.g. ['mRed7Q1S1BM', 'mScarlet', 'mScarlet-220A']
+    7VQQ: 4 scaffold(s) -- e.g. ['mCerulean', 'mCerulean.B', 'mCerulean.B2']
+    7VCF: 3 scaffold(s) -- e.g. ['DimVenus', 'SEYFP', 'Venus']
+
+  usable per surrogate role: test 40/50 | train 189/254 | val 37/54

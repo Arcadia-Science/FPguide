@@ -1,0 +1,219 @@
+CV pool (train+val) = 515 | fixed held-out test = 91
+reusing 5 already-complete config(s) from /home/ubuntu/spectrum-to-fp-design/in-silico-test/trained_models/surrogate_cv3.csv: ['cnn-concat-d1', 'cnn-concat-d2', 'cnn-concatstd-d2', 'cnn-max-d1', 'cnn-max-d2']
+43/48 configs to run x 3 folds = 129 fits
+[ 1/43] [mlp-mean-d0           ] fold 0 n_tr=343 n_va=172 @ep118 fold-va 19.33 nm | fixed-test 24.92 nm
+[ 1/43] [mlp-mean-d0           ] fold 1 n_tr=343 n_va=172 @ep86 fold-va 24.56 nm | fixed-test 24.99 nm
+[ 1/43] [mlp-mean-d0           ] fold 2 n_tr=344 n_va=171 @ep107 fold-va 22.81 nm | fixed-test 26.21 nm
+  mlp-mean-d0            CV fold-va 22.24 +/- 2.18 nm | fixed-test 25.37 +/- 0.59 nm
+
+[ 2/43] [cnn-mean-d1           ] fold 0 n_tr=343 n_va=172 @ep113 fold-va 17.32 nm | fixed-test 22.93 nm
+[ 2/43] [cnn-mean-d1           ] fold 1 n_tr=343 n_va=172 @ep114 fold-va 21.50 nm | fixed-test 22.90 nm
+[ 2/43] [cnn-mean-d1           ] fold 2 n_tr=344 n_va=171 @ep119 fold-va 21.08 nm | fixed-test 25.04 nm
+  cnn-mean-d1            CV fold-va 19.97 +/- 1.88 nm | fixed-test 23.63 +/- 1.00 nm
+
+[ 3/43] [cnn-mean-d2           ] fold 0 n_tr=343 n_va=172 @ep127 fold-va 17.00 nm | fixed-test 21.83 nm
+[ 3/43] [cnn-mean-d2           ] fold 1 n_tr=343 n_va=172 @ep96 fold-va 22.17 nm | fixed-test 22.28 nm
+[ 3/43] [cnn-mean-d2           ] fold 2 n_tr=344 n_va=171 @ep147 fold-va 20.52 nm | fixed-test 25.72 nm
+  cnn-mean-d2            CV fold-va 19.90 +/- 2.16 nm | fixed-test 23.27 +/- 1.74 nm
+
+[ 4/43] [cnn-mean-d3           ] fold 0 n_tr=343 n_va=172 @ep82 fold-va 17.91 nm | fixed-test 23.39 nm
+[ 4/43] [cnn-mean-d3           ] fold 1 n_tr=343 n_va=172 @ep99 fold-va 22.20 nm | fixed-test 23.55 nm
+[ 4/43] [cnn-mean-d3           ] fold 2 n_tr=344 n_va=171 @ep97 fold-va 21.75 nm | fixed-test 26.68 nm
+  cnn-mean-d3            CV fold-va 20.62 +/- 1.93 nm | fixed-test 24.54 +/- 1.51 nm
+
+[ 5/43] [cnn-mean-d4           ] fold 0 n_tr=343 n_va=172 @ep25 fold-va 23.44 nm | fixed-test 30.20 nm
+[ 5/43] [cnn-mean-d4           ] fold 1 n_tr=343 n_va=172 @ep97 fold-va 21.40 nm | fixed-test 23.23 nm
+[ 5/43] [cnn-mean-d4           ] fold 2 n_tr=344 n_va=171 @ep93 fold-va 21.29 nm | fixed-test 26.59 nm
+  cnn-mean-d4            CV fold-va 22.04 +/- 0.99 nm | fixed-test 26.68 +/- 2.85 nm
+
+[ 6/43] [transformer-mean-d1   ] fold 0 n_tr=343 n_va=172 @ep135 fold-va 17.65 nm | fixed-test 22.95 nm
+[ 6/43] [transformer-mean-d1   ] fold 1 n_tr=343 n_va=172 @ep39 fold-va 25.93 nm | fixed-test 28.32 nm
+[ 6/43] [transformer-mean-d1   ] fold 2 n_tr=344 n_va=171 @ep62 fold-va 25.16 nm | fixed-test 28.11 nm
+  transformer-mean-d1    CV fold-va 22.91 +/- 3.74 nm | fixed-test 26.46 +/- 2.48 nm
+
+[ 7/43] [transformer-mean-d2   ] fold 0 n_tr=343 n_va=172 @ep43 fold-va 18.37 nm | fixed-test 21.40 nm
+[ 7/43] [transformer-mean-d2   ] fold 1 n_tr=343 n_va=172 @ep144 fold-va 20.40 nm | fixed-test 24.82 nm
+[ 7/43] [transformer-mean-d2   ] fold 2 n_tr=344 n_va=171 @ep26 fold-va 27.21 nm | fixed-test 30.53 nm
+  transformer-mean-d2    CV fold-va 21.99 +/- 3.78 nm | fixed-test 25.58 +/- 3.77 nm
+
+[ 8/43] [transformer-mean-d3   ] fold 0 n_tr=343 n_va=172 @ep106 fold-va 16.89 nm | fixed-test 21.95 nm
+[ 8/43] [transformer-mean-d3   ] fold 1 n_tr=343 n_va=172 @ep114 fold-va 18.95 nm | fixed-test 23.60 nm
+[ 8/43] [transformer-mean-d3   ] fold 2 n_tr=344 n_va=171 @ep18 fold-va 28.58 nm | fixed-test 33.17 nm
+  transformer-mean-d3    CV fold-va 21.48 +/- 5.10 nm | fixed-test 26.24 +/- 4.95 nm
+
+[ 9/43] [transformer-mean-d4   ] fold 0 n_tr=343 n_va=172 @ep74 fold-va 17.25 nm | fixed-test 22.22 nm
+[ 9/43] [transformer-mean-d4   ] fold 1 n_tr=343 n_va=172 @ep12 fold-va 28.83 nm | fixed-test 31.56 nm
+[ 9/43] [transformer-mean-d4   ] fold 2 n_tr=344 n_va=171 @ep13 fold-va 30.05 nm | fixed-test 33.97 nm
+  transformer-mean-d4    CV fold-va 25.38 +/- 5.77 nm | fixed-test 29.25 +/- 5.07 nm
+
+[10/43] [mlp-max-d0            ] fold 0 n_tr=343 n_va=172 @ep81 fold-va 23.06 nm | fixed-test 29.49 nm
+[10/43] [mlp-max-d0            ] fold 1 n_tr=343 n_va=172 @ep96 fold-va 26.04 nm | fixed-test 27.89 nm
+[10/43] [mlp-max-d0            ] fold 2 n_tr=344 n_va=171 @ep80 fold-va 27.59 nm | fixed-test 30.11 nm
+  mlp-max-d0             CV fold-va 25.56 +/- 1.88 nm | fixed-test 29.16 +/- 0.93 nm
+
+[11/43] [cnn-max-d3            ] fold 0 n_tr=343 n_va=172 @ep38 fold-va 16.02 nm | fixed-test 21.66 nm
+[11/43] [cnn-max-d3            ] fold 1 n_tr=343 n_va=172 @ep95 fold-va 17.49 nm | fixed-test 20.98 nm
+[11/43] [cnn-max-d3            ] fold 2 n_tr=344 n_va=171 @ep75 fold-va 18.47 nm | fixed-test 23.23 nm
+  cnn-max-d3             CV fold-va 17.33 +/- 1.01 nm | fixed-test 21.96 +/- 0.94 nm
+
+[12/43] [cnn-max-d4            ] fold 0 n_tr=343 n_va=172 @ep42 fold-va 18.19 nm | fixed-test 20.03 nm
+[12/43] [cnn-max-d4            ] fold 1 n_tr=343 n_va=172 @ep120 fold-va 18.75 nm | fixed-test 22.58 nm
+[12/43] [cnn-max-d4            ] fold 2 n_tr=344 n_va=171 @ep46 fold-va 22.98 nm | fixed-test 27.42 nm
+  cnn-max-d4             CV fold-va 19.97 +/- 2.14 nm | fixed-test 23.34 +/- 3.07 nm
+
+[13/43] [transformer-max-d1    ] fold 0 n_tr=343 n_va=172 @ep38 fold-va 15.11 nm | fixed-test 17.55 nm
+[13/43] [transformer-max-d1    ] fold 1 n_tr=343 n_va=172 @ep46 fold-va 18.49 nm | fixed-test 20.75 nm
+[13/43] [transformer-max-d1    ] fold 2 n_tr=344 n_va=171 @ep53 fold-va 17.58 nm | fixed-test 21.12 nm
+  transformer-max-d1     CV fold-va 17.06 +/- 1.43 nm | fixed-test 19.81 +/- 1.60 nm
+
+[14/43] [transformer-max-d2    ] fold 0 n_tr=343 n_va=172 @ep155 fold-va 15.11 nm | fixed-test 18.57 nm
+[14/43] [transformer-max-d2    ] fold 1 n_tr=343 n_va=172 @ep91 fold-va 17.46 nm | fixed-test 21.37 nm
+[14/43] [transformer-max-d2    ] fold 2 n_tr=344 n_va=171 @ep75 fold-va 17.68 nm | fixed-test 23.16 nm
+  transformer-max-d2     CV fold-va 16.75 +/- 1.16 nm | fixed-test 21.03 +/- 1.89 nm
+
+[15/43] [transformer-max-d3    ] fold 0 n_tr=343 n_va=172 @ep124 fold-va 16.98 nm | fixed-test 20.19 nm
+[15/43] [transformer-max-d3    ] fold 1 n_tr=343 n_va=172 @ep128 fold-va 17.69 nm | fixed-test 22.06 nm
+[15/43] [transformer-max-d3    ] fold 2 n_tr=344 n_va=171 @ep56 fold-va 28.05 nm | fixed-test 32.48 nm
+  transformer-max-d3     CV fold-va 20.91 +/- 5.06 nm | fixed-test 24.91 +/- 5.41 nm
+
+[16/43] [transformer-max-d4    ] fold 0 n_tr=343 n_va=172 @ep29 fold-va 24.00 nm | fixed-test 30.64 nm
+[16/43] [transformer-max-d4    ] fold 1 n_tr=343 n_va=172 @ep40 fold-va 26.77 nm | fixed-test 29.21 nm
+[16/43] [transformer-max-d4    ] fold 2 n_tr=344 n_va=171 @ep46 fold-va 27.61 nm | fixed-test 32.11 nm
+  transformer-max-d4     CV fold-va 26.12 +/- 1.54 nm | fixed-test 30.65 +/- 1.19 nm
+
+[17/43] [mlp-concat-d0         ] fold 0 n_tr=343 n_va=172 @ep71 fold-va 23.15 nm | fixed-test 29.54 nm
+[17/43] [mlp-concat-d0         ] fold 1 n_tr=343 n_va=172 @ep49 fold-va 26.50 nm | fixed-test 29.08 nm
+[17/43] [mlp-concat-d0         ] fold 2 n_tr=344 n_va=171 @ep102 fold-va 26.63 nm | fixed-test 30.36 nm
+  mlp-concat-d0          CV fold-va 25.43 +/- 1.61 nm | fixed-test 29.66 +/- 0.53 nm
+
+[18/43] [cnn-concat-d3         ] fold 0 n_tr=343 n_va=172 @ep128 fold-va 17.17 nm | fixed-test 19.12 nm
+[18/43] [cnn-concat-d3         ] fold 1 n_tr=343 n_va=172 @ep60 fold-va 16.32 nm | fixed-test 21.10 nm
+[18/43] [cnn-concat-d3         ] fold 2 n_tr=344 n_va=171 @ep89 fold-va 18.20 nm | fixed-test 23.39 nm
+  cnn-concat-d3          CV fold-va 17.23 +/- 0.77 nm | fixed-test 21.21 +/- 1.75 nm
+
+[19/43] [cnn-concat-d4         ] fold 0 n_tr=343 n_va=172 @ep90 fold-va 19.32 nm | fixed-test 21.83 nm
+[19/43] [cnn-concat-d4         ] fold 1 n_tr=343 n_va=172 @ep40 fold-va 20.49 nm | fixed-test 22.84 nm
+[19/43] [cnn-concat-d4         ] fold 2 n_tr=344 n_va=171 @ep51 fold-va 22.58 nm | fixed-test 26.24 nm
+  cnn-concat-d4          CV fold-va 20.80 +/- 1.35 nm | fixed-test 23.64 +/- 1.89 nm
+
+[20/43] [transformer-concat-d1 ] fold 0 n_tr=343 n_va=172 @ep57 fold-va 15.51 nm | fixed-test 18.53 nm
+[20/43] [transformer-concat-d1 ] fold 1 n_tr=343 n_va=172 @ep27 fold-va 18.29 nm | fixed-test 20.21 nm
+[20/43] [transformer-concat-d1 ] fold 2 n_tr=344 n_va=171 @ep53 fold-va 18.33 nm | fixed-test 22.92 nm
+  transformer-concat-d1  CV fold-va 17.38 +/- 1.32 nm | fixed-test 20.55 +/- 1.81 nm
+
+[21/43] [transformer-concat-d2 ] fold 0 n_tr=343 n_va=172 @ep39 fold-va 17.68 nm | fixed-test 22.19 nm
+[21/43] [transformer-concat-d2 ] fold 1 n_tr=343 n_va=172 @ep71 fold-va 18.98 nm | fixed-test 22.57 nm
+[21/43] [transformer-concat-d2 ] fold 2 n_tr=344 n_va=171 @ep126 fold-va 19.45 nm | fixed-test 23.73 nm
+  transformer-concat-d2  CV fold-va 18.70 +/- 0.75 nm | fixed-test 22.83 +/- 0.66 nm
+
+[22/43] [transformer-concat-d3 ] fold 0 n_tr=343 n_va=172 @ep18 fold-va 23.37 nm | fixed-test 31.15 nm
+[22/43] [transformer-concat-d3 ] fold 1 n_tr=343 n_va=172 @ep58 fold-va 20.36 nm | fixed-test 23.67 nm
+[22/43] [transformer-concat-d3 ] fold 2 n_tr=344 n_va=171 @ep23 fold-va 28.44 nm | fixed-test 33.89 nm
+  transformer-concat-d3  CV fold-va 24.06 +/- 3.33 nm | fixed-test 29.57 +/- 4.32 nm
+
+[23/43] [transformer-concat-d4 ] fold 0 n_tr=343 n_va=172 @ep109 fold-va 19.76 nm | fixed-test 23.70 nm
+[23/43] [transformer-concat-d4 ] fold 1 n_tr=343 n_va=172 @ep79 fold-va 21.10 nm | fixed-test 27.28 nm
+[23/43] [transformer-concat-d4 ] fold 2 n_tr=344 n_va=171 @ep40 fold-va 28.11 nm | fixed-test 33.84 nm
+  transformer-concat-d4  CV fold-va 22.99 +/- 3.66 nm | fixed-test 28.27 +/- 4.20 nm
+
+[24/43] [mlp-concatstd-d0      ] fold 0 n_tr=343 n_va=172 @ep57 fold-va 23.61 nm | fixed-test 30.92 nm
+[24/43] [mlp-concatstd-d0      ] fold 1 n_tr=343 n_va=172 @ep70 fold-va 26.13 nm | fixed-test 28.85 nm
+[24/43] [mlp-concatstd-d0      ] fold 2 n_tr=344 n_va=171 @ep104 fold-va 26.19 nm | fixed-test 29.81 nm
+  mlp-concatstd-d0       CV fold-va 25.31 +/- 1.20 nm | fixed-test 29.86 +/- 0.84 nm
+
+[25/43] [cnn-concatstd-d1      ] fold 0 n_tr=343 n_va=172 @ep45 fold-va 13.87 nm | fixed-test 16.87 nm
+[25/43] [cnn-concatstd-d1      ] fold 1 n_tr=343 n_va=172 @ep153 fold-va 16.44 nm | fixed-test 19.57 nm
+[25/43] [cnn-concatstd-d1      ] fold 2 n_tr=344 n_va=171 @ep93 fold-va 16.56 nm | fixed-test 21.27 nm
+  cnn-concatstd-d1       CV fold-va 15.62 +/- 1.24 nm | fixed-test 19.24 +/- 1.81 nm
+
+[26/43] [cnn-concatstd-d3      ] fold 0 n_tr=343 n_va=172 @ep104 fold-va 16.90 nm | fixed-test 17.57 nm
+[26/43] [cnn-concatstd-d3      ] fold 1 n_tr=343 n_va=172 @ep102 fold-va 18.02 nm | fixed-test 20.60 nm
+[26/43] [cnn-concatstd-d3      ] fold 2 n_tr=344 n_va=171 @ep79 fold-va 18.25 nm | fixed-test 25.09 nm
+  cnn-concatstd-d3       CV fold-va 17.72 +/- 0.59 nm | fixed-test 21.09 +/- 3.09 nm
+
+[27/43] [cnn-concatstd-d4      ] fold 0 n_tr=343 n_va=172 @ep83 fold-va 19.28 nm | fixed-test 23.30 nm
+[27/43] [cnn-concatstd-d4      ] fold 1 n_tr=343 n_va=172 @ep121 fold-va 19.34 nm | fixed-test 21.87 nm
+[27/43] [cnn-concatstd-d4      ] fold 2 n_tr=344 n_va=171 @ep81 fold-va 22.02 nm | fixed-test 25.99 nm
+  cnn-concatstd-d4       CV fold-va 20.21 +/- 1.28 nm | fixed-test 23.72 +/- 1.71 nm
+
+[28/43] [transformer-concatstd-d1] fold 0 n_tr=343 n_va=172 @ep39 fold-va 15.29 nm | fixed-test 19.20 nm
+[28/43] [transformer-concatstd-d1] fold 1 n_tr=343 n_va=172 @ep51 fold-va 17.11 nm | fixed-test 20.24 nm
+[28/43] [transformer-concatstd-d1] fold 2 n_tr=344 n_va=171 @ep39 fold-va 19.29 nm | fixed-test 22.43 nm
+  transformer-concatstd-d1 CV fold-va 17.23 +/- 1.64 nm | fixed-test 20.62 +/- 1.35 nm
+
+[29/43] [transformer-concatstd-d2] fold 0 n_tr=343 n_va=172 @ep62 fold-va 17.11 nm | fixed-test 21.55 nm
+[29/43] [transformer-concatstd-d2] fold 1 n_tr=343 n_va=172 @ep44 fold-va 17.75 nm | fixed-test 20.69 nm
+[29/43] [transformer-concatstd-d2] fold 2 n_tr=344 n_va=171 @ep88 fold-va 18.87 nm | fixed-test 22.97 nm
+  transformer-concatstd-d2 CV fold-va 17.91 +/- 0.73 nm | fixed-test 21.74 +/- 0.94 nm
+
+[30/43] [transformer-concatstd-d3] fold 0 n_tr=343 n_va=172 @ep20 fold-va 23.53 nm | fixed-test 32.25 nm
+[30/43] [transformer-concatstd-d3] fold 1 n_tr=343 n_va=172 @ep114 fold-va 18.34 nm | fixed-test 24.14 nm
+[30/43] [transformer-concatstd-d3] fold 2 n_tr=344 n_va=171 @ep196 fold-va 22.13 nm | fixed-test 25.55 nm
+  transformer-concatstd-d3 CV fold-va 21.34 +/- 2.19 nm | fixed-test 27.31 +/- 3.54 nm
+
+[31/43] [transformer-concatstd-d4] fold 0 n_tr=343 n_va=172 @ep25 fold-va 24.78 nm | fixed-test 33.37 nm
+[31/43] [transformer-concatstd-d4] fold 1 n_tr=343 n_va=172 @ep110 fold-va 23.12 nm | fixed-test 28.12 nm
+[31/43] [transformer-concatstd-d4] fold 2 n_tr=344 n_va=171 @ep39 fold-va 28.68 nm | fixed-test 34.11 nm
+  transformer-concatstd-d4 CV fold-va 25.53 +/- 2.33 nm | fixed-test 31.87 +/- 2.66 nm
+
+[32/43] [mlp-attn-d0           ] fold 0 n_tr=343 n_va=172 @ep102 fold-va 16.38 nm | fixed-test 19.35 nm
+[32/43] [mlp-attn-d0           ] fold 1 n_tr=343 n_va=172 @ep114 fold-va 19.81 nm | fixed-test 22.37 nm
+[32/43] [mlp-attn-d0           ] fold 2 n_tr=344 n_va=171 @ep104 fold-va 21.42 nm | fixed-test 25.80 nm
+  mlp-attn-d0            CV fold-va 19.21 +/- 2.10 nm | fixed-test 22.50 +/- 2.63 nm
+
+[33/43] [cnn-attn-d1           ] fold 0 n_tr=343 n_va=172 @ep149 fold-va 15.76 nm | fixed-test 19.75 nm
+[33/43] [cnn-attn-d1           ] fold 1 n_tr=343 n_va=172 @ep63 fold-va 18.27 nm | fixed-test 22.84 nm
+[33/43] [cnn-attn-d1           ] fold 2 n_tr=344 n_va=171 @ep124 fold-va 16.56 nm | fixed-test 23.40 nm
+  cnn-attn-d1            CV fold-va 16.86 +/- 1.05 nm | fixed-test 21.99 +/- 1.61 nm
+
+[34/43] [cnn-attn-d2           ] fold 0 n_tr=343 n_va=172 @ep92 fold-va 17.90 nm | fixed-test 22.70 nm
+[34/43] [cnn-attn-d2           ] fold 1 n_tr=343 n_va=172 @ep80 fold-va 21.37 nm | fixed-test 23.02 nm
+[34/43] [cnn-attn-d2           ] fold 2 n_tr=344 n_va=171 @ep61 fold-va 20.17 nm | fixed-test 25.81 nm
+  cnn-attn-d2            CV fold-va 19.81 +/- 1.44 nm | fixed-test 23.84 +/- 1.40 nm
+
+[35/43] [cnn-attn-d3           ] fold 0 n_tr=343 n_va=172 @ep82 fold-va 17.98 nm | fixed-test 22.07 nm
+[35/43] [cnn-attn-d3           ] fold 1 n_tr=343 n_va=172 @ep155 fold-va 21.38 nm | fixed-test 21.83 nm
+[35/43] [cnn-attn-d3           ] fold 2 n_tr=344 n_va=171 @ep64 fold-va 21.29 nm | fixed-test 25.42 nm
+  cnn-attn-d3            CV fold-va 20.22 +/- 1.58 nm | fixed-test 23.11 +/- 1.64 nm
+
+[36/43] [cnn-attn-d4           ] fold 0 n_tr=343 n_va=172 @ep88 fold-va 17.28 nm | fixed-test 23.09 nm
+[36/43] [cnn-attn-d4           ] fold 1 n_tr=343 n_va=172 @ep73 fold-va 22.97 nm | fixed-test 24.74 nm
+[36/43] [cnn-attn-d4           ] fold 2 n_tr=344 n_va=171 @ep104 fold-va 21.24 nm | fixed-test 28.66 nm
+  cnn-attn-d4            CV fold-va 20.50 +/- 2.38 nm | fixed-test 25.50 +/- 2.34 nm
+
+[37/43] [transformer-attn-d1   ] fold 0 n_tr=343 n_va=172 @ep73 fold-va 16.58 nm | fixed-test 20.99 nm
+[37/43] [transformer-attn-d1   ] fold 1 n_tr=343 n_va=172 @ep49 fold-va 19.29 nm | fixed-test 22.62 nm
+[37/43] [transformer-attn-d1   ] fold 2 n_tr=344 n_va=171 @ep69 fold-va 21.34 nm | fixed-test 23.73 nm
+  transformer-attn-d1    CV fold-va 19.07 +/- 1.95 nm | fixed-test 22.44 +/- 1.13 nm
+
+[38/43] [transformer-attn-d2   ] fold 0 n_tr=343 n_va=172 @ep43 fold-va 18.72 nm | fixed-test 21.70 nm
+[38/43] [transformer-attn-d2   ] fold 1 n_tr=343 n_va=172 @ep53 fold-va 18.22 nm | fixed-test 22.03 nm
+[38/43] [transformer-attn-d2   ] fold 2 n_tr=344 n_va=171 @ep161 fold-va 15.61 nm | fixed-test 23.54 nm
+  transformer-attn-d2    CV fold-va 17.52 +/- 1.36 nm | fixed-test 22.42 +/- 0.80 nm
+
+[39/43] [transformer-attn-d3   ] fold 0 n_tr=343 n_va=172 @ep128 fold-va 15.16 nm | fixed-test 19.70 nm
+[39/43] [transformer-attn-d3   ] fold 1 n_tr=343 n_va=172 @ep83 fold-va 20.30 nm | fixed-test 24.06 nm
+[39/43] [transformer-attn-d3   ] fold 2 n_tr=344 n_va=171 @ep109 fold-va 22.26 nm | fixed-test 25.87 nm
+  transformer-attn-d3    CV fold-va 19.24 +/- 2.99 nm | fixed-test 23.21 +/- 2.59 nm
+
+[40/43] [transformer-attn-d4   ] fold 0 n_tr=343 n_va=172 @ep73 fold-va 19.51 nm | fixed-test 23.66 nm
+[40/43] [transformer-attn-d4   ] fold 1 n_tr=343 n_va=172 @ep7 fold-va 26.82 nm | fixed-test 32.70 nm
+[40/43] [transformer-attn-d4   ] fold 2 n_tr=344 n_va=171 @ep173 fold-va 22.55 nm | fixed-test 26.52 nm
+  transformer-attn-d4    CV fold-va 22.96 +/- 3.00 nm | fixed-test 27.63 +/- 3.77 nm
+
+[41/43] [cnn-cov-d1            ] fold 0 n_tr=343 n_va=172 @ep79 fold-va 17.41 nm | fixed-test 22.76 nm
+[41/43] [cnn-cov-d1            ] fold 1 n_tr=343 n_va=172 @ep195 fold-va 18.53 nm | fixed-test 21.50 nm
+[41/43] [cnn-cov-d1            ] fold 2 n_tr=344 n_va=171 @ep183 fold-va 19.13 nm | fixed-test 22.87 nm
+  cnn-cov-d1             CV fold-va 18.36 +/- 0.71 nm | fixed-test 22.38 +/- 0.62 nm
+
+[42/43] [cnn-cov-d2            ] fold 0 n_tr=343 n_va=172 @ep141 fold-va 15.92 nm | fixed-test 21.72 nm
+[42/43] [cnn-cov-d2            ] fold 1 n_tr=343 n_va=172 @ep121 fold-va 20.96 nm | fixed-test 21.87 nm
+[42/43] [cnn-cov-d2            ] fold 2 n_tr=344 n_va=171 @ep101 fold-va 20.21 nm | fixed-test 26.77 nm
+  cnn-cov-d2             CV fold-va 19.03 +/- 2.22 nm | fixed-test 23.45 +/- 2.35 nm
+
+[43/43] [cnn-cov-d3            ] fold 0 n_tr=343 n_va=172 @ep0 fold-va 40.45 nm | fixed-test 44.36 nm
+[43/43] [cnn-cov-d3            ] fold 1 n_tr=343 n_va=172 @ep76 fold-va 21.85 nm | fixed-test 24.50 nm
+[43/43] [cnn-cov-d3            ] fold 2 n_tr=344 n_va=171 @ep111 fold-va 20.11 nm | fixed-test 26.35 nm
+  cnn-cov-d3             CV fold-va 27.47 +/- 9.20 nm | fixed-test 31.74 +/- 8.96 nm
+
+wrote 144 rows (48 configs) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/trained_models/surrogate_cv3.csv

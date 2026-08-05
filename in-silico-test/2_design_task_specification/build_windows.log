@@ -1,0 +1,90 @@
+108 unique scaffolds across 3 cohorts
+already built (resumed from design_windows.json): 26 | to build: 82
+loading family alignment from /home/ubuntu/spectrum-to-fp-design/in-silico-test/msa/data/fp_all.aln.fasta ...
+  alignment 763 seq x 1861 col | core 233 col | N_eff(Henikoff) 272.1
+  [27/108] bfloGFPc1 [4DKM]: 23 editable, 3 hbond | 0s
+  [28/108] mNeonGreen [5LTR]: 19 editable, 1 hbond | 0s
+  [29/108] Aquamarine [2YE1]: 25 editable, 2 hbond | 0s
+  [30/108] mCerulean2.D3 [4EN1]: 26 editable, 2 hbond | 0s
+  [31/108] mCerulean3 [4EN1]: 26 editable, 2 hbond | 0s
+  [32/108] ccGFP E6 [8U21]: 24 editable, 4 hbond | 0s
+  [33/108] ZsGreen1 [2OJK]: 27 editable, 4 hbond | 0s
+  [34/108] Enhanced Cyan-Emitting GFP [2WSN]: 25 editable, 2 hbond | 0s
+  [35/108] AdRed-C148S [6AA7]: 27 editable, 3 hbond | 0s
+  [36/108] P11 [1W7S]: 25 editable, 3 hbond | 1s
+  [37/108] rsFolder2 [4J8A]: 23 editable, 2 hbond | 1s
+  [38/108] rsKame [4EMQ]: 27 editable, 4 hbond | 1s
+  [39/108] NowGFP [9FGI]: 25 editable, 1 hbond | 1s
+  [40/108] mEosFP-M159A [4R6B]: 25 editable, 5 hbond | 1s
+  [41/108] AausFP1 [6S67]: 28 editable, 2 hbond | 1s
+  [42/108] moxDendra2 [2VZX]: 28 editable, 2 hbond | 1s
+  [43/108] super-TagRFP [5JVA]: 26 editable, 6 hbond | 1s
+  [44/108] mGold [4NDJ]: 26 editable, 3 hbond | 1s
+  [45/108] NijiFP [2VZX]: 28 editable, 2 hbond | 1s
+  [46/108] mScarlet-2A [7ZCT]: 26 editable, 4 hbond | 1s
+  [47/108] mStrawberry [2H5P]: 24 editable, 1 hbond | 1s
+  [48/108] dsFP483 [3CGL]: 26 editable, 5 hbond | 2s
+  [49/108] rsFusionRed3 [6U1A]: 14 editable, 1 hbond | 2s
+  [50/108] RFP630 [1UIS]: 26 editable, 5 hbond | 2s
+  [51/108] Rtms5 [3VIC]: 26 editable, 2 hbond | 2s
+  [52/108] cjBlue [2IB5]: 23 editable, 5 hbond | 2s
+  [53/108] mNeptune [3IP2]: 26 editable, 3 hbond | 2s
+  [54/108] AQ14 [4OHS]: 24 editable, 1 hbond | 2s
+  [55/108] mGarnet [9V56]: 26 editable, 6 hbond | 2s
+  [56/108] P9 [1W7S]: 25 editable, 3 hbond | 2s
+  [57/108] rsEGFP2 [5O89]: 24 editable, 3 hbond | 2s
+  [58/108] AdRed [6AA7]: 27 editable, 3 hbond | 2s
+  [59/108] d2EosFP [2VVH]: 25 editable, 5 hbond | 2s
+  [60/108] GFPxm16 [7LG4]: 25 editable, 1 hbond | 2s
+  [61/108] mEos3.1 [5OOZ]: 25 editable, 4 hbond | 2s
+  [62/108] moxGFP [4J8A]: 23 editable, 2 hbond | 2s
+  [63/108] frSkylan-S [6YLS]: 26 editable, 5 hbond | 3s
+  [64/108] rsEGFP [7A7K]: 24 editable, 3 hbond | 3s
+  [65/108] IrisFP [2VVH]: 25 editable, 5 hbond | 3s
+  [66/108] IrisFP-M159A [4R6B]: 25 editable, 5 hbond | 3s
+  [67/108] 11 [4ANJ]: 20 editable, 1 hbond | 3s
+  [68/108] G3 [6FP7]: 26 editable, 3 hbond | 3s
+  [69/108] eqFP578 [3PJB]: 25 editable, 2 hbond | 3s
+  [70/108] dendFP [7DIG]: 29 editable, 3 hbond | 3s
+  [71/108] DspR1 [1G7K]: 26 editable, 5 hbond | 3s
+  [72/108] DsRed-Express [2VAE]: 26 editable, 5 hbond | 3s
+  [73/108] mScarlet3-H [7ZCT]: 26 editable, 4 hbond | 3s
+  [74/108] G2 [6FP7]: 26 editable, 3 hbond | 3s
+  [75/108] DsRed.T3 [2VAE]: 26 editable, 5 hbond | 4s
+  [76/108] asFP499 [2C9I]: 24 editable, 3 hbond | 4s
+  [77/108] mRuby2 [7QGK]: 26 editable, 4 hbond | 4s
+  [78/108] mRuby [3U0L]: 26 editable, 5 hbond | 4s
+  [79/108] d-RFP618 [3E5W]: 27 editable, 3 hbond | 4s
+  [80/108] rsCherryRev1.4 [8BGL]: 27 editable, 2 hbond | 4s
+  [81/108] mRtms5 [3VIC]: 26 editable, 2 hbond | 4s
+  [82/108] LanFP1 [4DKN]: 20 editable, 1 hbond | 4s
+  [83/108] V127T SAASoti [8PEI]: 29 editable, 5 hbond | 4s
+  [84/108] mKO [2ZMU]: 30 editable, 5 hbond | 4s
+  [85/108] d1EosFP [2VVH]: 25 editable, 5 hbond | 4s
+  [86/108] mGeos-C [5OQ9]: 27 editable, 2 hbond | 4s
+  [87/108] iq-mEmerald [4KW4]: 26 editable, 4 hbond | 4s
+  [88/108] SBFP1 [4NDJ]: 26 editable, 3 hbond | 4s
+  [89/108] mGeos-M [5OQ9]: 27 editable, 2 hbond | 4s
+  [90/108] htFuncLib_sf:mid.12 [4J8A]: 23 editable, 2 hbond | 4s
+  [91/108] usGFP [5MFC]: 26 editable, 2 hbond | 5s
+  [92/108] htFuncLib_sf:mid.9 [5MFC]: 26 editable, 2 hbond | 5s
+  [93/108] PSmOrange [4Q7T]: 32 editable, 3 hbond | 5s
+  [94/108] mOrange2 [2H5O]: 24 editable, 5 hbond | 5s
+  [95/108] htFuncLib_sf:thermo.2 [5MFC]: 26 editable, 2 hbond | 5s
+  [96/108] OFPxm [7LG4]: 25 editable, 1 hbond | 5s
+  [97/108] Monomeric hyperfolder YFP [7UGS]: 24 editable, 2 hbond | 5s
+  [98/108] FusionRed-MQV [6U1A]: 14 editable, 1 hbond | 5s
+  [99/108] asulCP [2A50]: 19 editable, 3 hbond | 5s
+  [100/108] eqFP611 V124T [3E5T]: 24 editable, 5 hbond | 5s
+  [101/108] FusionRed [6U1A]: 14 editable, 1 hbond | 5s
+  [102/108] mTFP0.7 [2OTB]: 26 editable, 3 hbond | 5s
+  [103/108] tdKatushka2 [3PJB]: 25 editable, 2 hbond | 5s
+  [104/108] Katushka [4EDO]: 25 editable, 3 hbond | 5s
+  [105/108] Katushka-9-5 [4EDO]: 25 editable, 3 hbond | 5s
+  [106/108] HcRed [1YZW]: 27 editable, 5 hbond | 5s
+  [107/108] Neptune [3IP2]: 26 editable, 3 hbond | 5s
+  [108/108] mRubyFT [7QGK]: 26 editable, 4 hbond | 5s
+built 82 windows (0 position fallbacks) in 5s
+
+wrote 108/108 scaffold windows -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/design_windows.json
+editable min/med/max = 14/26/34

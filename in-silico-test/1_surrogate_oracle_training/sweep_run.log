@@ -1,0 +1,141 @@
+device: cuda
+
+=== surrogate sweep | emb=esm d_in=1280 | split surrogate_role: train=424 val=91 test=91 | N=758 Lmax=582 ===
+[surr  1/48] cached  mlp-mean-d0            s0 val 19.07 (ex 23.0 em 15.1)  test 27.99  @ep46
+[surr  2/48] cached  cnn-mean-d1            s0 val 16.91 (ex 20.7 em 13.1)  test 24.94  @ep74
+[surr  3/48] cached  cnn-mean-d2            s0 val 18.71 (ex 23.3 em 14.2)  test 25.61  @ep59
+[surr  4/48] cached  cnn-mean-d3            s0 val 17.60 (ex 21.8 em 13.4)  test 24.36  @ep68
+[surr  5/48] cached  cnn-mean-d4            s0 val 17.16 (ex 19.7 em 14.6)  test 24.24  @ep98
+[surr  6/48] cached  transformer-mean-d1    s0 val 19.51 (ex 23.9 em 15.1)  test 32.17  @ep18
+[surr  7/48] cached  transformer-mean-d2    s0 val 15.14 (ex 17.9 em 12.4)  test 22.84  @ep114
+[surr  8/48] cached  transformer-mean-d3    s0 val 19.36 (ex 23.7 em 15.0)  test 32.85  @ep28
+[surr  9/48] trained transformer-mean-d4    s0 val 27.22 (ex 30.8 em 23.7)  test 34.66  @ep3
+[surr 10/48] trained mlp-max-d0             s0 val 20.96 (ex 25.7 em 16.3)  test 29.47  @ep50
+[surr 11/48] trained cnn-max-d1             s0 val 11.69 (ex 13.1 em 10.3)  test 17.62  @ep76
+[surr 12/48] trained cnn-max-d2             s0 val 11.43 (ex 13.0 em  9.9)  test 15.14  @ep91
+[surr 13/48] trained cnn-max-d3             s0 val 13.10 (ex 14.9 em 11.3)  test 17.87  @ep114
+[surr 14/48] trained cnn-max-d4             s0 val 15.70 (ex 20.2 em 11.2)  test 23.96  @ep61
+[surr 15/48] trained transformer-max-d1     s0 val 13.05 (ex 15.2 em 10.9)  test 19.99  @ep42
+[surr 16/48] trained transformer-max-d2     s0 val 13.53 (ex 15.4 em 11.7)  test 20.00  @ep92
+[surr 17/48] trained transformer-max-d3     s0 val 19.39 (ex 23.8 em 15.0)  test 30.37  @ep41
+[surr 18/48] trained transformer-max-d4     s0 val 19.95 (ex 23.8 em 16.1)  test 32.10  @ep20
+[surr 19/48] trained mlp-concat-d0          s0 val 20.44 (ex 25.2 em 15.7)  test 29.85  @ep76
+[surr 20/48] trained cnn-concat-d1          s0 val 11.48 (ex 13.7 em  9.3)  test 18.57  @ep55
+[surr 21/48] trained cnn-concat-d2          s0 val 11.42 (ex 13.3 em  9.6)  test 19.51  @ep88
+[surr 22/48] trained cnn-concat-d3          s0 val 13.69 (ex 16.5 em 10.8)  test 20.58  @ep34
+[surr 23/48] trained cnn-concat-d4          s0 val 12.44 (ex 14.7 em 10.2)  test 21.62  @ep55
+[surr 24/48] trained transformer-concat-d1  s0 val 13.54 (ex 15.5 em 11.6)  test 20.72  @ep46
+[surr 25/48] trained transformer-concat-d2  s0 val 14.02 (ex 16.5 em 11.5)  test 19.72  @ep83
+[surr 26/48] trained transformer-concat-d3  s0 val 20.46 (ex 25.2 em 15.7)  test 30.98  @ep19
+[surr 27/48] trained transformer-concat-d4  s0 val 24.37 (ex 29.0 em 19.7)  test 33.58  @ep16
+[surr 28/48] trained mlp-concatstd-d0       s0 val 22.14 (ex 26.3 em 18.0)  test 32.37  @ep18
+[surr 29/48] trained cnn-concatstd-d1       s0 val 12.54 (ex 14.3 em 10.8)  test 18.73  @ep24
+[surr 30/48] trained cnn-concatstd-d2       s0 val 11.80 (ex 13.7 em  9.9)  test 18.77  @ep67
+[surr 31/48] trained cnn-concatstd-d3       s0 val 12.93 (ex 14.5 em 11.3)  test 21.01  @ep68
+[surr 32/48] trained cnn-concatstd-d4       s0 val 14.77 (ex 16.8 em 12.7)  test 21.01  @ep54
+[surr 33/48] trained transformer-concatstd-d1 s0 val 12.74 (ex 15.1 em 10.4)  test 21.60  @ep42
+[surr 34/48] trained transformer-concatstd-d2 s0 val 19.88 (ex 25.4 em 14.4)  test 32.82  @ep11
+[surr 35/48] trained transformer-concatstd-d3 s0 val 18.73 (ex 22.7 em 14.7)  test 31.71  @ep49
+[surr 36/48] trained transformer-concatstd-d4 s0 val 18.28 (ex 23.2 em 13.3)  test 28.26  @ep50
+[surr 37/48] trained mlp-attn-d0            s0 val 17.10 (ex 20.8 em 13.4)  test 24.45  @ep64
+[surr 38/48] trained cnn-attn-d1            s0 val 12.61 (ex 15.2 em 10.0)  test 20.80  @ep68
+[surr 39/48] trained cnn-attn-d2            s0 val 15.30 (ex 19.1 em 11.5)  test 19.92  @ep122
+[surr 40/48] trained cnn-attn-d3            s0 val 18.31 (ex 21.7 em 14.9)  test 23.80  @ep46
+[surr 41/48] trained cnn-attn-d4            s0 val 15.05 (ex 17.7 em 12.4)  test 24.01  @ep93
+[surr 42/48] trained transformer-attn-d1    s0 val 15.18 (ex 17.9 em 12.5)  test 22.16  @ep23
+[surr 43/48] trained transformer-attn-d2    s0 val 13.90 (ex 16.7 em 11.1)  test 20.28  @ep63
+[surr 44/48] trained transformer-attn-d3    s0 val 20.32 (ex 24.6 em 16.1)  test 33.72  @ep18
+[surr 45/48] trained transformer-attn-d4    s0 val 34.14 (ex 39.0 em 29.3)  test 42.67  @ep5
+[surr 46/48] trained cnn-cov-d1             s0 val 15.86 (ex 18.5 em 13.3)  test 21.82  @ep114
+[surr 47/48] trained cnn-cov-d2             s0 val 17.23 (ex 22.0 em 12.5)  test 24.15  @ep48
+[surr 48/48] trained cnn-cov-d3             s0 val 18.62 (ex 22.7 em 14.5)  test 28.63  @ep27
+
+--- surrogate leaderboard (by mean val MAE, nm) ---
+config                          val_MAE       test_MAE
+cnn-concat-d2             11.42 ± 0.00    19.51 ± 0.00
+cnn-max-d2                11.43 ± 0.00    15.14 ± 0.00
+cnn-concat-d1             11.48 ± 0.00    18.57 ± 0.00
+cnn-max-d1                11.69 ± 0.00    17.62 ± 0.00
+cnn-concatstd-d2          11.80 ± 0.00    18.77 ± 0.00
+cnn-concat-d4             12.44 ± 0.00    21.62 ± 0.00
+cnn-concatstd-d1          12.54 ± 0.00    18.73 ± 0.00
+cnn-attn-d1               12.61 ± 0.00    20.80 ± 0.00
+transformer-concatstd-d1  12.74 ± 0.00    21.60 ± 0.00
+cnn-concatstd-d3          12.93 ± 0.00    21.01 ± 0.00
+transformer-max-d1        13.05 ± 0.00    19.99 ± 0.00
+cnn-max-d3                13.10 ± 0.00    17.87 ± 0.00
+transformer-max-d2        13.53 ± 0.00    20.00 ± 0.00
+transformer-concat-d1     13.54 ± 0.00    20.72 ± 0.00
+cnn-concat-d3             13.69 ± 0.00    20.58 ± 0.00
+best surrogate (esm): cnn-concat-d2  val 11.42 ± 0.00 nm | test 19.51 ± 0.00 nm
+
+=== oracle sweep | emb=prostt5 d_in=1024 | split oracle_role: train=606 val=76 test=76 | N=758 Lmax=582 ===
+[orac  1/48] cached  mlp-mean-d0            s0 val 20.02 (ex 23.9 em 16.1)  test 26.27  @ep13
+[orac  2/48] cached  cnn-mean-d1            s0 val 13.52 (ex 16.4 em 10.7)  test 14.19  @ep102
+[orac  3/48] cached  cnn-mean-d2            s0 val 12.44 (ex 15.4 em  9.5)  test 14.27  @ep97
+[orac  4/48] cached  cnn-mean-d3            s0 val 11.15 (ex 12.8 em  9.5)  test 14.68  @ep73
+[orac  5/48] cached  cnn-mean-d4            s0 val 11.68 (ex 14.0 em  9.4)  test 14.73  @ep72
+[orac  6/48] cached  transformer-mean-d1    s0 val 15.03 (ex 18.1 em 12.0)  test 19.42  @ep105
+[orac  7/48] cached  transformer-mean-d2    s0 val 12.50 (ex 16.0 em  9.0)  test 15.82  @ep28
+[orac  8/48] cached  transformer-mean-d3    s0 val 10.96 (ex 12.2 em  9.7)  test 13.98  @ep79
+[orac  9/48] trained transformer-mean-d4    s0 val 12.41 (ex 15.0 em  9.9)  test 16.78  @ep55
+[orac 10/48] trained mlp-max-d0             s0 val 18.85 (ex 23.0 em 14.7)  test 27.34  @ep74
+[orac 11/48] trained cnn-max-d1             s0 val  8.71 (ex 10.4 em  7.0)  test 12.27  @ep115
+[orac 12/48] trained cnn-max-d2             s0 val  8.90 (ex 10.4 em  7.4)  test 14.89  @ep33
+[orac 13/48] trained cnn-max-d3             s0 val  9.47 (ex 11.9 em  7.0)  test 13.29  @ep39
+[orac 14/48] trained cnn-max-d4             s0 val 10.98 (ex 13.4 em  8.6)  test 16.09  @ep59
+[orac 15/48] trained transformer-max-d1     s0 val  9.73 (ex 13.2 em  6.3)  test 13.02  @ep78
+[orac 16/48] trained transformer-max-d2     s0 val  9.49 (ex 11.5 em  7.5)  test 13.52  @ep76
+[orac 17/48] trained transformer-max-d3     s0 val 11.11 (ex 13.8 em  8.4)  test 13.74  @ep52
+[orac 18/48] trained transformer-max-d4     s0 val 18.23 (ex 22.9 em 13.5)  test 26.36  @ep14
+[orac 19/48] trained mlp-concat-d0          s0 val 17.78 (ex 20.7 em 14.9)  test 24.48  @ep133
+[orac 20/48] trained cnn-concat-d1          s0 val 10.28 (ex 13.1 em  7.4)  test 13.09  @ep38
+[orac 21/48] trained cnn-concat-d2          s0 val  9.41 (ex 11.2 em  7.6)  test 15.16  @ep31
+[orac 22/48] trained cnn-concat-d3          s0 val  9.44 (ex 11.4 em  7.4)  test 12.48  @ep80
+[orac 23/48] trained cnn-concat-d4          s0 val 10.64 (ex 12.0 em  9.3)  test 16.77  @ep90
+[orac 24/48] trained transformer-concat-d1  s0 val  9.39 (ex 11.9 em  6.9)  test 14.02  @ep76
+[orac 25/48] trained transformer-concat-d2  s0 val  9.47 (ex 11.7 em  7.2)  test 14.30  @ep63
+[orac 26/48] trained transformer-concat-d3  s0 val  9.05 (ex 11.3 em  6.8)  test 13.49  @ep85
+[orac 27/48] trained transformer-concat-d4  s0 val 10.64 (ex 13.5 em  7.8)  test 11.49  @ep68
+[orac 28/48] trained mlp-concatstd-d0       s0 val 18.90 (ex 23.5 em 14.3)  test 26.88  @ep58
+[orac 29/48] trained cnn-concatstd-d1       s0 val  9.73 (ex 12.4 em  7.0)  test 12.69  @ep51
+[orac 30/48] trained cnn-concatstd-d2       s0 val  9.26 (ex 11.3 em  7.2)  test 13.75  @ep29
+[orac 31/48] trained cnn-concatstd-d3       s0 val 10.48 (ex 11.8 em  9.1)  test 15.12  @ep39
+[orac 32/48] trained cnn-concatstd-d4       s0 val 11.41 (ex 12.7 em 10.1)  test 18.09  @ep32
+[orac 33/48] trained transformer-concatstd-d1 s0 val  9.31 (ex 11.0 em  7.6)  test 13.55  @ep61
+[orac 34/48] trained transformer-concatstd-d2 s0 val 11.47 (ex 14.2 em  8.7)  test 16.89  @ep38
+[orac 35/48] trained transformer-concatstd-d3 s0 val 11.83 (ex 15.0 em  8.6)  test 15.91  @ep60
+[orac 36/48] trained transformer-concatstd-d4 s0 val 15.07 (ex 18.9 em 11.2)  test 18.81  @ep86
+[orac 37/48] trained mlp-attn-d0            s0 val 12.75 (ex 15.7 em  9.7)  test 16.52  @ep100
+[orac 38/48] trained cnn-attn-d1            s0 val 12.81 (ex 16.3 em  9.3)  test 17.55  @ep40
+[orac 39/48] trained cnn-attn-d2            s0 val 10.80 (ex 12.6 em  9.0)  test 15.02  @ep65
+[orac 40/48] trained cnn-attn-d3            s0 val 13.81 (ex 17.4 em 10.3)  test 16.93  @ep28
+[orac 41/48] trained cnn-attn-d4            s0 val 13.45 (ex 15.7 em 11.2)  test 17.30  @ep38
+[orac 42/48] trained transformer-attn-d1    s0 val 12.49 (ex 15.1 em  9.9)  test 15.29  @ep24
+[orac 43/48] trained transformer-attn-d2    s0 val 11.31 (ex 14.2 em  8.4)  test 13.94  @ep54
+[orac 44/48] trained transformer-attn-d3    s0 val 11.39 (ex 13.4 em  9.4)  test 13.77  @ep59
+[orac 45/48] trained transformer-attn-d4    s0 val 11.75 (ex 12.5 em 11.0)  test 14.13  @ep77
+[orac 46/48] trained cnn-cov-d1             s0 val 11.65 (ex 13.9 em  9.4)  test 13.67  @ep91
+[orac 47/48] trained cnn-cov-d2             s0 val 11.33 (ex 14.3 em  8.4)  test 13.47  @ep149
+[orac 48/48] trained cnn-cov-d3             s0 val 37.35 (ex 35.6 em 39.1)  test 41.23  @ep1
+
+--- oracle leaderboard (by mean val MAE, nm) ---
+config                          val_MAE       test_MAE
+cnn-max-d1                 8.71 ± 0.00    12.27 ± 0.00
+cnn-max-d2                 8.90 ± 0.00    14.89 ± 0.00
+transformer-concat-d3      9.05 ± 0.00    13.49 ± 0.00
+cnn-concatstd-d2           9.26 ± 0.00    13.75 ± 0.00
+transformer-concatstd-d1   9.31 ± 0.00    13.55 ± 0.00
+transformer-concat-d1      9.39 ± 0.00    14.02 ± 0.00
+cnn-concat-d2              9.41 ± 0.00    15.16 ± 0.00
+cnn-concat-d3              9.44 ± 0.00    12.48 ± 0.00
+transformer-concat-d2      9.47 ± 0.00    14.30 ± 0.00
+cnn-max-d3                 9.47 ± 0.00    13.29 ± 0.00
+transformer-max-d2         9.49 ± 0.00    13.52 ± 0.00
+transformer-max-d1         9.73 ± 0.00    13.02 ± 0.00
+cnn-concatstd-d1           9.73 ± 0.00    12.69 ± 0.00
+cnn-concat-d1             10.28 ± 0.00    13.09 ± 0.00
+cnn-concatstd-d3          10.48 ± 0.00    15.12 ± 0.00
+best oracle (prostt5): cnn-max-d1  val 8.71 ± 0.00 nm | test 12.27 ± 0.00 nm
+
+combined results (96 configs across roles) -> ../in-silico-test/trained_models/peak_sweep_results_all.csv

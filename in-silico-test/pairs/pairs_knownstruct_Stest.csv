@@ -1,0 +1,37 @@
+scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity,dist_nm,delta_ex_nm,delta_em_nm,scaffold_pdb
+334,laGFP,9,test,339,laRFP,71,train,0.7763,83.2,19.0,81.0,4HVF
+335,LanFP1,10,test,339,laRFP,71,train,0.5044,84.6,21.0,82.0,4DKN
+482,moxCerulean3,40,test,690,Sumire,71,train,0.9153,109.0,-91.0,-60.0,4EN1
+737,V127T SAASoti,10,test,596,plobRFP,36,train,0.5132,117.4,69.0,95.0,8PEI
+54,avGFP480,24,test,690,Sumire,71,train,0.9404,130.9,-113.0,-66.0,2WSN
+457,mKO,11,test,43,apulFP483,63,train,0.5043,148.9,-128.0,-76.0,2ZMU
+226,GFPxm19,27,test,690,Sumire,71,train,0.7839,158.6,-132.0,-88.0,7LG4
+107,d1EosFP,11,test,152,E2-Crimson,35,train,0.5130,167.7,106.0,130.0,2VVH
+425,mGeos-C,11,test,152,E2-Crimson,35,train,0.5261,167.7,106.0,130.0,5OQ9
+310,iq-mEmerald,27,test,690,Sumire,71,train,0.8983,168.4,-139.0,-95.0,4KW4
+651,SBFP1,66,test,591,phiYFPv,13,train,0.5145,170.3,144.0,91.0,4NDJ
+429,mGeos-M,11,test,152,E2-Crimson,35,train,0.5261,170.6,108.0,132.0,5OQ9
+289,htFuncLib_sf:mid.12,20,test,690,Sumire,71,train,0.9065,172.8,-145.0,-94.0,4J8A
+736,usGFP,18,test,690,Sumire,71,train,0.9534,174.5,-147.0,-94.0,5MFC
+172,eGFP203C,11,test,690,Sumire,71,train,0.9153,181.8,-155.0,-95.0,5N9O
+292,htFuncLib_sf:mid.9,14,test,690,Sumire,71,train,0.9106,182.0,-154.0,-97.0,5MFC
+609,PSmOrange,17,test,362,mBlueberry1,54,train,0.9068,187.8,-150.0,-113.0,4Q7T
+480,mOrange2,16,test,362,mBlueberry1,54,train,0.9195,188.6,-151.0,-113.0,2H5O
+295,htFuncLib_sf:thermo.2,7,test,690,Sumire,71,train,0.9146,194.8,-166.0,-102.0,5MFC
+562,OFPxm,14,test,690,Sumire,71,train,0.8008,198.6,-166.0,-109.0,7LG4
+477,Monomeric hyperfolder YFP,14,test,690,Sumire,71,train,0.8941,206.9,-172.0,-115.0,7UGS
+199,FusionRed-MQV,19,test,362,mBlueberry1,54,train,0.5481,214.3,-168.0,-133.0,6U1A
+50,asulCP,23,test,70,Bluebonnet2,55,train,0.5872,223.2,-173.0,-141.0,2A50
+181,eqFP611 V124T,52,test,70,Bluebonnet2,55,train,0.6853,224.2,-160.0,-157.0,3E5T
+61,AzamiRed1.0,35,test,362,mBlueberry1,54,train,0.5720,231.6,-173.0,-154.0,8I4K
+197,FusionRed,28,test,362,mBlueberry1,54,train,0.5481,239.7,-182.0,-156.0,6U1A
+536,mTFP0.7,35,test,374,mCarmine,72,train,0.5100,239.7,150.0,187.0,2OTB
+721,td-RFP639,42,test,70,Bluebonnet2,55,train,0.6897,259.7,-190.0,-177.0,3E5W
+717,tdKatushka2,45,test,70,Bluebonnet2,55,train,0.8405,260.3,-189.0,-179.0,3PJB
+315,Katushka,47,test,70,Bluebonnet2,55,train,0.8333,261.7,-189.0,-181.0,4EDO
+317,Katushka-9-5,47,test,70,Bluebonnet2,55,train,0.8263,261.7,-189.0,-181.0,4EDO
+232,HcRed,53,test,70,Bluebonnet2,55,train,0.5897,271.5,-193.0,-191.0,1YZW
+538,mTFP1-Y67W,37,test,374,mCarmine,72,train,0.5020,279.0,179.0,214.0,6FP7
+554,Neptune,50,test,362,mBlueberry1,54,train,0.5403,282.9,-202.0,-198.0,3IP2
+513,mRubyFT,49,test,374,mCarmine,72,train,0.6967,292.5,195.0,218.0,7QGK
+677,shCP-E63L/Y64H,48,test,374,mCarmine,72,train,0.5492,300.3,200.0,224.0,6JC5

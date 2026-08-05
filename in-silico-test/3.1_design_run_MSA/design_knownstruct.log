@@ -1,0 +1,36 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+device cuda | fp16 True
+108 tasks across 3 cohort(s): knownstruct_Strain=36, knownstruct_Sval=36, knownstruct_Stest=36
+surrogate (surrogate_final) test MAE 17.6 nm (n_train=515) | oracle val MAE 8.7 nm
+[dLanYFP-laRFP] cached -> skip
+[laRFP-LanFP1] cached -> skip
+[SAASoti-eforCP] cached -> skip
+[CGFP-Sumire] cached -> skip
+[mLumin-mBlueberry1] cached -> skip
+[mRouge-mBlueberry1] cached -> skip
+[mTagBFP2-mCarmine] cached -> skip
+[LanYFP-laRFP] cached -> skip
+[ZsYellow1-AdRed] cached -> skip
+[ZsGreen-AdRed] cached -> skip
+[KCY-R1-38L-AzamiRed1.0] cached -> skip
+[GFPmut2-Sumire] cached -> skip
+[cpCitrine-Sumire] cached -> skip
+[mScarlet3-mBlueberry1] cached -> skip
+[Diogenes-mBlueberry1] cached -> skip
+[eqFP650-mBlueberry1] cached -> skip
+[eqFP670-Bluebonnet2] cached -> skip
+[laGFP-laRFP] cached -> skip
+[moxCerulean3-Sumire] cached -> skip
+[avGFP480-Sumire] cached -> skip
+[GFPxm19-Sumire] cached -> skip
+[eGFP203C-Sumire] cached -> skip
+[AzamiRed1.0-mBlueberry1] cached -> skip
+[td-RFP639-Bluebonnet2] cached -> skip
+[mTFP1-Y67W-mCarmine] cached -> skip
+[shCP-E63L/Y64H-mCarmine] cached -> skip
+running 82 tasks | 2 iters x (chromo -> pocket) | k=10 T=1.0 lam_ex=1.0 lam_em=1.0 | editable min/med/max = 14/26/32 (Tier-B) | proposal = family MSA PSSM (ESM-2 masked-LM not called for selection)
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 30443.28it/s]
+  round 0 (scaffold): mean oracle err 134.7 nm | 5s
+  it1 [chromo+pocket]: mean oracle err 98.2 nm | mean id 0.92 | 161s
+  it2 [chromo+pocket]: mean oracle err 96.8 nm | mean id 0.92 | 319s
+wrote 82 design CSVs | total 319s

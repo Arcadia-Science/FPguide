@@ -1,0 +1,27 @@
+CV pool (train+val) = 515 | fixed held-out test = 91
+[cnn-concat-d2     ] fold 0 n_tr=343 n_va=172 @ep60 fold-va 14.43 nm | fixed-test 16.93 nm
+[cnn-concat-d2     ] fold 1 n_tr=343 n_va=172 @ep80 fold-va 15.92 nm | fixed-test 18.80 nm
+[cnn-concat-d2     ] fold 2 n_tr=344 n_va=171 @ep88 fold-va 16.60 nm | fixed-test 21.82 nm
+  cnn-concat-d2      CV fold-va 15.65 +/- 0.91 nm | fixed-test 19.18 +/- 2.02 nm
+
+[cnn-max-d2        ] fold 0 n_tr=343 n_va=172 @ep59 fold-va 14.79 nm | fixed-test 17.87 nm
+[cnn-max-d2        ] fold 1 n_tr=343 n_va=172 @ep83 fold-va 16.13 nm | fixed-test 18.03 nm
+[cnn-max-d2        ] fold 2 n_tr=344 n_va=171 @ep110 fold-va 16.32 nm | fixed-test 21.27 nm
+  cnn-max-d2         CV fold-va 15.75 +/- 0.68 nm | fixed-test 19.06 +/- 1.57 nm
+
+[cnn-concat-d1     ] fold 0 n_tr=343 n_va=172 @ep109 fold-va 14.59 nm | fixed-test 18.01 nm
+[cnn-concat-d1     ] fold 1 n_tr=343 n_va=172 @ep86 fold-va 16.15 nm | fixed-test 18.50 nm
+[cnn-concat-d1     ] fold 2 n_tr=344 n_va=171 @ep93 fold-va 17.53 nm | fixed-test 22.51 nm
+  cnn-concat-d1      CV fold-va 16.09 +/- 1.20 nm | fixed-test 19.68 +/- 2.02 nm
+
+[cnn-max-d1        ] fold 0 n_tr=343 n_va=172 @ep56 fold-va 13.99 nm | fixed-test 16.81 nm
+[cnn-max-d1        ] fold 1 n_tr=343 n_va=172 @ep69 fold-va 15.33 nm | fixed-test 18.36 nm
+[cnn-max-d1        ] fold 2 n_tr=344 n_va=171 @ep88 fold-va 16.72 nm | fixed-test 21.12 nm
+  cnn-max-d1         CV fold-va 15.34 +/- 1.12 nm | fixed-test 18.77 +/- 1.78 nm
+
+[cnn-concatstd-d2  ] fold 0 n_tr=343 n_va=172 @ep59 fold-va 14.35 nm | fixed-test 16.25 nm
+[cnn-concatstd-d2  ] fold 1 n_tr=343 n_va=172 @ep123 fold-va 16.11 nm | fixed-test 18.62 nm
+[cnn-concatstd-d2  ] fold 2 n_tr=344 n_va=171 @ep73 fold-va 17.04 nm | fixed-test 22.05 nm
+  cnn-concatstd-d2   CV fold-va 15.83 +/- 1.12 nm | fixed-test 18.97 +/- 2.38 nm
+
+wrote /home/ubuntu/spectrum-to-fp-design/in-silico-test/trained_models/surrogate_cv3.csv

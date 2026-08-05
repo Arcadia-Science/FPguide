@@ -1,0 +1,12 @@
+epoch budget (mean CV epoch_best across 3 folds) = 71
+train+val pool = 515 | held-out test (untouched) = 91
+  epoch 10/71: held-out test MAE 23.36 nm
+  epoch 20/71: held-out test MAE 19.01 nm
+  epoch 30/71: held-out test MAE 19.20 nm
+  epoch 40/71: held-out test MAE 17.21 nm
+  epoch 50/71: held-out test MAE 17.51 nm
+  epoch 60/71: held-out test MAE 16.63 nm
+  epoch 70/71: held-out test MAE 16.52 nm
+  epoch 71/71: held-out test MAE 17.55 nm
+FINAL held-out test MAE 17.55 nm (ex 21.84 / em 13.27)
+wrote /home/ubuntu/spectrum-to-fp-design/in-silico-test/trained_models/surrogate_final/cnn-max-d1_trainval.pt
