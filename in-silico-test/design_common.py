@@ -8,6 +8,15 @@ pipeline stage imports it. Stages are separate folders, run in order:
   2_design_task_specification/   validate + curate + build -> pairs/, design_windows.json
   3.1_design_run_MSA/            design_knownstruct.py     -> peak_designs/  (family-PSSM arm)
   3.2_design_run_ESM2/           design_knownstruct_esm2.py-> peak_designs/  (ESM-2 proposal arm)
+  3.3_design_run_gibbs/          design_knownstruct_gibbs.py -> peak_designs/  (unguided null)
+
+Stages 4 / 5.1 / 5.2 repeat the task specification and the two ESM-2 arms on a SECOND task set,
+identical in every rule except that each scaffold is paired with a random qualifying target rather
+than its most spectrally distant one, over two merged cohorts (S-pool = train+val, S-test):
+
+  4_design_task2/                curate_pairs_task2.py     -> pairs_task2/
+  5.1_design_run_ESM2/           run_task2_esm2.py         -> peak_designs/  (task 2, guided)
+  5.2_design_run_gibbs/          run_task2_gibbs.py        -> peak_designs/  (task 2, null)
 
 Stage scripts sit one level down, so each begins with a small bootstrap putting this root plus
 ``lib/`` and ``msa/`` on ``sys.path``. Artifacts and shared inputs stay at the root, since they
@@ -83,6 +92,7 @@ HITS_CSV = HERE / "structure_hits.csv"                # structure-known scaffold
 MSA_DIR = HERE / "msa"                                # conservation.py + data/fp_all.aln.fasta
 WINDOWS_JSON = HERE / "design_windows.json"           # OURS: build_windows.py (built from scratch)
 PAIRS_DIR = HERE / "pairs"                            # OURS: curate_pairs.py (our split, distance-spread)
+PAIRS_DIR_T2 = HERE / "pairs_task2"                   # OURS: 4_design_task2 (random target per scaffold)
 
 PIPE_OUT = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate"
 # same tasks + same Tier-B windows, ESM-2 masked-LM proposal instead of the family PSSM
@@ -95,6 +105,21 @@ PIPE_OUT_ESM2 = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate_
 # the first pass stays reproducible and comparable; `--outdir` overrides either.
 PIPE_OUT_R3 = HERE / "peak_designs" / "structure" / "knownstruct_msa_rand3"
 PIPE_OUT_ESM2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_esm2_rand3"
+
+# UNGUIDED CONTROL (3.3): the ESM-2 arm with lam_ex = lam_em = 0, i.e. Gibbs sampling from the
+# masked-LM inside the same Tier-B window, with the surrogate removed from the loop entirely.
+# It answers "how much of 3.1/3.2's movement is the guidance, and how much is resampling the
+# pocket at all?". Run on S-train + S-test only (36 + 36), 12 trials, so the null distribution
+# of a task's outcome is estimated well enough to compare against a 3-trial guided run.
+PIPE_OUT_GIBBS_R12 = HERE / "peak_designs" / "structure" / "knownstruct_gibbs_r12"
+
+# TASK SET 2 (stages 4 / 5.1 / 5.2): the same eligibility rules, but each scaffold paired with a
+# RANDOM qualifying target instead of its furthest one, over two merged cohorts (S-pool, S-test).
+# Same scripts, same models, same windows -- only the pair manifests differ, so these arms are
+# read against 3.2 / 3.3 directly.
+PIPE_OUT_ESM2_T2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_task2_esm2_rand3"
+PIPE_OUT_GIBBS_T2_R12 = HERE / "peak_designs" / "structure" / "knownstruct_task2_gibbs_r12"
+
 SURR_CKPT = HERE / "trained_models" / "surrogate_final" / "cnn-max-d1_trainval.pt"  # final refit
 ORAC_CKPT = HERE / "trained_models" / "oracle_sweep" / "cnn-max-d1_s0.pt"           # oracle winner
 
@@ -107,10 +132,15 @@ DEFAULT_COHORTS = ["knownstruct_Strain", "knownstruct_Sval", "knownstruct_Stest"
 #   seen      -- scaffold is inside the refit surrogate's train+val pool   (S-train + S-val, 72)
 #   held-out  -- scaffold the surrogate has never been trained on          (S-test, 36)
 COHORT_CONDITION = {"knownstruct_Strain": "seen", "knownstruct_Sval": "seen",
-                    "knownstruct_Stest": "held-out"}
+                    "knownstruct_Stest": "held-out",
+                    # task set 2 pools train+val into ONE cohort up front, so its manifests are
+                    # the conditions themselves rather than a grouping over three role files
+                    "knownstruct_Spool": "seen"}
 CONDITIONS = ["seen", "held-out"]
 CONDITION_COHORTS = {c: [k for k in DEFAULT_COHORTS if COHORT_CONDITION[k] == c] for c in CONDITIONS}
 CONDITION_LABEL = {"seen": "S-pool", "held-out": "S-test"}   # display names for figures/tables
+
+TASK2_COHORTS = ["knownstruct_Spool", "knownstruct_Stest"]   # 36 + 36, see 4_design_task2/
 
 
 def load_dataset(cur=CUR):
@@ -144,12 +174,14 @@ def load_hits():
     return {int(r["idx"]): r["pdb_id"] for r in csv.DictReader(open(HITS_CSV)) if r["pdb_id"]}
 
 
-def pairs_csv_path(cohort):
-    return os.path.join(str(PAIRS_DIR), f"pairs_{cohort}.csv")
+def pairs_csv_path(cohort, pairs_dir=PAIRS_DIR):
+    """Manifest path for a cohort. `pairs_dir` selects the task set: PAIRS_DIR (task 1, furthest
+    target) or PAIRS_DIR_T2 (task 2, random target)."""
+    return os.path.join(str(pairs_dir), f"pairs_{cohort}.csv")
 
 
-def read_pairs(cohort):
-    fn = pairs_csv_path(cohort)
+def read_pairs(cohort, pairs_dir=PAIRS_DIR):
+    fn = pairs_csv_path(cohort, pairs_dir)
     if not os.path.exists(fn):
         raise FileNotFoundError(
             f"missing pair manifest for cohort {cohort!r}: {fn}\n"

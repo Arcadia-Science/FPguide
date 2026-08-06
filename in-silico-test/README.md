@@ -31,10 +31,16 @@ design_common.py               every path + the dataset/split/hits loaders — S
                                build_windows                         -> pairs/, design_windows.json
 3.1_design_run_MSA/            design_knownstruct.py                 -> peak_designs/  (MSA arm)
 3.2_design_run_ESM2/           design_knownstruct_esm2.py            -> peak_designs/  (ESM-2 arm)
+3.3_design_run_gibbs/          design_knownstruct_gibbs.py           -> peak_designs/  (unguided null)
+                               compare_arms.py                       -> the three-arm table
+4_design_task2/                curate_pairs_task2.py                 -> pairs_task2/   (random target)
+5.1_design_run_ESM2/           run_task2_esm2.py                     -> peak_designs/  (task 2, guided)
+5.2_design_run_gibbs/          run_task2_gibbs.py                    -> peak_designs/  (task 2, null)
+                               compare_task_sets.py                  -> task 1 vs task 2
 lib/                           vendored modules — copies, don't edit here
 msa/                           vendored MSA code + the family alignment (self-contained unit)
 data/  structures/             inputs and the RCSB cache
-sweep_results.ipynb  visualize_knownstruct.ipynb  visualization.ipynb
+sweep_results.ipynb  visualize_knownstruct.ipynb  visualization.ipynb  visualization_task2.ipynb
 ```
 
 Stage scripts live one level down, so each starts with a short bootstrap putting the root, `lib/`
@@ -72,17 +78,33 @@ Run in order. Each step's output is committed to disk, and every long step is re
 ```bash
 S0=0_data_split; S1=1_surrogate_oracle_training
 S2=2_design_task_specification; S3=3.1_design_run_MSA; S4=3.2_design_run_ESM2
+S5=3.3_design_run_gibbs; S6=4_design_task2; S7=5.1_design_run_ESM2; S8=5.2_design_run_gibbs
 
 python $S0/make_dual_split.py                     # -> data/dual_splits.csv
 python $S1/sweep_peak_oracle.py --role both --seeds 0   # 48 configs x 2 roles -> trained_models/
 python $S1/cv_all_surrogate.py                    # 3-fold CV, all 48 surrogate configs
 python $S1/train_final_surrogate.py               # refit the CV winner on train+val
 
+# task set 1 -- each scaffold paired with its most spectrally distant qualifying target
 python $S2/validate_structures.py                 # -> structure_validation.json  (~12 min, one-time)
 python $S2/curate_pairs.py --n 36                 # -> pairs/*.csv  (--from-cache skips the ~9min scan)
 python $S2/build_windows.py                       # -> design_windows.json
 python $S3/design_knownstruct.py                  # -> peak_designs/...  (108 tasks x 3 trials)
 python $S4/design_knownstruct_esm2.py --no-ppl    # same tasks, ESM-2 proposal
+python $S5/design_knownstruct_gibbs.py --no-ppl   # unguided null: 3.2 with lam_ex = lam_em = 0
+
+# task set 2 -- same rules, but a RANDOM qualifying target (36 S-pool + 36 S-test)
+python $S6/curate_pairs_task2.py                  # -> pairs_task2/*.csv  (~10 min scan, then cached)
+python $S2/build_windows.py --pairs-dir pairs_task2 \
+       --cohorts knownstruct_Spool knownstruct_Stest   # adds its scaffolds to design_windows.json
+python $S7/run_task2_esm2.py                      # 5.1 guided  (72 x 3,  ~16 min)
+python $S8/run_task2_gibbs.py                     # 5.2 null    (72 x 12, ~7 min)
+
+for a in msa_rand3 esm2_rand3 gibbs_r12 esm2_t2_rand3 gibbs_t2_r12; do
+    python score_traj_surrogate.py --arm $a
+done
+python $S5/compare_arms.py --by-cohort            # three arms, on the 72 tasks they share
+python $S8/compare_task_sets.py --by-condition    # task 1 vs task 2, each against its own null
 ```
 
 Then `sweep_results.ipynb` (sweep + CV figures) and `visualize_knownstruct.ipynb` (per-task design
@@ -269,6 +291,10 @@ Oracle-scored. Two reporting rules matter here and both are about *not* consulti
 Across all **108 tasks**: **103/108 improved** over their scaffold, mean error **133.2 → 87.2 nm**.
 Runtime ~21 min on one GPU for 324 searches.
 
+Read the 133.2 → 87.2 against the [unguided null](#unguided-control-33_design_run_gibbs-what-the-guidance-actually-buys),
+not against zero: resampling the pocket with the surrogate switched off already reaches 105.8 nm, so
+~65% of that gain is not the guidance.
+
 | condition | n | scaffold | design (surrogate-selected) | improved | every trial improved |
 |---|---|---|---|---|---|
 | `S-pool` (S-train + S-val) | 72 | 130.7 | 85.6 | 68/72 | 60/72 |
@@ -392,6 +418,191 @@ Outputs land in `knownstruct_msa_rand3/` (`C.PIPE_OUT_R3`) and `knownstruct_esm2
 (`C.PIPE_OUT_ESM2_R3`). The single-trial, fixed-order first pass of each arm is left in place in
 `knownstruct_cv_surrogate/` and `knownstruct_cv_surrogate_esm2/` for comparison.
 
+### Unguided control (`3.3_design_run_gibbs/`): what the guidance actually buys
+
+Every number above is an improvement **over the scaffold**, and a scaffold is not a null: resampling
+26 pocket positions moves ex/em whether or not anything is steering. This arm supplies the missing
+null. It is `3.2` with **λ_ex = λ_em = 0**, which collapses the score to
+
+```
+3.1 / 3.2    score = z(logp_proposal) − 1.0·z(|ex_err|) − 1.0·z(|em_err|)
+3.3          score = z(logp_esm)
+```
+
+so the target spectrum never enters the search: each editable position is resampled from ESM-2's
+conditional given the design's current sequence — a Gibbs sweep over the pocket under the same
+Tier-B structural constraints — and the oracle just watches where it wanders. Same windows, same
+proposal, same k = 10 / T = 1.0 / 2 cycles, same per-trial random visit order, same seeding.
+
+**Cohorts and trials: S-train (36) + S-test (36), 12 trials = 864 searches.** S-val is dropped —
+it is the same reporting condition as S-train (`seen`), so 36 seen / 36 held-out is balanced and
+costs a third less. 12 trials rather than 3 because this arm's output *is* a distribution. **All
+comparisons below are therefore recomputed on these same 72 tasks**, not read off the 108-task
+means above.
+
+| | scaffold | mean of trials | surrogate-selected | oracle-best (unobtainable) | improved | identity | fam_logp |
+|---|---|---|---|---|---|---|---|
+| 3.1 MSA PSSM (3 trials) | 132.9 | 92.7 | **86.9** | 79.0 | 69/72 | 0.921 | −51.4 |
+| 3.2 ESM-2 guided (3 trials) | 132.9 | **91.4** | 88.0 | 80.4 | 65/72 | 0.904 | −95.2 |
+| 3.3 Gibbs unguided (12 trials) | 132.9 | 105.8 | 101.2 | 84.9 | 59/72 | 0.902 | −100.9 |
+| 3.3 Gibbs unguided (first 3) | 132.9 | 105.7 | 101.3 | 93.5 | 55/72 | 0.902 | −100.4 |
+
+(`3.3_design_run_gibbs/compare_arms.py --by-cohort` regenerates this and the per-cohort breakdown;
+`compare_arms.log` is the run it was written from. "mean of trials" is the primary axis because it
+is the only one here that does not depend on how many trials an arm drew; "first 3" matches the
+null's trial count to the guided arms for the two statistics that do.)
+
+**The guidance is the one manipulation in this comparison that clearly does something.** Guided beats
+unguided by **13.0 nm (MSA) / 14.4 nm (ESM-2)** on the mean-of-trials axis, Wilcoxon *p* = 1e−5 and
+1.7e−8, and the gap survives on the surrogate-selected axis (+14.3 / +13.2 nm, *p* < 5e−4) and in both
+conditions separately. Set that against the arm swap measured the same way on the same 72 tasks —
+ESM-2 1.3 nm better on mean-of-trials (*p* = 0.60), MSA 1.1 nm better on the surrogate-selected design
+(*p* = 0.61). Changing where the proposal comes from is not measurable at this sample size; switching
+the surrogate off is, by roughly an order of magnitude in effect size.
+
+**But two thirds of the headline gain is not the guidance.** Unguided sampling alone takes 132.9 →
+105.8 nm, closing **20% of the scaffold error** where the guided arms close 30–31%. So of the 41.5 nm
+`S-pool`+`S-test` gain the Design results section reports, **27.1 nm (65%) is reproduced by a search that
+never sees the target** — mutating the pocket at all pulls a design toward the dataset's centre of
+mass, and most tasks start far from it. The right statement of what the surrogate contributes is
+"13–14 nm beyond pocket resampling", not "46 nm below the scaffold".
+
+**Trial variance is intrinsic to the sampler, not created by the guidance.** Matched at 3 trials the
+within-task spread is 23.1 nm unguided vs 22.4 (ESM-2) and 27.6 (MSA) guided — indistinguishable.
+The 24–28 nm spread flagged above as "the largest effect in this experiment" is therefore a
+property of sampling k = 10 candidates at T = 1.0, and would be there with the surrogate switched off.
+(The unguided arm's 40.2 nm spread at 12 trials is just max−min over 4× as many draws.)
+
+**The same holds for the two things separating the arms in the ESM-2 comparison above.** Unguided ESM-2
+already sits at 0.902 identity and −100.9 fam_logp, essentially where guided ESM-2 lands (0.904,
+−95.2) and far from MSA (0.921, −51.4). ESM-2's less conservative editing and worse family
+log-likelihood are properties of the ESM-2 proposal itself, not consequences of steering it.
+
+**One uncomfortable number.** Oracle-picking the best of the null's 12 trials gives 84.9 nm — better
+than either guided arm's surrogate-selected design (86.9 / 88.0). That is not a usable result (it
+peeks at the held-out judge, and needs 4× the searches), but it prices the selection rule: with a
+17.55 nm surrogate against a 24 nm trial spread, *choosing* among unguided samples with a perfect
+judge is worth about as much as *steering* with an imperfect one. The null's own surrogate-selection
+recovers only 4.6 of its 20.9 nm oracle-best gap.
+
+Runtime **7 min** for 864 searches, vs 25 min for 3.2's 324: with both λ at 0 the k = 10 candidates'
+surrogate predictions are multiplied by zero, so the arm skips the surrogate forward pass entirely
+(10 sequences per position per search — the bulk of 3.2's cost). It is an exact short-circuit, not an
+approximation; `--lam-ex 1 --lam-em 1` restores the guided path and reproduces 3.2 byte-for-byte
+(verified). Outputs land in `knownstruct_gibbs_r12/` (`C.PIPE_OUT_GIBBS_R12`); the surrogate can
+still be applied post-hoc with `python score_traj_surrogate.py --arm gibbs_r12`.
+
+**Is it exactly Gibbs?** No, deliberately: the step keeps 3.2's machinery so the arms differ in one
+place only. Candidates are the top k = 10 of the allowed alphabet rather than all of it, and their
+log-probs are z-scored before the softmax exactly as 3.2 z-scores them against the error terms —
+both rescale the conditional. `--proposal raw` drops the z-scoring and samples the truncated
+conditional itself; `zscore` is the default because that is what makes the difference between this
+arm and 3.2 attributable to the guidance alone.
+
+### Task set 2 (`4_design_task2/` → `5.1`, `5.2`): the same algorithm on an *ordinary* target
+
+Everything above is measured on tasks built by pairing each scaffold with the **most spectrally
+distant** of its ~85 qualifying targets. That is the hardest legitimate task per scaffold, and it is
+not a typical one — the argmax rule collapses onto a handful of extreme proteins, so task 1's 108
+tasks use only **17 distinct targets** at a median distance of 190 nm. Nothing so far says the
+algorithm behaves the same way on a target someone would actually ask for.
+
+Task set 2 changes exactly one thing: the target is drawn **uniformly at random** from the identical
+qualifying set — same identity floor/cap, same ≥40 nm distance floor, same length tolerance, same
+oracle-train target pool, same structure-validated scaffolds. The result is 72 tasks over **60
+distinct targets** at a median distance of **79 nm**, with the chosen target sitting at rank ~30 of
+~85 by distance instead of rank 1. Cohorts are merged up front into the two that the analysis
+already used — `knownstruct_Spool` (36, S-train + S-val, inside the refit surrogate's training pool)
+and `knownstruct_Stest` (36, never trained on) — since task 1 only kept three files to balance a
+per-role distance spread.
+
+The guided and unguided arms are the *same scripts* (`5.1`/`5.2` are runners that call
+`3.2`/`3.3` with the task-2 manifests and a separate output root), so nothing but the pairs differs.
+
+| task set | n | start | guided (mean of trials) | unguided null | guidance | error closed: guided / null |
+|---|---|---|---|---|---|---|
+| 1 — furthest target | 72\* | 132.9 | 91.4 | 105.8 | **+14.4 nm** (*p* = 2e−8) | 0.27 / 0.16 |
+| 2 — random target | 72 | 70.2 | **43.9** | 53.4 | **+9.6 nm** (*p* = 5e−10) | 0.31 / 0.14 |
+
+\*task 1's row is 3.2/3.3 on the 72 tasks they share, not the 108-task means published above.
+"Error closed" is the per-task share of the scaffold's own initial error — the axis that survives
+two task sets starting at different distances. `5.2_design_run_gibbs/compare_task_sets.py` regenerates
+this; `compare_task_sets.log` is the run it was written from.
+
+**The guidance survives the change, and on the fraction axis it reads slightly stronger.** Guided
+beats its own null on **62/72** random-target tasks (*p* = 5e−10), and closes 0.31 of the scaffold
+error where the null closes 0.14 — so the null reproduces **45%** of what guidance achieves here
+versus **59%** on task 1. In absolute nm the picture is less flattering and essentially unchanged
+(26.3 nm of guided movement, 16.8 of it unguided, i.e. 64% free vs task 1's 65%): the two axes
+disagree because averaging nm weights the few far tasks, while the fraction weights every task
+equally. Either way, "13–14 nm beyond pocket resampling" from the task-1 section becomes **~10 nm**
+here, on tasks that are half as far away to begin with.
+
+**Half of task set 2 starts inside the models' noise, and that half barely moves.** 36 of the 72
+tasks begin within 50 nm of their target (oracle-scored), which is under 3× the surrogate's 17.55 nm
+test MAE, and the design closes only a quarter of it:
+
+| scaffold→target distance | n | start | design (sel.) | mean gain | frac. of error closed |
+|---|---|---|---|---|---|
+| ≤50 nm | 36 | 39.2 | 29.1 | −10.1 | 0.25 |
+| 50–75 | 12 | 58.7 | 40.7 | −18.0 | 0.30 |
+| 75–100 | 9 | 87.1 | 41.6 | −45.6 | 0.51 |
+| 100–150 | 10 | 123.0 | 57.0 | −66.0 | 0.55 |
+| >150 | 5 | 184.7 | 96.1 | −88.6 | 0.48 |
+
+**Above 100 nm, an ordinary target is *easier* than an extreme one at the same distance.** Task 2
+closes 0.55 / 0.48 in the 100–150 and >150 nm bands where task 1 closes 0.36 / 0.34 at the same
+distances. Task 1's targets are the extreme tail of the dataset's spectral range, and getting to
+them may simply not be reachable from a pocket edit; a randomly drawn target 120 nm away is an
+ordinary protein, and the search gets over half of the way there. The caveat is sample size — 15
+tasks across those two bands, against a 23 nm trial spread.
+
+**16 of 72 tasks end worse than their scaffold** (task 1: 7 of 72). That is the same effect from the
+other side: when a task starts 40 nm out, a search whose scorer has a 17.55 nm MAE is as likely to
+walk away as toward, and the ≥40 nm curation floor no longer keeps every task clear of the noise.
+Under a random-target regime the floor probably has to rise with the surrogate's error, not sit at a
+fixed 40 nm.
+
+**Unguided sampling stops working on the held-out cohort, and that is about the tasks, not the
+surrogate.** Per condition:
+
+| task 2 | n | start | guided | null | guidance | closed: guided / null |
+|---|---|---|---|---|---|---|
+| `S-pool` | 36 | 72.9 | 38.4 | 47.0 | +8.5 nm (*p* = 3e−5) | 0.45 / 0.33 |
+| `S-test` | 36 | 67.4 | 49.3 | 59.9 | +10.6 nm (*p* = 5e−8) | 0.17 / **−0.06** |
+
+The null *increases* mean error on the held-out cohort — with targets this close, resampling the
+pocket drifts a design away from its target as readily as toward it, which is exactly the failure
+mode task 1's 100–300 nm distances hid. But note that the **guidance gap is the same in both
+conditions** (+8.5 vs +10.6 nm), and the cohort difference is just as large in the arm that has no
+surrogate at all (0.33 vs −0.06). So this is a difference between the two cohorts' *tasks*, not
+evidence that the surrogate does better on scaffolds it was trained on — the same conclusion task 1
+reached, arrived at from the null instead of from the conditions.
+
+Runtime: 16 min for 5.1 (216 searches), 7 min for 5.2 (864). Outputs land in
+`knownstruct_task2_esm2_rand3/` and `knownstruct_task2_gibbs_r12/`, and
+`visualization_task2.ipynb` asks the same two design questions `visualization.ipynb` asks of task
+set 1 — the per-cycle distance distributions with paired tests, and how far every design landed from
+its target. Its second figure is built differently from Section 9's: rather than plotting the peaks
+themselves, it draws the absolute offset from the target for the three deployable methods (the
+surrogate's top pick, its top-3 mean, the unguided control) as one block per method, each ranked
+from its best pair to its worst, so the three distributions are compared as shapes. That is what
+shows guidance to be worth 11.6 nm a pair overall but only 5.2 nm on the hardest third.
+
+It also adds a third figure with no counterpart in `visualization.ipynb`, and this one changes how
+the other two should be read. **The unguided control does not improve on its scaffold by moving
+toward the target — it collapses onto the middle of the FP distribution** (spread 23/25 nm about its
+mean against the scaffolds' 58/59; 37.3 nm from the pool centre against 70.4), which is a better
+guess than a peripheral scaffold for a target drawn at random. Scored against a predictor that
+ignores the scaffold, the target and the sequence and always outputs the average FP (58.2 nm), the
+control manages 53.4 nm and wins on only 40 of 72 tasks, tracking that predictor at *r* = +0.69; the
+guided arm manages 43.9 and wins on 48. The control's apparent gain over the scaffold is therefore
+not a property of the search but the gap between two things fixed before any design ran — how far
+the scaffold started and how peripheral the target is (*r* = +0.83 with that difference). That is
+also what the S-pool/S-test asymmetry was: from one cohort to the other the average-FP error rises
+12.1 nm and the control's rises 12.9, while the scaffolds start 5.5 nm *closer*. **Read design runs
+in this folder against the average-FP predictor, not against the unedited scaffold.**
+
 ## Files
 
 **Pipeline** — one folder per stage, see [Layout](#layout).
@@ -402,10 +613,17 @@ Start here when tracing what reads what.
 **Artifacts** — `data/dual_splits.csv` · `trained_models/{surrogate,oracle}_sweep/` ·
 `trained_models/surrogate_cv3.csv` (all 48 configs × 3 folds) ·
 `trained_models/surrogate_final/cnn-max-d1_trainval.pt` · `structure_validation.json` ·
-`pairs/` (+ `_full_pool_cache.json`, the full pre-filter pool with the criteria that built it) ·
-`design_windows.json` · `peak_designs/structure/knownstruct_cv_surrogate/`
+`pairs/` (task 1, + `_full_pool_cache.json`, one row per scaffold: its argmax target) ·
+`pairs_task2/` (task 2, + `_candidate_pool_cache.json`, **every** qualifying pair — 27,866 of them —
+which is what makes a random re-draw possible) ·
+`design_windows.json` (a union over both task sets: 137 scaffolds) ·
+`peak_designs/structure/` (seven design runs: `knownstruct_cv_surrogate{,_esm2}` first passes,
+`knownstruct_{msa,esm2}_rand3` 3-trial reruns, `knownstruct_gibbs_r12` unguided null, and task 2's
+`knownstruct_task2_{esm2_rand3,gibbs_r12}` — each with a `surrogate_traj.csv` post-hoc cache)
 
 **Notebooks** — `sweep_results.ipynb` · `visualize_knownstruct.ipynb` · `visualization.ipynb`
+(Sections 8-9 are task set 1's design figures) · `visualization_task2.ipynb` (the same two questions
+on task set 2; Sections 1-7 of `visualization.ipynb` are task-independent and are not repeated there)
 
 ## Notes and gotchas
 
@@ -416,6 +634,22 @@ Start here when tracing what reads what.
 - **`design_knownstruct.py` is resumable per task**, skipping any task whose output CSV exists.
   Changing `--iters` therefore requires clearing the affected CSVs under `peak_designs/` first, or
   the old runs are silently kept.
+- **`3.3`'s cohorts are a strict subset of `3.1`/`3.2`'s** (72 of 108 — no S-val). Any three-arm
+  table has to be recomputed on the shared 72 tasks; the 108-task means published for 3.1/3.2 are
+  not comparable to it directly. On the 72, 3.1/3.2 come out at 92.7/91.4 nm mean-of-trials rather
+  than the 94.0/92.8 they report over 108.
+- **The two task sets are not paired and must not be pooled.** They share only 43 of 72 scaffolds
+  and 3 of 72 pairs, and they start at very different distances (132.9 vs 70.2 nm), so any
+  task-1-vs-task-2 statement belongs on the fraction-of-error-closed axis or on each arm's gap to
+  its own null. `compare_task_sets.py` prints the cross-set rows without a significance test for
+  this reason.
+- **`design_windows.json` is a union over task sets, not a snapshot of one.** A window is a
+  property of the scaffold, so `build_windows.py --pairs-dir pairs_task2 …` adds task 2's 29 new
+  scaffolds and leaves task 1's 108 in place. Consequently the file's `n_scaffolds` (137) is larger
+  than any single task set, and `--rebuild` drops everything not in the cohorts being built.
+- **Task set 2's cohorts are `Spool`/`Stest`, task set 1's are `Strain`/`Sval`/`Stest`.** Both map
+  to the same two conditions through `design_common.COHORT_CONDITION`; the difference is only
+  whether train+val were merged when selecting or when reporting.
 - **`curate_pairs.py --from-cache`** re-selects from `pairs/_full_pool_cache.json` instead of
   redoing the ~9-minute all-pairs identity scan. The cache records the criteria that produced it and
   a mismatch is a hard error, so it can't silently yield pairs for the wrong criteria. The pool is

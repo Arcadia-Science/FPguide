@@ -1,0 +1,15 @@
+$ /home/ubuntu/miniconda3/envs/esm2-fp-design/bin/python /home/ubuntu/spectrum-to-fp-design/in-silico-test/3.2_design_run_ESM2/design_knownstruct_esm2.py --pairs-dir /home/ubuntu/spectrum-to-fp-design/in-silico-test/pairs_task2 --cohorts knownstruct_Spool knownstruct_Stest --outdir /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_task2_esm2_rand3 --no-ppl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+device cuda | fp16 True
+72 tasks across 2 cohort(s): knownstruct_Spool=36, knownstruct_Stest=36
+surrogate (surrogate_final) test MAE 17.6 nm (n_train=515) | oracle val MAE 8.7 nm
+running 72 tasks x 3 trials = 216 searches | 2 iters x (chromo -> pocket) | k=10 T=1.0 lam_prior=1.0 lam_ex=1.0 lam_em=1.0 | editable min/med/max = 14/26/32 (Tier-B, same windows as 3.1_design_run_MSA) | visit order = random | ppl = off | proposal = ESM-2 masked-LM (family PSSM not used for selection; 279 structurally constrained positions across tasks, rest = 20 AAs)
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 36408.89it/s]
+  round 0 (scaffold): mean oracle err 70.2 nm | 6s
+  it1 [chromo+pocket]: mean oracle err 43.9 nm | mean id 0.91 | 493s
+  it2 [chromo+pocket]: mean oracle err 43.9 nm | mean id 0.90 | 982s
+  trial 0: mean final oracle err 45.6 nm
+  trial 1: mean final oracle err 42.4 nm
+  trial 2: mean final oracle err 43.5 nm
+  within-task spread across trials: mean 23.2 nm, median 20.8 nm, max 90.5 nm
+wrote 72 design CSVs (216 trajectories) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_task2_esm2_rand3 | total 982s

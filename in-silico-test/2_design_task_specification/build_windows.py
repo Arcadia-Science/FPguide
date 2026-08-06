@@ -27,10 +27,18 @@ or curation was run with ``--no-validation``.
 Re-running is resumable: any scaffold already present in ``design_windows.json`` is kept as-is
 and only missing ones are computed. Use ``--rebuild`` to recompute everything from zero.
 
+``design_windows.json`` is a UNION over every task set built so far, not a snapshot of one
+cohort's scaffolds: a window is a property of the scaffold (its structure and its alignment row),
+independent of which target it was paired with, so pointing ``--pairs-dir`` at task set 2
+(``pairs_task2/``, from ``4_design_task2/curate_pairs_task2.py``) adds its new scaffolds and
+leaves task 1's in place. Both task sets then read the same file and share the scaffolds they
+have in common instead of recomputing their geometry.
+
 Usage
 -----
     python build_windows.py
     python build_windows.py --rebuild
+    python build_windows.py --pairs-dir pairs_task2 --cohorts knownstruct_Spool knownstruct_Stest
 """
 import argparse
 import json
@@ -59,21 +67,27 @@ OUT = C.WINDOWS_JSON
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rebuild", action="store_true", help="recompute every window from zero")
+    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR),
+                    help=f"manifest directory -- the task set to build for (default {C.PAIRS_DIR.name})")
+    ap.add_argument("--cohorts", nargs="*", default=C.DEFAULT_COHORTS,
+                    help="cohorts to read from --pairs-dir")
     args = ap.parse_args()
 
     d = C.load_dataset()
     rows, seqs = d["rows"], d["seqs"]
 
     scaffolds = {}
-    for coh in C.DEFAULT_COHORTS:
-        for r in C.read_pairs(coh):
+    for coh in args.cohorts:
+        for r in C.read_pairs(coh, args.pairs_dir):
             scaffolds.setdefault(int(r["scaffold_idx"]), r["scaffold_pdb"])
-    print(f"{len(scaffolds)} unique scaffolds across {len(C.DEFAULT_COHORTS)} cohorts")
+    print(f"{len(scaffolds)} unique scaffolds across {len(args.cohorts)} cohorts "
+          f"in {_os.path.basename(str(args.pairs_dir).rstrip('/'))}")
 
     prior = {} if args.rebuild or not OUT.exists() else json.loads(OUT.read_text())["windows"]
-    windows = {rows[si]["name"]: prior[rows[si]["name"]] for si in scaffolds if rows[si]["name"] in prior}
+    windows = dict(prior)          # union across task sets -- see the module docstring
     todo = {si: pdb for si, pdb in scaffolds.items() if rows[si]["name"] not in windows}
-    print(f"already built (resumed from {OUT.name}): {len(windows)} | to build: {len(todo)}")
+    print(f"already in {OUT.name}: {len(windows)} window(s), "
+          f"{len(scaffolds) - len(todo)} of them this task set's | to build: {len(todo)}")
 
     if todo:
         print(f"loading family alignment from {C.MSA_DIR / 'data' / 'fp_all.aln.fasta'} ...")
@@ -150,15 +164,16 @@ def main():
                 "pssm": pssm,
             }
             n_done += 1
-            print(f"  [{len(windows)}/{len(scaffolds)}] {nm} [{pdb}]: {len(editable0)} editable, "
+            print(f"  [{n_done}/{len(todo)}] {nm} [{pdb}]: {len(editable0)} editable, "
                   f"{len(hbond)} hbond | {time.time()-t0:.0f}s", flush=True)
         print(f"built {n_done} windows ({n_fallback} position fallbacks) in {time.time()-t0:.0f}s")
 
+    built_here = [rows[si]["name"] for si in scaffolds if rows[si]["name"] in windows]
     meta_out = {
         "description": "Per-scaffold Tier-B design window (5 A chromophore pocket + H-bond "
                        "alphabet) intersected with whole-family MSA support, built from scratch "
-                       "for this experiment's own distance-spread cohorts "
-                       "(knownstruct_Strain/Sval/Stest from curate_pairs.py).",
+                       "for this experiment's own cohorts. A union over every task set built so "
+                       "far -- a window is a property of the scaffold, not of the pair.",
         "cutoff_angstrom": CUTOFF, "hbond_cutoff_angstrom": HBOND_CUTOFF,
         "aromatic_alphabet": AROMATIC, "hbond_alphabet": HBOND_AA,
         "source_alignment": "msa/data/fp_all.aln.fasta",
@@ -169,7 +184,8 @@ def main():
     OUT.write_text(json.dumps({"meta": meta_out, "windows": windows}, indent=1))
 
     ned = [wv["n_editable"] for wv in windows.values()]
-    print(f"\nwrote {len(windows)}/{len(scaffolds)} scaffold windows -> {OUT}")
+    print(f"\nwrote {len(windows)} scaffold windows -> {OUT} "
+          f"({len(built_here)}/{len(scaffolds)} of them this task set's)")
     if ned:
         print(f"editable min/med/max = {min(ned)}/{int(np.median(ned))}/{max(ned)}")
     missing = [rows[si]["name"] for si in scaffolds if rows[si]["name"] not in windows]

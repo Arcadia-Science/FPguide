@@ -1,0 +1,44 @@
+
+=== task 1 -- furthest target (n=72) ===
+3.2 ESM-2 guided       scaffold= 132.9  mean-of-trials=  91.4  surr-sel=  88.0  oracle-best=  80.4  closed=+0.27  improved= 65/72  spread= 22.4  ident=0.904
+3.3 Gibbs unguided     scaffold= 132.9  mean-of-trials= 105.8  surr-sel= 101.2  oracle-best=  84.9  closed=+0.16  improved= 59/72  spread= 40.2  ident=0.902
+  guidance (mean_tr):  +14.4 nm | guided better on 59/72 | Wilcoxon p=1.7e-08
+  guidance (sel    ):  +13.2 nm | guided better on 48/72 | Wilcoxon p=0.00034
+
+=== task 1 -- furthest target | S-pool (n=36) ===
+3.2 ESM-2 guided       scaffold= 127.7  mean-of-trials=  92.3  surr-sel=  89.4  oracle-best=  82.4  closed=+0.23  improved= 31/36  spread= 18.7  ident=0.903
+3.3 Gibbs unguided     scaffold= 127.7  mean-of-trials= 103.8  surr-sel=  98.8  oracle-best=  82.4  closed=+0.14  improved= 28/36  spread= 40.8  ident=0.901
+  guidance (mean_tr):  +11.5 nm | guided better on 27/36 | Wilcoxon p=0.002
+  guidance (sel    ):   +9.4 nm | guided better on 22/36 | Wilcoxon p=0.085
+
+=== task 1 -- furthest target | S-test (n=36) ===
+3.2 ESM-2 guided       scaffold= 138.1  mean-of-trials=  90.6  surr-sel=  86.6  oracle-best=  78.4  closed=+0.31  improved= 34/36  spread= 26.2  ident=0.905
+3.3 Gibbs unguided     scaffold= 138.1  mean-of-trials= 107.8  surr-sel= 103.6  oracle-best=  87.4  closed=+0.18  improved= 31/36  spread= 39.7  ident=0.902
+  guidance (mean_tr):  +17.2 nm | guided better on 32/36 | Wilcoxon p=1.9e-08
+  guidance (sel    ):  +17.0 nm | guided better on 26/36 | Wilcoxon p=0.00076
+
+=== task 2 -- random target (n=72) ===
+5.1 ESM-2 guided       scaffold=  70.2  mean-of-trials=  43.9  surr-sel=  41.1  oracle-best=  32.5  closed=+0.31  improved= 56/72  spread= 23.2  ident=0.904
+5.2 Gibbs unguided     scaffold=  70.2  mean-of-trials=  53.4  surr-sel=  48.0  oracle-best=  35.0  closed=+0.14  improved= 60/72  spread= 35.7  ident=0.901
+  guidance (mean_tr):   +9.6 nm | guided better on 62/72 | Wilcoxon p=5.4e-10
+  guidance (sel    ):   +7.0 nm | guided better on 48/72 | Wilcoxon p=0.0011
+
+=== task 2 -- random target | S-pool (n=36) ===
+5.1 ESM-2 guided       scaffold=  72.9  mean-of-trials=  38.4  surr-sel=  36.5  oracle-best=  27.7  closed=+0.45  improved= 33/36  spread= 22.8  ident=0.900
+5.2 Gibbs unguided     scaffold=  72.9  mean-of-trials=  47.0  surr-sel=  42.8  oracle-best=  29.3  closed=+0.33  improved= 35/36  spread= 33.1  ident=0.899
+  guidance (mean_tr):   +8.5 nm | guided better on 28/36 | Wilcoxon p=3e-05
+  guidance (sel    ):   +6.3 nm | guided better on 25/36 | Wilcoxon p=0.039
+
+=== task 2 -- random target | S-test (n=36) ===
+5.1 ESM-2 guided       scaffold=  67.4  mean-of-trials=  49.3  surr-sel=  45.7  oracle-best=  37.3  closed=+0.17  improved= 23/36  spread= 23.6  ident=0.907
+5.2 Gibbs unguided     scaffold=  67.4  mean-of-trials=  59.9  surr-sel=  53.2  oracle-best=  40.7  closed=-0.06  improved= 25/36  spread= 38.2  ident=0.903
+  guidance (mean_tr):  +10.6 nm | guided better on 34/36 | Wilcoxon p=5.1e-08
+  guidance (sel    ):   +7.6 nm | guided better on 23/36 | Wilcoxon p=0.012
+
+=== task 1 vs task 2 (unpaired -- different tasks) ===
+                             start   guided    null  guidance  closed(g)  closed(n)
+task 1 -- furthest target    132.9     91.4   105.8     +14.4      +0.27      +0.16
+task 2 -- random target       70.2     43.9    53.4      +9.6      +0.31      +0.14
+
+(guided/null columns are the per-task mean over trials; `closed` is the mean share of the
+ scaffold's own initial error closed, the axis comparable across the two task sets.)

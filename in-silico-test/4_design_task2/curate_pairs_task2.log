@@ -1,0 +1,14 @@
+structure-known entries (structure_hits.csv): 445
+usable scaffolds: 358 (87 more are structure-known but sit in OUR oracle's own held-out val/test -- excluded)
+structure-validated scaffolds: 266 (92 will be dropped)
+target pool (our oracle-train, SS<80, motif): 547
+identity floor 50% / cap 98% | min ex/em distance 40nm | length tolerance 30
+  scanned 100/358 scaffolds (97 with >=1 valid target, 8411 candidate pairs) | 179s
+  scanned 200/358 scaffolds (195 with >=1 valid target, 15004 candidate pairs) | 357s
+  scanned 300/358 scaffolds (289 with >=1 valid target, 24285 candidate pairs) | 533s
+scaffolds with >=1 valid target: 335/358 | 27866 candidate pairs -> _candidate_pool_cache.json
+selectable scaffolds after the structure-validation filter: 250 | candidates per scaffold min/med/max = 1/74/181
+knownstruct_Spool (train+val): 36/212 available | identity min 50% med 77% max 98% | dist min 40 med 79 max 289 nm (task 1's argmax rule would give med 173) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/pairs_task2/pairs_knownstruct_Spool.csv
+knownstruct_Stest (test): 36/38 available | identity min 50% med 70% max 96% | dist min 43 med 76 max 274 nm (task 1's argmax rule would give med 202) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/pairs_task2/pairs_knownstruct_Stest.csv
+
+total: 72 tasks | random-target distance med 79 nm vs 181 nm for the same scaffolds' furthest target (64% of tasks now start under 100 nm)

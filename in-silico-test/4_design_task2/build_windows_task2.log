@@ -1,0 +1,37 @@
+72 unique scaffolds across 2 cohorts in pairs_task2
+already in design_windows.json: 108 window(s), 43 of them this task set's | to build: 29
+loading family alignment from /home/ubuntu/spectrum-to-fp-design/in-silico-test/msa/data/fp_all.aln.fasta ...
+  alignment 763 seq x 1861 col | core 233 col | N_eff(Henikoff) 272.1
+  [1/29] PAmKate [4KPI]: 24 editable, 3 hbond | 0s
+  [2/29] mEmerald [4KW4]: 26 editable, 4 hbond | 0s
+  [3/29] mCerulean2.N [4EN1]: 26 editable, 2 hbond | 0s
+  [4/29] mTurquoise2_T203Y [3ZTF]: 26 editable, 2 hbond | 0s
+  [5/29] Dronpa-3 [4EMQ]: 27 editable, 4 hbond | 0s
+  [6/29] ECFP [2WSN]: 25 editable, 2 hbond | 0s
+  [7/29] SCFP1 [4AR7]: 26 editable, 2 hbond | 0s
+  [8/29] Azurite [5N9O]: 26 editable, 3 hbond | 0s
+  [9/29] CFP [1W7S]: 25 editable, 3 hbond | 0s
+  [10/29] ShG24 [7LG4]: 25 editable, 1 hbond | 1s
+  [11/29] CyPet [3GEX]: 25 editable, 3 hbond | 1s
+  [12/29] BrUSLEE [8BVG]: 25 editable, 2 hbond | 1s
+  [13/29] htFuncLib_sf:mid.11 [5MFC]: 26 editable, 2 hbond | 1s
+  [14/29] Superfolder GFP [5MFC]: 26 editable, 2 hbond | 1s
+  [15/29] SGFP2(206A) [7YDQ]: 24 editable, 3 hbond | 1s
+  [16/29] mEos2 [5OQ9]: 27 editable, 2 hbond | 1s
+  [17/29] SCFP3A [4AR7]: 26 editable, 2 hbond | 1s
+  [18/29] pcDronpa [4HQ8]: 27 editable, 5 hbond | 1s
+  [19/29] Skylan-NS [5OOZ]: 25 editable, 4 hbond | 1s
+  [20/29] mIrisFP [2VVH]: 25 editable, 5 hbond | 1s
+  [21/29] BFP [1W7S]: 25 editable, 3 hbond | 1s
+  [22/29] mGeos-E [5OQ9]: 27 editable, 2 hbond | 1s
+  [23/29] P4 [1W7S]: 25 editable, 3 hbond | 1s
+  [24/29] KCY-R1-158A [2ZO7]: 25 editable, 4 hbond | 1s
+  [25/29] mPlum-E16P [4H3L]: 27 editable, 1 hbond | 2s
+  [26/29] mKate [4NWS]: 23 editable, 4 hbond | 2s
+  [27/29] mCardinal [4OJ0]: 25 editable, 1 hbond | 2s
+  [28/29] DsRed-Express2 [2V4E]: 26 editable, 4 hbond | 2s
+  [29/29] mVenus-Q69M [4NDJ]: 26 editable, 3 hbond | 2s
+built 29 windows (0 position fallbacks) in 2s
+
+wrote 137 scaffold windows -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/design_windows.json (72/72 of them this task set's)
+editable min/med/max = 14/26/34

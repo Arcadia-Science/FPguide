@@ -147,6 +147,9 @@ def _rng_pair(dev, trial, si, ti):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cohorts", nargs="*", default=C.DEFAULT_COHORTS)
+    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR),
+                    help=f"manifest directory, i.e. which task set to run (default "
+                         f"{C.PAIRS_DIR.name}; {C.PAIRS_DIR_T2.name} is stage 4's random-target set)")
     ap.add_argument("--smoke", type=int, default=0, help="run only the first N tasks (wiring/timing probe)")
     ap.add_argument("--iters", type=int, default=N_ITERS, help=f"design cycles per task (default {N_ITERS})")
     ap.add_argument("--no-ppl", action="store_true", help="skip the ESM-2 pseudo-perplexity diagnostic")
@@ -176,9 +179,9 @@ def main():
     # ---- tasks from the requested cohorts, restricted to scaffolds with a built window ----
     tasks, n_no_window = [], 0
     for coh in args.cohorts:
-        fn = C.pairs_csv_path(coh)
+        fn = C.pairs_csv_path(coh, args.pairs_dir)
         if not os.path.exists(fn):
-            raise SystemExit(f"missing manifest {fn}; run 2_design_task_specification/curate_pairs.py first")
+            raise SystemExit(f"missing manifest {fn}; run the curation stage for this task set first")
         outdir = os.path.join(args.outdir, coh)
         os.makedirs(outdir, exist_ok=True)
         for r in csv.DictReader(open(fn)):

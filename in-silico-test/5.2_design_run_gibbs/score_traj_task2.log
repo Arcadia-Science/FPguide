@@ -1,0 +1,4 @@
+device cuda | fp16 True | 648 sequences from 72 tasks
+wrote /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_task2_esm2_rand3/surrogate_traj.csv (648 rows) | 6s
+device cuda | fp16 True | 2592 sequences from 72 tasks
+wrote /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_task2_gibbs_r12/surrogate_traj.csv (2592 rows) | 22s

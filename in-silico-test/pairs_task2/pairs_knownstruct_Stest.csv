@@ -1,0 +1,37 @@
+scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity,dist_nm,delta_ex_nm,delta_em_nm,scaffold_pdb,n_candidates,dist_rank,max_dist_nm
+717,tdKatushka2,45,test,515,mScarlet,25,train,0.5149,43.4,-19.0,-39.0,3PJB,109,101,260.3
+721,td-RFP639,42,test,581,PATagRFP,33,train,0.7186,45.0,-27.0,-36.0,3E5W,60,42,259.7
+50,asulCP,23,test,528,mStable,36,train,0.6266,45.5,25.0,38.0,2A50,39,30,223.2
+317,Katushka-9-5,47,test,581,PATagRFP,33,train,0.8632,47.7,-26.0,-40.0,4EDO,77,53,261.7
+310,iq-mEmerald,27,test,591,phiYFPv,13,train,0.5145,50.5,42.0,28.0,4KW4,48,42,168.4
+226,GFPxm19,27,test,387,mCerulean.B24,40,train,0.7866,51.0,-42.0,-29.0,7LG4,72,24,158.6
+197,FusionRed,28,test,480,mOrange2,16,train,0.5690,53.0,-31.0,-43.0,6U1A,99,85,239.7
+107,d1EosFP,11,test,535,mTFP0.3,30,train,0.6473,54.7,-47.0,-28.0,2VVH,44,38,167.7
+181,eqFP611 V124T,52,test,554,Neptune,50,train,0.6926,56.6,41.0,39.0,3E5T,43,31,224.2
+482,moxCerulean3,40,test,159,EBFP2,65,train,0.9205,57.2,-51.0,-26.0,4EN1,155,123,109.0
+425,mGeos-C,11,test,149,dTFP0.2,30,train,0.6556,57.5,-49.0,-30.0,5OQ9,62,55,167.7
+554,Neptune,50,test,144,DsRed-NF,39,train,0.5246,63.4,-39.0,-50.0,3IP2,109,80,282.9
+289,htFuncLib_sf:mid.12,20,test,656,SCFP3B,41,train,0.8956,64.7,-55.0,-34.0,4J8A,45,23,172.8
+736,usGFP,18,test,385,mCerulean.B,39,train,0.9289,66.0,-56.0,-35.0,5MFC,46,24,174.5
+54,avGFP480,24,test,3,5B,12,train,0.9622,71.2,56.0,44.0,2WSN,124,44,130.9
+232,HcRed,53,test,711,TagRFP-T,29,train,0.5779,71.3,-37.0,-61.0,1YZW,53,22,271.5
+292,htFuncLib_sf:mid.9,14,test,384,mCerulean3,42,train,0.8835,73.4,-64.0,-36.0,5MFC,46,26,182.0
+172,eGFP203C,11,test,387,mCerulean.B24,40,train,0.9414,74.3,-65.0,-36.0,5N9O,44,20,181.8
+480,mOrange2,16,test,316,Katushka2S,45,train,0.5272,78.4,39.0,68.0,2H5O,128,67,188.6
+609,PSmOrange,17,test,316,Katushka2S,45,train,0.5230,78.9,40.0,68.0,4Q7T,127,65,187.8
+334,laGFP,9,test,339,laRFP,71,train,0.7763,83.2,19.0,81.0,4HVF,1,1,83.2
+335,LanFP1,10,test,339,laRFP,71,train,0.5044,84.6,21.0,82.0,4DKN,1,1,84.6
+199,FusionRed-MQV,19,test,423,mGarnet,72,train,0.7112,90.8,32.0,85.0,6U1A,125,70,214.3
+737,V127T SAASoti,10,test,35,amilFP597,39,train,0.5000,92.1,49.0,78.0,8PEI,29,6,117.4
+477,Monomeric hyperfolder YFP,14,test,106,D10,42,train,0.8870,98.2,-82.0,-54.0,7UGS,74,26,206.9
+141,DsRed-Express2,37,test,419,mEosFP-F173S,28,train,0.5130,102.7,-68.0,-77.0,2V4E,157,46,208.9
+61,AzamiRed1.0,35,test,60,AzamiGreen,13,train,0.8673,128.2,-79.0,-101.0,8I4K,165,51,231.6
+547,mVenus-Q69M,13,test,608,PS-CFP2,68,train,0.8619,129.7,-115.0,-60.0,4NDJ,74,16,206.3
+295,htFuncLib_sf:thermo.2,7,test,481,moxBFP,63,train,0.8916,141.4,-124.0,-68.0,5MFC,56,13,194.8
+562,OFPxm,14,test,67,BFP5,65,train,0.8319,143.9,-124.0,-73.0,7LG4,57,15,198.6
+651,SBFP1,66,test,684,SPOON,17,train,0.9372,153.2,130.0,81.0,4NDJ,170,29,170.3
+538,mTFP1-Y67W,37,test,394,mCherry-XL,31,train,0.5593,185.3,134.0,128.0,6FP7,160,55,279.0
+513,mRubyFT,49,test,515,mScarlet,25,train,0.5858,211.4,161.0,137.0,7QGK,164,83,292.5
+536,mTFP0.7,35,test,152,E2-Crimson,35,train,0.5381,223.4,158.0,158.0,2OTB,159,2,239.7
+315,Katushka,47,test,70,Bluebonnet2,55,train,0.8333,261.7,-189.0,-181.0,4EDO,89,1,261.7
+677,shCP-E63L/Y64H,48,test,182,eqFP650,58,train,0.5726,274.4,189.0,199.0,6JC5,68,13,300.3

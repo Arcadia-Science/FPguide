@@ -24,6 +24,7 @@ Usage
     python score_traj_surrogate.py --arm esm2            # ESM-2 first pass        -> PIPE_OUT_ESM2
     python score_traj_surrogate.py --arm msa_rand3       # 3-trial random-order    -> PIPE_OUT_R3
     python score_traj_surrogate.py --arm esm2_rand3      # ditto, ESM-2 arm        -> PIPE_OUT_ESM2_R3
+    python score_traj_surrogate.py --arm gibbs_r12       # unguided control (3.3)  -> PIPE_OUT_GIBBS_R12
     python score_traj_surrogate.py --force               # recompute even if the cache exists
 """
 from __future__ import annotations
@@ -51,7 +52,14 @@ ESM_BS = 32
 
 ARMS = {"msa": C.PIPE_OUT, "pssm": C.PIPE_OUT,          # "pssm" kept as an alias for "msa"
         "esm2": C.PIPE_OUT_ESM2,
-        "msa_rand3": C.PIPE_OUT_R3, "esm2_rand3": C.PIPE_OUT_ESM2_R3}
+        "msa_rand3": C.PIPE_OUT_R3, "esm2_rand3": C.PIPE_OUT_ESM2_R3,
+        # the unguided control (3.3) never consulted the surrogate during the search, so here the
+        # surrogate curve is not "what the search thought" but a counterfactual: what it would
+        # have said about sequences chosen without it -- and the axis a surrogate-selected
+        # best-of-12 has to be computed on, to price trial selection against the guided arms
+        "gibbs_r12": C.PIPE_OUT_GIBBS_R12,
+        # task set 2 (random target per scaffold): 5.1 guided, 5.2 unguided null
+        "esm2_t2_rand3": C.PIPE_OUT_ESM2_T2_R3, "gibbs_t2_r12": C.PIPE_OUT_GIBBS_T2_R12}
 
 
 def pipe_dir(arm):
