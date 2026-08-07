@@ -31,8 +31,8 @@ import sys
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-# peak_models (ESM-2 embedding utilities) lives in the sibling peak_design/ folder
-sys.path.insert(0, os.path.join(HERE, "..", "peak_design"))
+# fpdesign.peak_models holds the shared ESM-2 embedding utilities
+sys.path.insert(0, os.path.join(HERE, ".."))
 
 TRAITS = {"peak": "peaks_assignments.csv",
           "brightness": "brightness_assignments.csv",
@@ -63,7 +63,7 @@ def embed_trait(trait, dev, force=False, dry_run=False):
         print(f"{tag}  cache exists -> skip (use --force to rebuild)")
         return
 
-    import peak_models as pm
+    from fpdesign import peak_models as pm
     H = np.zeros((N, Lmax, pm.D_IN), dtype=np.float16)
     for i0 in range(0, N, CHUNK):
         chunk = seqs[i0:i0 + CHUNK]

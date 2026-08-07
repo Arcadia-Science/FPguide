@@ -37,8 +37,8 @@ import numpy as np
 import torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "esm2_design"))
-import peak_models as pm  # noqa: E402
+sys.path.insert(0, os.path.join(HERE, ".."))
+from fpdesign import peak_models as pm  # noqa: E402
 
 DMS = os.path.join(HERE, "DMS_data")
 

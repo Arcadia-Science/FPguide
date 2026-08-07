@@ -22,10 +22,10 @@ Stage scripts sit one level down, so each begins with a small bootstrap putting 
 ``lib/`` and ``msa/`` on ``sys.path``. Artifacts and shared inputs stay at the root, since they
 are consumed across stages and by the notebooks here.
 
-The folder is SELF-CONTAINED: every code and data dependency lives here, so nothing is read from
-``../esm2_design`` or ``../msa_conservation`` at runtime. Copied in as real files (not symlinks,
-not imports across folders) -- ``lib/`` holds the vendored modules, which should not be edited
-here since they are copies:
+The folder is SELF-CONTAINED IN CODE: every module it runs lives here, so nothing is imported from
+``../fpdesign`` or ``../msa_conservation`` at runtime. Copied in (not symlinks, not imports across
+folders) -- ``lib/`` holds the vendored modules, which should not be edited here since they are
+copies:
 
   lib/pockets.py        window geometry (5 A pocket + H-bond partners) from an RCSB structure
   lib/peak_models.py    model architectures + checkpoint save/load
@@ -34,15 +34,21 @@ here since they are copies:
   msa/conservation.py   family-MSA alignment loading + Henikoff weighting
   msa/data/             the MSA RESULT itself (fp_all.aln.fasta + fp_all_meta.csv), i.e. the
                         763-sequence whole-family alignment the PSSMs are computed from
-  structures/experimental/  RCSB PDBx cache; self-populating (pockets.py fetches on a miss)
   structure_hits.csv    which dataset entries have a >=97%-identity experimental structure --
                         a property of the protein itself, independent of any train/val/test split
 
-The ONE remaining external reference is ``data/``, whose entries are symlinks to
-``dataset_pipeline/data/peak/curated/`` -- the shared curated dataset and its ~2GB of ESM-2 /
-ProstT5 residue embedding caches. Those are split-independent inputs to every experiment in the
-repo and duplicating 2GB per experiment folder would be wasteful, so they stay symlinked.
-``data/dual_splits.csv`` (this experiment's own nested split) IS a real local file.
+TWO external references remain, both SYMLINKS to large read-only caches that are split-independent
+inputs to every experiment in the repo (duplicating them per folder would be waste):
+
+  data/         -> dataset_pipeline/data/peak/curated/ : the shared curated dataset and its ~2GB of
+                   ESM-2 / ProstT5 residue embedding caches. ``data/dual_splits.csv`` (this
+                   experiment's own nested split) IS a real local file, not a symlink.
+  structures/   -> ../structures : the repo-level RCSB PDBx cache (~175MB), self-populating -- a
+                   miss fetched by pockets.py now lands in the shared cache. Paths inside this
+                   folder are unchanged, so ``structures/experimental/`` still resolves.
+
+Both hold immutable public downloads, so sharing them across experiments cannot leak anything
+between splits.
 
 Pairs (``pairs/pairs_knownstruct_{Strain,Sval,Stest}.csv``, from ``curate_pairs.py``) and their
 Tier-B windows + MSA PSSMs (``design_windows.json``, from ``build_windows.py``) are generated

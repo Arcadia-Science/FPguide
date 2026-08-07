@@ -29,8 +29,8 @@ import torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(HERE, "..", "esm2_design"))
-import peak_models as pm  # noqa: E402
+sys.path.insert(0, os.path.join(HERE, ".."))
+from fpdesign import peak_models as pm  # noqa: E402
 import sweep_classify_parallel as sw  # noqa: E402
 
 MAXPOOL = os.path.join(HERE, "DMS_data", "esm_maxpool_4scaffold_10k.npz")   # row-aligned with sub40k

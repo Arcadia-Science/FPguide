@@ -31,7 +31,7 @@ import sys
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "esm2_design"))  # peak_models (ESM-2 utils)
+sys.path.insert(0, os.path.join(HERE, ".."))  # fpdesign.peak_models (ESM-2 utils)
 
 CSV = os.path.join(HERE, "DMS_data", "avgfp_dms_sequences.csv")
 EMB = os.path.join(HERE, "DMS_data", "esm_residue_fp16.npy")
@@ -83,7 +83,7 @@ def main():
         H = np.lib.format.open_memmap(EMB, mode="w+", dtype=np.float16, shape=(N, Lmax, D_IN))
 
     import torch
-    import peak_models as pm
+    from fpdesign import peak_models as pm
     dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     print(f"device: {dev}")
 

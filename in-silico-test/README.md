@@ -1,6 +1,7 @@
 # in-silico-test — does a differently-structured split change what we conclude?
 
-A self-contained replication of the `esm2_design` guided-design experiment under a **different
+A self-contained replication of the original peak-conditioned guided-design experiment
+(`archive/esm2_design/`) under a **different
 train/val/test structure**, to test whether model selection and design outcomes are artifacts of
 how the data was split.
 
@@ -49,7 +50,7 @@ Each stage folder also keeps its own run logs.
 
 ## Standalone by design
 
-Everything the pipeline needs lives here; nothing is read from `../esm2_design` or
+Every piece of *code* the pipeline runs lives here; nothing is imported from `../fpdesign` or
 `../msa_conservation` at runtime. Vendored as real local files:
 
 | file | what it is |
@@ -60,13 +61,20 @@ Everything the pipeline needs lives here; nothing is read from `../esm2_design` 
 | `lib/sweep_peak_oracle_base.py` | the shared architecture-sweep implementation |
 | `msa/conservation.py` | alignment loading + Henikoff sequence weighting |
 | `msa/data/` | the MSA **result**: 763-sequence family alignment + metadata |
-| `structures/experimental/` | RCSB PDBx cache — self-populating (a miss is fetched) |
 | `structure_hits.csv` | which dataset entries have a ≥97%-identity PDB entry |
 
-**One deliberate exception:** `data/` holds symlinks to `dataset_pipeline/data/peak/curated/` —
-the shared curated dataset plus ~2GB of ESM-2 / ProstT5 residue-embedding caches. Those are
-split-independent inputs to every experiment in the repo, so duplicating 2GB per folder would be
-waste. `data/dual_splits.csv` (this experiment's own split) *is* a real local file.
+**Two deliberate exceptions**, both large read-only caches that are split-independent inputs to
+every experiment in the repo — duplicating them per folder would be waste, so both are symlinks:
+
+- `data/` → `dataset_pipeline/data/peak/curated/`: the shared curated dataset plus ~2GB of ESM-2 /
+  ProstT5 residue-embedding caches. `data/dual_splits.csv` (this experiment's own nested split)
+  *is* a real local file.
+- `structures/` → the repo-level [`../structures/`](../structures): the RCSB PDBx cache, ~175MB.
+  Self-populating — `pockets.py` fetches a miss from RCSB, which now lands in the shared cache.
+  Every path inside this folder is unchanged, so `structures/experimental/` still resolves.
+
+Both are content-addressed downloads of immutable public data, so sharing them across experiments
+cannot leak anything between splits.
 
 Model weights come from the HF cache (ProstT5, ESM-2) — a package-level dependency, not a
 repo-folder one.

@@ -39,7 +39,7 @@ import time
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "esm2_design"))  # peak_models (ESM-2 utils)
+sys.path.insert(0, os.path.join(HERE, ".."))  # fpdesign.peak_models (ESM-2 utils)
 
 D_IN = 1280
 DEFAULT_INPUT = os.path.join(HERE, "DMS_data", "ortho_gfp_dms_sequences.csv")
@@ -87,7 +87,7 @@ def run_worker(a):
     H = np.lib.format.open_memmap(emb, mode="r+")  # shared file, header written by launcher
 
     import torch
-    import peak_models as pm
+    from fpdesign import peak_models as pm
     dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"[shard {a.shard_id}] rows {start}..{s1} of {N} on {os.environ.get('CUDA_VISIBLE_DEVICES','?')} ({dev})",
           flush=True)

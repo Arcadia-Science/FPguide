@@ -56,10 +56,20 @@ Built once in [`../msa_conservation/`](../msa_conservation/) and vendored into
 are reproducible from this folder alone).
 
 **Input.** `build_msa_input.py` takes the union of the three curated trait sets — peak (758) plus
-what brightness and pKa add (2 + 5) = **763 unique sequences**, 82 source organisms. The union of
+what brightness and pKa add (2 + 3) = **763 unique sequences**, 82 source organisms. The union of
 the *curated* sets, not the raw FPbase export, is the right universe for a family alignment:
 curation has already dropped the biliverdin/phytochrome near-infrared class, which does not share
 the GFP fold and would contribute nothing but junk columns.
+
+The 763 vs 758 gap is worth stating explicitly, since 758 is the peak set every surrogate and
+oracle here is trained and tested on. The 5 extra sequences are proteins the *peak* curation
+rejected but that carry a brightness or pKa measurement, so the union readmits them as sequences
+without a peak label: four analyte sensors (`CAR-GECO1`, `mKeima`, `pHluorin4`, `pHmScarlet`),
+whose (ex, em) is ill-defined because the peak moves with analyte concentration, and one
+unresolvable multi-state entry (`PSLSSmKate`). They contribute to column frequencies and to
+nothing else. Note also that the alignment covers the peak set *including* its held-out test
+proteins — but it uses only their sequences, never their ex/em labels, so the PSSM carries no
+label information into the surrogate or the oracle.
 
 **Alignment.** MAFFT **v7.526** (2024-04-26), FFT-NS-i (progressive + iterative refinement,
 `--maxiterate 1000`, BLOSUM62, default gap parameters op = 1.53 / offset = 0.12; the refinement

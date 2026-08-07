@@ -1,3 +1,0 @@
-scaffold_idx,scaffold_name,scaffold_SS,scaffold_surr_role,target_idx,target_name,target_SS,target_orac_role,identity
-0,10B,12,train,13,AcGFP1,30,train,0.9038
-1,11,10,train,13,AcGFP1,30,train,0.8996

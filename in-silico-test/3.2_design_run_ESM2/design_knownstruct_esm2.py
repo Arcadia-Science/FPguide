@@ -14,7 +14,7 @@ S-val, ``held-out`` = S-test) since the deployed surrogate was refit on train+va
                     log-frequencies read out of ``design_windows.json``)
   THIS FOLDER       proposal = ESM-2 650M masked-LM logits at the position being edited,
                     conditioned on the design's CURRENT sequence -- the mechanism
-                    ``esm2_design/parallel_pipeline/design_knownstruct.py`` uses
+                    ``archive/esm2_design/parallel_pipeline/design_knownstruct.py`` uses
 
 What "same window" means here, precisely. ``design_windows.json`` carries two separable things,
 and only the second is MSA-derived:

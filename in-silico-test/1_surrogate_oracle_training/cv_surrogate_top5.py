@@ -10,7 +10,7 @@ Naive random KFold (no sequence-identity clustering) -- consistent with this exp
 already-naive-random dual_splits.csv. Note (flagged to the user before running this): FP
 variants in this dataset are frequently near-identical point mutants of the same parent
 scaffold, so naive random folds can place near-duplicates on both sides of a fold, which can
-optimistically bias the held-out MAE. See esm2_design/cluster_split/run_oracle_cv.py for the
+optimistically bias the held-out MAE. See archive/esm2_design/cluster_split/run_oracle_cv.py (archived) for the
 cluster-grouped alternative (not used here per the user's choice).
 
 Per fold: mean/std standardization is recomputed from THAT fold's train indices only (proper

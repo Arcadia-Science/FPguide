@@ -62,10 +62,8 @@ import torch
 
 HERE = Path(__file__).resolve().parent       # .../fpdesign
 REPO = HERE.parent                            # .../spectrum-to-fp-design
-ESM2 = REPO / "esm2_design"
 CUR = REPO / "dataset_pipeline" / "data" / "peak" / "curated"
-sys.path.insert(0, str(ESM2))
-import peak_models as pm            # noqa: E402  (shared ESM-2 + surrogate/oracle model utilities)
+from . import peak_models as pm     # noqa: E402  (shared ESM-2 + surrogate/oracle model utilities)
 
 # Default surrogate checkpoint now lives inside the library so every campaign shares one weight.
 DEFAULT_SURROGATE = HERE / "models" / "surrogate_cnn-max-d1_alldata.pt"

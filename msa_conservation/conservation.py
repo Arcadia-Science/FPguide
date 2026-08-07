@@ -44,7 +44,7 @@ from Bio import AlignIO
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
-STRUCT_PATH = REPO / "esm2_design" / "structures" / "1GFL.pdbx"
+STRUCT_PATH = REPO / "structures" / "1GFL.pdbx"
 
 OCC_MIN = 0.50        # column occupancy to count as barrel core
 CLUSTER_ID = 0.90     # single-linkage identity for the cluster-weight cross-check

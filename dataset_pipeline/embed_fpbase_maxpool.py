@@ -42,8 +42,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PROT_JSON = os.path.join(HERE, "..", "fpbase-extractor", "fpbase_output", "fpbase_proteins.json")
 OUT_NPY = os.path.join(HERE, "data", "fpbase_esm2_650M_max.npy")
 OUT_META = os.path.join(HERE, "data", "fpbase_esm2_650M_max.meta.json")
-# peak_models holds the shared ESM-2 loader / per-residue embedding helper
-sys.path.insert(0, os.path.join(HERE, "..", "esm2_design"))
+# fpdesign.peak_models holds the shared ESM-2 loader / per-residue embedding helper
+sys.path.insert(0, os.path.join(HERE, ".."))
 
 MODEL_NAME = "esm2_t33_650M_UR50D"
 CHUNK = 8
@@ -94,7 +94,7 @@ def main():
         return
 
     import torch
-    import peak_models as pm
+    from fpdesign import peak_models as pm
 
     dev = get_device()
     print(f"device: {dev} | model: {MODEL_NAME} | pooling: max")

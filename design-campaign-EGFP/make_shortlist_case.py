@@ -26,9 +26,9 @@ from sklearn.neighbors import NearestNeighbors
 
 REPO = Path("/home/ubuntu/spectrum-to-fp-design")
 CAMP = REPO / "design-campaign-EGFP"
-sys.path.insert(0, str(REPO / "esm2_design"))
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(CAMP))
-import peak_models as pm
+from fpdesign import peak_models as pm
 from embed_cache import MaxPoolCache
 from xlsx_io import write_xlsx
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Compute the design (edit) window for each of the 24 campaign scaffolds using the
-SAME rules as peak_design/ (structure-based 5 A contact shell) and save them to a single
-portable JSON so any design algorithm can load them without re-deriving.
+structure-based 5 A contact shell and save them to a single portable JSON so any design
+algorithm can load them without re-deriving.
 
-Window rule (identical to esm2_design/pockets.py + guided_design_peak_structure_*):
+Window rule (identical to fpdesign/pockets.py):
   * chromophore = X-[YWHF]-G motif near seq position 50-85 (closest to ~65) -> pos1,pos2,pos3;
   * EDITABLE = chromophore pos1 & pos2  +  every residue with a heavy atom within 5.0 A of the
     chromophore reference atoms (fused hetero-chromophore if modelled, else the tripeptide),
@@ -37,11 +37,11 @@ HERE = Path(__file__).resolve().parent      # .../fpdesign
 REPO = HERE.parent                           # .../spectrum-to-fp-design
 CAMPAIGN = REPO / "design-campaign-conventional"   # default home for pairs list + output JSON
 CUR = REPO / "dataset_pipeline" / "data" / "peak" / "curated"
-sys.path.insert(0, str(REPO / "esm2_design"))
-import pockets                     # noqa: E402
+sys.path.insert(0, str(REPO))      # importable when run as a script, not just as fpdesign.*
+from fpdesign import pockets       # noqa: E402
 
 # reuse the established experimental-structure cache so PDBs aren't re-downloaded
-STRUCTDIR = str(REPO / "esm2_design" / "structures" / "experimental")
+STRUCTDIR = str(REPO / "structures" / "experimental")
 AROMATIC = ["Y", "W", "H", "F"]
 # Tier-B: residues that can donate/accept a hydrogen bond via their side chain. A chromophore
 # H-bond partner is kept EDITABLE but restricted to this set, so the design can retune the
@@ -131,7 +131,7 @@ def main():
 
     meta = {
         "description": "Structure-based 5 A chromophore edit window per campaign scaffold "
-                       "(same rule as esm2_design/pockets.py) + Tier-B H-bond-partner alphabet "
+                       "(same rule as fpdesign/pockets.py) + Tier-B H-bond-partner alphabet "
                        "restriction.",
         "rule": "editable = chromophore pos1 & pos2 + residues with a heavy atom within CUTOFF of the "
                 "chromophore; pos2 constrained to aromatics {Y,W,H,F}; pos3 (Gly) and catalytic Arg+Glu "

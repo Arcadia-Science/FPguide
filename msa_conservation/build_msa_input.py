@@ -27,7 +27,7 @@ def main():
     frames = {t: pd.read_csv(CUR / t / "curated" / f) for t, f in TRAITS.items()}
 
     # peak is the largest set, so take it as the base and append what the other
-    # two traits add (2 from brightness, 5 from pKa).
+    # two traits add (2 from brightness, 3 from pKa).
     rows, seen = [], set()
     for trait in ("peak", "brightness", "pka"):
         df = frames[trait]

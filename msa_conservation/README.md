@@ -32,7 +32,11 @@ everything else is already there (biopython, biotite, pandas, scipy, matplotlib)
 ## What was aligned
 
 The union of the three curated trait sets — peak (758) plus what brightness and pKa
-add (2 + 5) = **763 unique sequences**. That union, not the raw FPbase export, is the
+add (2 + 3) = **763 unique sequences**. The 5 extras are proteins the peak curation
+dropped as analyte sensors (`CAR-GECO1`, `mKeima`, `pHluorin4`, `pHmScarlet` — a single
+(ex, em) label is ill-defined when the peak moves with analyte) or as an unresolvable
+multi-state entry (`PSLSSmKate`); all 5 carry a brightness or pKa measurement, so the
+union readmits them as *sequences* even though they have no peak label. That union, not the raw FPbase export, is the
 right universe for a *family* alignment: `dataset_pipeline` has already removed the
 biliverdin/phytochrome near-infrared class, which does not share the GFP fold and would
 contribute nothing but junk columns.
