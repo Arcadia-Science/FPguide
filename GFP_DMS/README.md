@@ -48,9 +48,14 @@ GFP_DMS/
 ├── transform_avgfp_dms.py            raw avGFP TSV      -> avgfp_dms_sequences.csv
 ├── transform_ortho_dms.py            raw orthologue CSV -> ortho_gfp_dms_sequences.csv
 ├── embed_dms.py                      ESM-2 650M per-residue embeddings (memmap cache)
+├── embed_parallel.py                 the same embedding pass sharded across GPUs
+├── build_subsample.py                stratified 4-scaffold sub20k / sub40k caches + 70/15/15 split
 ├── sweep_brightness.py               architecture sweep + full-data training for log-brightness regression
+├── sweep_classify_parallel.py        multi-GPU bright/dim CLASSIFIER sweep (24 configs) -> sweep_class4/
+├── nn_distance_accuracy.py           held-out accuracy stratified by the campaigns' in-distribution NN distance
 ├── visualize_sweep.ipynb             sweep leaderboard, predicted-vs-true, post-hoc classifier
 ├── visualize_thresholds.ipynb        brightness distributions & threshold analysis
+├── visualization.ipynb               write-up figures: the classifier sweep + design-campaign metrics
 └── figures/                          exported plots
 ```
 
