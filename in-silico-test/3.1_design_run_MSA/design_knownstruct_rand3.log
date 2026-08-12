@@ -1,14 +1,0 @@
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-device cuda | fp16 True
-108 tasks across 3 cohort(s): knownstruct_Strain=36, knownstruct_Sval=36, knownstruct_Stest=36
-surrogate (surrogate_final) test MAE 17.6 nm (n_train=515) | oracle val MAE 8.7 nm
-running 108 tasks x 3 trials = 324 searches | 2 iters x (chromo -> pocket) | k=10 T=1.0 lam_ex=1.0 lam_em=1.0 | editable min/med/max = 14/26/34 (Tier-B) | visit order = random | proposal = family MSA PSSM (ESM-2 masked-LM not called for selection)
-Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 37762.10it/s]
-  round 0 (scaffold): mean oracle err 133.2 nm | 7s
-  it1 [chromo+pocket]: mean oracle err 95.6 nm | mean id 0.92 | 623s
-  it2 [chromo+pocket]: mean oracle err 94.0 nm | mean id 0.92 | 1249s
-  trial 0: mean final oracle err 95.2 nm
-  trial 1: mean final oracle err 91.8 nm
-  trial 2: mean final oracle err 95.2 nm
-  within-task spread across trials: mean 28.1 nm, median 25.4 nm, max 82.8 nm
-wrote 108 design CSVs (324 trajectories) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_msa_rand3 | total 1249s

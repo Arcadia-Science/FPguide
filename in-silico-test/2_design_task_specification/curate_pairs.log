@@ -1,7 +1,0 @@
-structure-known entries (structure_hits.csv): 445
-usable scaffolds: 358 (87 more are structure-known but sit in OUR oracle's own held-out val/test -- excluded, since this cohort is about the surrogate's roles)
-structure-validated scaffolds: 266 (92 will be dropped -- their deposited structure does not map cleanly onto the sequence, or the sequence is absent from the family alignment)
-re-selecting from cached pool: 250 valid pairs (85 dropped by the structure-validation filter)
-knownstruct_Strain: 36/176 available pairs | identity min 50% med 65% max 95% | dist min 68 med 184 max 301 nm -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/pairs/pairs_knownstruct_Strain.csv
-knownstruct_Sval: 36/36 available pairs | identity min 50% med 73% max 95% | dist min 68 med 194 max 298 nm -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/pairs/pairs_knownstruct_Sval.csv
-knownstruct_Stest: 36/38 available pairs | identity min 50% med 69% max 95% | dist min 83 med 192 max 300 nm -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/pairs/pairs_knownstruct_Stest.csv

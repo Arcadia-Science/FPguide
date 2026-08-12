@@ -1,12 +1,0 @@
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-device cuda | fp16 True
-72 tasks across 2 cohort(s): knownstruct_Strain=36, knownstruct_Stest=36
-oracle val MAE 8.7 nm | surrogate NOT loaded (lam_ex = lam_em = 0)
-running 72 tasks x 12 trials = 864 searches | 2 iters x (chromo -> pocket) | k=10 T=1.0 lam_prior=1.0 lam_ex=0.0 lam_em=0.0 | editable min/med/max = 14/26/32 (Tier-B, same windows as 3.1/3.2) | visit order = random | proposal = ESM-2 masked-LM (zscore) | ppl = off | UNGUIDED: target spectrum not used; surrogate pass skipped | 278 structurally constrained positions across tasks, rest = 20 AAs
-Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 37483.47it/s]
-  round 0 (scaffold): mean oracle err 132.9 nm | 13s
-  it1 [chromo+pocket]: mean oracle err 104.4 nm | mean id 0.90 | 210s
-  it2 [chromo+pocket]: mean oracle err 105.8 nm | mean id 0.90 | 409s
-  final oracle err over all 864 searches: mean 105.8 nm (scaffold 132.9 nm) | best-of-12 per task 84.9 nm
-  within-task spread across trials: mean 40.2 nm, median 37.9 nm, max 76.5 nm
-wrote 72 design CSVs (864 trajectories) -> /home/ubuntu/spectrum-to-fp-design/in-silico-test/peak_designs/structure/knownstruct_gibbs_r12 | total 409s
