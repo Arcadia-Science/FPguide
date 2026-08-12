@@ -30,8 +30,8 @@ seed, same 3 trials, same score — differing in one line of the loop: the propo
 masked-LM log-probability at the edited position, or a static Henikoff-weighted PSSM read off the
 763-sequence family alignment from [`msa_conservation/`](msa_conservation).
 
-Oracle-scored mean absolute peak error, nm ([`3.1`](in-silico-test/3.1_design_run_MSA) vs
-[`3.2`](in-silico-test/3.2_design_run_ESM2)):
+Oracle-scored mean absolute peak error, nm ([`3.1`](in-silico-test/archive/3.1_design_run_MSA) vs
+[`3.2`](in-silico-test/archive/3.2_design_run_ESM2), both archived):
 
 | proposal | scaffold | design (surrogate-selected) | mean of trials | improved | trial spread | identity | fam_logp/pos |
 |---|---|---|---|---|---|---|---|
@@ -80,7 +80,7 @@ fold, and why both arms are kept rather than picking one on priors.
 
 ### The proposal is not the axis that matters — the surrogate is
 
-Against the unguided null ([`3.3`](in-silico-test/3.3_design_run_gibbs), the same search with
+Against the unguided null ([`3.3`](in-silico-test/archive/3.3_design_run_gibbs), the same search with
 λ_ex = λ_em = 0, so the target never enters), measured on the 72 tasks all three arms share:
 
 | | mean of trials | vs null |
