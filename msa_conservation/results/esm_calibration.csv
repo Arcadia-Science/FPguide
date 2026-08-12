@@ -1,7 +1,7 @@
 protein,length,top1_accuracy,mean_max_prob,median_rank_true,frac_true_in_top10
 ubiquitin (76 aa),76,0.803,0.754,1.0,1.0
 lysozyme (129 aa),129,0.659,0.682,1.0,0.992
-adenylate kinase (214 aa),214,0.706,0.692,1.0,0.991
+trypsin (223 aa),223,0.735,0.687,1.0,0.991
 EGFP (campaign scaffold),239,0.126,0.128,6.0,0.741
 avGFP (wild type),238,0.101,0.125,6.0,0.727
 mCherry,236,0.178,0.17,6.0,0.729

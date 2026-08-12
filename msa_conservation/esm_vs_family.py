@@ -13,7 +13,7 @@ edit is made.
 
 A calibration panel runs first, because the headline result is only interpretable with
 it: ESM-2 650M is sharp on ordinary proteins of comparable length (ubiquitin, lysozyme,
-adenylate kinase) and close to uninformative on FP-fold sequences. Without the controls
+trypsin) and close to uninformative on FP-fold sequences. Without the controls
 that would look like a bug in this script rather than a property of the model on this
 family.
 
@@ -48,10 +48,11 @@ CONTROLS = {
     "lysozyme (129 aa)":
         "KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLC"
         "NIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL",
-    "adenylate kinase (214 aa)":
-        "MRIILLGAPGAGKGTQAQFIMEKYGIPQISTGDMLRAAVKSGSELGKQAKDIMDAGKLVTDELVIALVKERIAQED"
-        "CRNGFLLDGFPRTIPQADAMKEAGINVDYVLEFDVPDELIVDRIVGRRVHAPSGRVYHVKFNPPKVEGKDDVTGEE"
-        "LTTRKDDQEETVRKRLVEYHQMTAPLIGYYSKEAEAGNTKYAKVDGTKPVAEVRADLEKILG",
+    # trypsin, UniProt P00760 mature chain (24-246); kept identical to esm_profiles.py's set
+    "trypsin (223 aa)":
+        "IVGGYTCGANTVPYQVSLNSGYHFCGGSLINSQWVVSAAHCYKSGIQVRLGEDNINVVEGNEQFISASKSIVHPSY"
+        "NSNTLNNDIMLIKLKSAASLNSRVASISLPTSCASAGTQCLISGWGNTKSSGTSYPDVLKCLKAPILSDSSCKSAY"
+        "PGQITSNMFCAGYLEGGKDSCQGDSGGPVVCSGKLQGIVSWGSGCAQKNKPGVYTKVCNYVSWIKQTIASN",
 }
 
 

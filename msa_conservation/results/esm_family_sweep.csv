@@ -1,0 +1,100 @@
+slug,name,organism,clade,length,em_max,top1_accuracy,mean_max_prob,mean_entropy_bits,median_rank_true,frac_true_in_top10,n_core_cols,mean_js_family,mean_family_entropy_bits,mean_esm_entropy_core_bits,top1_agree_family
+aacugfp1,aacuGFP1,Acropora aculeus,Other FP,231,502.0,0.1299,0.1272,4.0571,6.0,0.7576,208,0.4341,2.1795,4.0639,0.1923
+adred,AdRed,Acropora digitifera,Other FP,231,612.0,0.1429,0.126,4.0653,5.0,0.7403,208,0.433,2.1795,4.0648,0.1923
+aeurgfp,aeurGFP,Acropora eurystoma,Other FP,231,515.0,0.1342,0.1434,3.985,6.0,0.7316,208,0.4182,2.1795,3.9793,0.2019
+amilfp484,amilFP484,Acropora millepora,Anthozoa,231,484.0,0.1082,0.1404,4.0079,6.0,0.7532,208,0.4189,2.1795,4.0087,0.1827
+amilfp490,amilFP490,Acropora millepora,Anthozoa,231,490.0,0.1212,0.1498,3.9711,6.0,0.7576,208,0.4153,2.1795,3.9695,0.1779
+anobcfp1,anobCFP1,Acropora nobilis,Other FP,231,490.0,0.1342,0.1451,3.9896,6.0,0.7662,208,0.4175,2.1795,3.9894,0.1827
+apulfp483,apulFP483,Acropora pulchra,Other FP,231,483.0,0.1169,0.1414,4.0042,6.0,0.7619,208,0.4195,2.1795,4.0075,0.1731
+micy,MiCy,Acropora sp. #30,Other FP,232,495.0,0.1552,0.164,3.9029,6.0,0.7543,208,0.4168,2.1795,3.9256,0.1779
+atenfp,atenFP,Acropora tenuis,Other FP,220,515.0,0.1182,0.1291,4.0324,6.0,0.7364,201,0.4281,2.1675,4.0294,0.1891
+aq14,AQ14,Actinia equina,Anthozoa,231,663.0,0.1472,0.122,4.0837,7.0,0.684,207,0.4397,2.1798,4.1012,0.1787
+aausfp1,AausFP1,Aequorea australis,Other FP,232,510.0,0.0991,0.1171,4.0895,6.0,0.7284,208,0.435,2.1795,4.0806,0.1731
+acegfp,aceGFP,Aequorea coerulescens,Other FP,238,505.0,0.1429,0.1341,4.0164,7.0,0.7437,208,0.4367,2.1795,4.0114,0.1538
+gfpxm16,GFPxm16,Aequorea macrodactyla,Aequorea,238,504.0,0.1513,0.1174,4.0917,6.0,0.7269,208,0.441,2.1795,4.0873,0.1683
+gfpxm161,GFPxm161,Aequorea macrodactyla,Aequorea,238,510.0,0.1513,0.1152,4.098,6.0,0.7227,208,0.4432,2.1795,4.0937,0.149
+10b,10B,Aequorea victoria,Aequorea,238,525.0,0.1261,0.1315,4.0307,6.0,0.7437,208,0.435,2.1795,4.03,0.1346
+11,11,Aequorea victoria,Aequorea,238,512.0,0.1261,0.1255,4.0541,6.0,0.7395,208,0.4383,2.1795,4.0498,0.1346
+afragfp,afraGFP,Agaricia fragilis,Other FP,226,503.0,0.177,0.1444,3.9619,5.0,0.7611,208,0.4131,2.1795,3.9597,0.1971
+amcyan1,amCyan1,Anemonia majano,Anthozoa,229,486.0,0.1659,0.1517,3.9643,5.0,0.7424,208,0.4249,2.1795,3.955,0.1779
+ascp562,asCP562,Anemonia sulcata,Anthozoa,232,595.0,0.1681,0.1327,4.04,6.0,0.7414,208,0.4266,2.1795,4.0484,0.1971
+a44-kr,A44-KR,Anthoathecata,Other FP,237,520.0,0.1181,0.1116,4.1248,8.0,0.6624,207,0.4488,2.1749,4.1201,0.1691
+anm1gfp1,anm1GFP1,Anthoathecata,Other FP,262,495.0,0.1565,0.1523,3.9284,5.0,0.7519,207,0.4288,2.1748,3.9583,0.1981
+supernova-red,SuperNova Red,Anthomedusae sp. DC-2005,Other FP,237,610.0,0.135,0.1257,4.0676,7.0,0.6878,207,0.4388,2.1749,4.056,0.1691
+alajgfp1,alajGFP1,Astrangia lajollaensis,Other FP,223,517.0,0.1749,0.1313,4.0268,6.0,0.7668,208,0.4356,2.1795,4.0327,0.1923
+bflogfpa1,bfloGFPa1,Branchiostoma floridae,Other FP,219,512.0,0.1005,0.1237,4.0602,6.0,0.7215,200,0.4495,2.1695,4.0612,0.11
+dlanyfp,dLanYFP,Branchiostoma lanceolatum,Other FP,236,524.0,0.1441,0.1301,4.0307,6.0,0.7246,203,0.4452,2.1684,4.0222,0.1478
+lagfp,laGFP,Branchiostoma lanceolatum,Other FP,228,511.0,0.1447,0.1341,4.0023,6.0,0.6974,203,0.4513,2.1655,4.0663,0.1478
+ofp,OFP,Ceriantharia,Other FP,222,573.0,0.1892,0.147,3.9724,5.0,0.7928,205,0.4235,2.1792,3.9669,0.1854
+cerfp505,cerFP505,Cerianthus sp.,Other FP,223,505.0,0.1076,0.1327,4.0231,6.0,0.7578,206,0.4312,2.1802,4.0219,0.1553
+cpygfp,CpYGFP,Chiridius poppei,Other FP,219,518.0,0.1416,0.1221,4.0578,7.0,0.7123,198,0.4493,2.1694,4.0521,0.1364
+cfp484,cFP484,Clavularia sp.,Anthozoa,266,484.0,0.1466,0.16,3.894,5.0,0.7556,208,0.4267,2.1795,3.9539,0.1442
+dtfp01,dTFP0.1,Clavularia sp.,Anthozoa,240,485.0,0.1667,0.1322,4.0093,6.0,0.7458,208,0.4288,2.1795,4.0165,0.1827
+chegfp1,CheGFP1,Clytia hemisphaerica,Other FP,232,500.0,0.1466,0.1243,4.0563,5.0,0.7845,208,0.435,2.1795,4.0597,0.149
+cjblue,cjBlue,Cnidopus,Other FP,232,620.0,0.1336,0.1149,4.119,6.0,0.6724,208,0.4418,2.1795,4.1313,0.1683
+ccalgfp1,ccalGFP1,Corynactis californica,Anthozoa,221,517.0,0.1584,0.1307,4.0397,6.0,0.7149,205,0.4299,2.1696,4.0375,0.1902
+cjfp510,cjFP510,Cribrinopsis japonica,Other FP,227,510.0,0.1322,0.128,4.0433,6.0,0.6916,207,0.4347,2.1798,4.0494,0.1691
+dvfp,dVFP,Cyphastrea microphthalma,Other FP,225,503.0,0.1422,0.146,3.9666,6.0,0.72,208,0.4268,2.1795,3.9611,0.1731
+cu17s,CU17S,Cytaeis uchidae,Other FP,217,505.0,0.1429,0.1332,4.0305,7.0,0.6682,196,0.4366,2.1523,4.0342,0.1378
+mbaojin,mBaoJin,Cytaeis uchidae,Other FP,234,508.0,0.1624,0.1348,4.0309,6.0,0.6923,202,0.4344,2.1649,4.0299,0.1436
+dendfp,dendFP,Dendronephthya sp.,Other FP,225,508.0,0.1644,0.1199,4.0801,5.0,0.7556,208,0.4303,2.1795,4.0757,0.1875
+dendra,Dendra,Dendronephthya sp.,Other FP,225,505.0,0.1556,0.1193,4.0775,5.0,0.7378,208,0.4322,2.1795,4.0762,0.1587
+mblueberry1,mBlueberry1,Discosoma,Other FP,236,452.0,0.178,0.1578,3.9137,5.0,0.75,208,0.4246,2.1795,3.9071,0.1683
+blue102,Blue102,Discosoma sp.,Anthozoa,231,454.0,0.1645,0.1688,3.8525,5.0,0.7316,206,0.4223,2.1816,3.8474,0.1845
+dimer1,dimer1,Discosoma sp.,Anthozoa,226,579.0,0.1726,0.1417,3.9959,5.0,0.6991,208,0.4257,2.1795,4.0035,0.1827
+dsfp483,dsFP483,Discosoma striata,Other FP,232,483.0,0.1293,0.1204,4.0911,6.0,0.694,208,0.4418,2.1795,4.0945,0.125
+eechgfp1,eechGFP1,Echinophyllia echinata,Other FP,229,510.0,0.1266,0.1161,4.0908,6.0,0.7074,208,0.4421,2.1795,4.0891,0.1683
+bsdronpa,bsDronpa,Echinophyllia sp. SC22,Anthozoa,224,504.0,0.1696,0.1359,4.0139,7.0,0.692,208,0.4293,2.1795,4.0098,0.1971
+dronpa,Dronpa,Echinophyllia sp. SC22,Anthozoa,224,518.0,0.192,0.1521,3.9364,6.0,0.7366,208,0.4257,2.1795,3.9284,0.1683
+eforcp,eforCP,Echinopora forskaliana,Other FP,227,609.0,0.1233,0.1309,4.0501,7.0,0.696,208,0.4381,2.1795,4.0532,0.1538
+bluebonnet2,Bluebonnet2,Entacmaea quadricolor,Anthozoa,234,454.0,0.1795,0.1291,4.0403,6.0,0.7222,208,0.4368,2.1795,4.0366,0.1875
+cgfmkate2,cgfmKate2,Entacmaea quadricolor,Anthozoa,232,628.0,0.1595,0.133,4.0121,6.0,0.7414,208,0.44,2.1795,4.0214,0.1683
+eagfp,EaGFP,Euphyllia ancora,Other FP,226,514.0,0.146,0.1199,4.0863,7.0,0.6504,208,0.4456,2.1795,4.0868,0.1538
+efascfp,efasCFP,Eusmilia fastigiata,Other FP,229,490.0,0.1659,0.1415,3.9855,6.0,0.7205,207,0.4317,2.1785,3.9849,0.1787
+kikg,KikG,Favia favus,Other FP,227,517.0,0.1542,0.1318,4.0282,6.0,0.7004,208,0.4329,2.1795,4.0357,0.1779
+fabdgfp,fabdGFP,Favites abdita,Other FP,224,520.0,0.1875,0.143,3.9802,5.0,0.7098,208,0.4267,2.1795,3.9819,0.2019
+afcfp,afCFP,Galaxea fascicularis,Other FP,226,499.0,0.1637,0.1199,4.0834,6.0,0.7212,208,0.4353,2.1795,4.0989,0.1971
+hcred,HcRed,Heteractis crispa,Anthozoa,227,645.0,0.1498,0.1382,4.0248,6.0,0.7137,206,0.4412,2.1871,4.0491,0.1699
+hmgfp,hmGFP,Heteractis magnifica,Other FP,228,510.0,0.114,0.1188,4.0773,7.0,0.7061,208,0.4441,2.1795,4.0858,0.1154
+laesgfp,laesGFP,Labidocera aestiva,Other FP,222,506.0,0.1486,0.1318,4.0185,7.0,0.6982,200,0.4425,2.1682,4.0047,0.13
+d1eosfp,d1EosFP,Lobophyllia hemprichii,Anthozoa,226,516.0,0.1504,0.1343,4.0149,6.0,0.7168,208,0.4246,2.1795,4.012,0.1779
+d2eosfp,d2EosFP,Lobophyllia hemprichii,Anthozoa,226,516.0,0.1549,0.1356,4.0112,6.0,0.7168,208,0.4244,2.1795,4.0084,0.1827
+mmgfp,mmGFP,Meandrina meandrites,Other FP,214,505.0,0.1308,0.1556,3.9162,5.0,0.7336,203,0.4327,2.1696,3.9137,0.1478
+mc1,mc1,Montastraea cavernosa,Anthozoa,225,582.0,0.1556,0.1297,4.0536,6.0,0.7422,208,0.4317,2.1795,4.052,0.1923
+mc2,mc2,Montastraea cavernosa,Anthozoa,227,515.0,0.1498,0.1372,4.0072,6.0,0.7269,208,0.4284,2.1795,4.0098,0.1683
+meffcfp,meffCFP,Montipora efflorescens,Other FP,232,492.0,0.1638,0.1383,4.007,6.0,0.7198,208,0.4367,2.1795,4.0107,0.1779
+mmilcfp,mmilCFP,Montipora millepora,Other FP,227,492.0,0.1586,0.1228,4.0804,7.0,0.6872,207,0.4383,2.1785,4.0791,0.1401
+azaleab5,AzaleaB5,Montipora monasteriata,Other FP,230,596.0,0.1696,0.129,4.046,6.0,0.7261,208,0.4259,2.1795,4.0392,0.1923
+dkeima,dKeima,Montipora sp. 20,Other FP,222,616.0,0.1532,0.1417,3.9861,6.0,0.7162,208,0.4253,2.1795,3.9896,0.1683
+melecfp,meleCFP,Mycedium elephantotus,Other FP,227,485.0,0.185,0.1371,4.0202,6.0,0.7225,208,0.4239,2.1795,4.0279,0.2067
+obecfp,obeCFP,Obelia sp.,Other FP,234,499.0,0.1624,0.111,4.1166,6.0,0.7051,208,0.4431,2.1795,4.1272,0.1538
+dfgfp,dfGFP,Olindias formosus,Other FP,232,524.0,0.1336,0.13,4.0433,6.0,0.6724,205,0.431,2.1865,4.0344,0.1415
+mfag1,MfaG1,Orbicella faveolata,Other FP,227,508.0,0.1674,0.1325,4.0362,6.0,0.7225,208,0.4337,2.1795,4.0416,0.1731
+phiyfp,phiYFP,Phialidium sp. SL-2003,Other FP,234,537.0,0.1667,0.1137,4.108,6.0,0.7051,208,0.4381,2.1795,4.0988,0.1875
+plamgfp,plamGFP,Platygyra lamellina,Other FP,230,514.0,0.1435,0.1246,4.0577,6.0,0.7174,208,0.4426,2.1795,4.0655,0.1587
+pdac1,PdaC1,Pocillopora damicornis,Other FP,222,492.0,0.1802,0.1605,3.9084,5.0,0.7432,207,0.4164,2.1798,3.9046,0.1739
+pmeagfp1,pmeaGFP1,Pontella meadi,Other FP,222,504.0,0.1351,0.1276,4.0257,7.0,0.7072,200,0.4411,2.1682,4.0174,0.1
+pmimgfp1,pmimGFP1,Pontella mimocerami,Other FP,222,505.0,0.1261,0.1313,4.0114,7.0,0.7252,200,0.4376,2.1682,3.9954,0.1
+pdae1gfp,pdae1GFP,Pontellidae sp. SL-2003,Other FP,222,511.0,0.1081,0.1198,4.0709,6.0,0.7207,200,0.4459,2.1682,4.0593,0.115
+pplugfp1,ppluGFP1,Pontellina plumata,Other FP,222,500.0,0.1216,0.1229,4.0604,6.0,0.7297,200,0.4549,2.1682,4.0509,0.125
+plobrfp,plobRFP,Porites lobata,Other FP,233,614.0,0.1416,0.1316,4.0259,6.0,0.7597,208,0.422,2.1795,4.0187,0.1971
+pporgfp,pporGFP,Porites porites,Other FP,220,507.0,0.1318,0.1371,3.9898,6.0,0.7045,201,0.4311,2.161,3.9875,0.1791
+psamcfp,psamCFP,Psammocora sp. NA-2008,Other FP,230,492.0,0.1087,0.1379,4.0187,7.0,0.6739,208,0.4361,2.1795,4.0152,0.1442
+ptilgfp,ptilGFP,Ptilosarcus sp. CSG-2001,Other FP,238,508.0,0.1008,0.1201,4.0668,6.0,0.7311,205,0.4427,2.1813,4.0578,0.1512
+rrengfp,rrenGFP,Renilla reniformis,Other FP,233,508.0,0.1459,0.1328,4.0066,6.0,0.7124,208,0.4435,2.1795,4.0048,0.1587
+rflogfp,rfloGFP,Ricordea florida,Anthozoa,231,518.0,0.1429,0.1303,4.0449,6.0,0.697,208,0.4424,2.1795,4.0457,0.1346
+h2-3,h2-3,Ricordea sp. FP2-3,Other FP,234,516.0,0.1581,0.1213,4.0631,7.0,0.7137,206,0.443,2.1756,4.0614,0.1699
+mukg,mUkG,Sarcophyton sp.,Other FP,224,499.0,0.1607,0.1383,4.0036,6.0,0.7009,208,0.4213,2.1795,3.9987,0.1923
+scubrfp,scubRFP,Scolymia cubensis,Anthozoa,230,578.0,0.1696,0.1347,4.0288,5.0,0.7391,208,0.4271,2.1795,4.0306,0.2212
+shbfp,shBFP,Stichodactyla haddoni,Other FP,227,458.0,0.1322,0.1372,4.0106,7.0,0.7357,206,0.4391,2.1871,4.021,0.1408
+saasoti,SAASoti,Stylocoeniella armata,Other FP,222,519.0,0.1261,0.1258,4.0567,6.0,0.7387,206,0.4329,2.1752,4.0547,0.1602
+stylgfp,stylGFP,Stylocoeniella sp. NOA-2005,Other FP,224,500.0,0.1607,0.1565,3.936,5.0,0.7411,208,0.4098,2.1795,3.9295,0.1827
+kaede,Kaede,Trachyphyllia geoffroyi,Other FP,225,518.0,0.16,0.1216,4.0792,5.0,0.7378,208,0.4336,2.1795,4.0808,0.1827
+kcy,KCY,Verrillofungia concinna,Anthozoa,223,488.0,0.1525,0.156,3.9237,5.0,0.7444,204,0.4233,2.1669,3.9091,0.1422
+kcy-g4219,KCY-G4219,Verrillofungia concinna,Anthozoa,223,486.0,0.148,0.1628,3.8917,5.0,0.7668,204,0.4205,2.1669,3.8782,0.1275
+mpapaya,mPapaya,Zoanthus sp.,Anthozoa,237,541.0,0.1477,0.1423,4.0201,6.0,0.7257,208,0.4227,2.1795,4.0114,0.1923
+cgp,CGP,synthetic construct,Other FP,225,514.0,0.2,0.1557,3.9453,6.0,0.7244,208,0.4243,2.1795,3.9575,0.1827
+fwyellow,fwYellow,synthetic construct,Other FP,236,540.0,0.1271,0.1189,4.0876,5.5,0.7669,208,0.4402,2.1795,4.0952,0.1106
+ubiquitin,ubiquitin,control,Control,76,,0.8026,0.7541,1.1209,1.0,1.0,0,,,,
+lysozyme,lysozyme,control,Control,129,,0.6589,0.6818,1.3981,1.0,0.9922,0,,,,
+trypsin,trypsin,control,Control,223,,0.7354,0.6869,1.4176,1.0,0.991,0,,,,

@@ -23,8 +23,13 @@ python validate.py            # -> results/validation.json   (4 robustness tests
 python report.py              # -> results/findings.txt      (numbers quoted below)
 python compare_design_windows.py   # -> results/design_window_*.csv, window_family_alphabet.csv
 python esm_vs_family.py       # -> results/esm_vs_family_egfp.csv, esm_calibration.csv (needs GPU)
+python esm_profiles.py        # -> results/esm_profiles.npz, esm_sweep_profiles.npz,
+                              #    esm_family_sweep.csv   (needs GPU, ~9 min)
 python figures.py             # -> figures/*.png
 ```
+
+`visualization.ipynb` then renders the seven-figure ESM-2-vs-family comparison
+(`figures/esm_vs_msa_*.png`) from those cached distributions; it needs no GPU of its own.
 
 Needs `mafft` (`mamba install -c conda-forge mafft`) in the `esm2-fp-design` env;
 everything else is already there (biopython, biotite, pandas, scipy, matplotlib).
@@ -322,16 +327,16 @@ makes that concrete, and it is the reason the comparison is reported at all:
 |---|---|---|---|---|---|
 | ubiquitin | 76 | 0.803 | 0.754 | 1.0 | 1.00 |
 | lysozyme | 129 | 0.659 | 0.682 | 1.0 | 0.99 |
-| adenylate kinase | 214 | 0.706 | 0.692 | 1.0 | 0.99 |
+| trypsin | 223 | 0.735 | 0.687 | 1.0 | 0.99 |
 | **EGFP** | 239 | **0.126** | **0.128** | **6.0** | **0.74** |
 | **avGFP** (wild type) | 238 | **0.101** | **0.125** | **6.0** | **0.73** |
 | **mCherry** | 236 | **0.178** | **0.170** | **6.0** | **0.73** |
 
-On three ordinary proteins spanning 76–214 residues ESM-2 650M recovers the true
+On three ordinary proteins spanning 76–223 residues ESM-2 650M recovers the true
 residue as its top choice 66–80% of the time with mean confidence ~0.7. On three FPs of
 comparable length it drops to 10–18% with mean confidence ~0.13, and its top prediction
 is Gly at most positions — close to a background amino-acid distribution. This is not a
-length effect (adenylate kinase at 214 behaves like the short controls), not an
+length effect (trypsin at 223 behaves like the short controls), not an
 artifact of EGFP being engineered (wild-type avGFP is the *worst* of the three), and not
 a bug in the harness (the same code path produces the sharp control numbers, and
 unmasked reconstruction of EGFP is 99.2%).
@@ -366,6 +371,37 @@ how the family itself changes colour — so a low-`C_chem` position being editab
 strategy working, not a warning. The comparison is only informative in one direction:
 a position the whole family refuses to vary is a position a design is unlikely to
 improve by varying, and there is exactly one of those currently left open.
+
+### The same comparison over the whole barrel and the whole family
+
+`esm_profiles.py` and `visualization.ipynb` extend that EGFP-window comparison to all 208
+near-complete columns and to 96 proteins sampled across the alignment's 81 source organisms. The
+window result is the general one:
+
+- **Neither flat nor sharp about the same positions.** Family column entropy spans the full range
+  (median 2.35 bits, 12% of columns below 1 bit); ESM-2's is pinned at the ceiling (median 4.09 of
+  a possible 4.32, 98% above 3.5, none below 1). The two are uncorrelated column by column,
+  Spearman ρ = +0.04 (p = 0.59), and top-1 choices agree at 14% of columns.
+- **They diverge most where the family is most decided.** Jensen-Shannon divergence rises with
+  `C_chem` (ρ = +0.70): 0.69 bits at the 27 chemistry-locked columns against 0.30 at the 55 most
+  permissive, and 0.51 at buried positions against 0.38 at exposed ones.
+- **The flatness is a property of the fold.** Mean masked-marginal confidence is 0.11–0.17 for all
+  96 sampled FPs (Aequorea 0.12, Anthozoa 0.14, other 0.13) against 0.68–0.75 for the three
+  controls. Nothing distinguishes EGFP.
+- **Only the family predicts real FP sequences.** Scoring each sampled protein's own residues at the
+  core columns under a *leave-one-out* family profile (its own Henikoff weight subtracted from every
+  column it occupies) gives perplexity **4.9** and 53% top-1, against **16.0** and 15% for ESM-2 —
+  which is barely better than the 18.2 obtained from the family's background composition alone. The
+  family profile wins for 96 of 96 proteins.
+- **The `k = 10` truncation is indiscriminate.** ESM-2 ranks the family's consensus residue 5th on
+  median, and the campaign's top-10 keeps it at 72% of columns overall but only 63% of the
+  chemistry-locked ones (61% across the EGFP window) — being certain in the family buys no
+  protection.
+
+The practical reading is the same as above, now with the whole barrel behind it: a per-position
+family prior is not redundant with the ESM-2 term, and the cheapest fix is to *widen* the proposal
+support to the union of ESM-2's top-10 with `window_family_alphabet.csv`, rather than to replace
+either.
 
 ## Robustness
 
@@ -411,6 +447,9 @@ improve by varying, and there is exactly one of those currently left open.
 | `results/esm_vs_family_egfp.csv` | ESM-2 masked marginal vs family frequency at each EGFP window position |
 | `results/esm_calibration.csv` | ESM-2 masked-marginal sharpness on FPs vs matched control proteins |
 | `figures/design_window_vs_conservation.png` | the EGFP window ranked by family constraint |
+| `results/esm_profiles.npz`, `esm_profiles_meta.json` | full (L, 20) ESM-2 masked marginals for avGFP, EGFP, mCherry and the three control proteins |
+| `results/esm_sweep_profiles.npz`, `esm_family_sweep.csv` | the same for 96 proteins sampled across 81 source organisms, plus per-protein sharpness and divergence from the family |
+| `visualization.ipynb`, `figures/esm_vs_msa_*.png` | the family-vs-ESM-2 distribution comparison, six figures (see below) |
 
 ## Caveats
 
