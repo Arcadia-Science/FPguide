@@ -6,8 +6,8 @@ plausible is each. That proposal is the only generative component in the pipelin
 downstream (surrogate, oracle, selection) is discriminative. This document covers why there are
 two of them, how each turns into a per-residue probability, and how the alignment was built.
 
-Code: [3.1_design_run_MSA/design_knownstruct.py](3.1_design_run_MSA/design_knownstruct.py),
-[3.2_design_run_ESM2/design_knownstruct_esm2.py](3.2_design_run_ESM2/design_knownstruct_esm2.py),
+Code: [archive/3.1_design_run_MSA/design_knownstruct.py](archive/3.1_design_run_MSA/design_knownstruct.py),
+[3.1_design_run_ESM2/design_knownstruct_esm2.py](3.1_design_run_ESM2/design_knownstruct_esm2.py),
 [2_design_task_specification/build_windows.py](2_design_task_specification/build_windows.py),
 [msa/conservation.py](msa/conservation.py), and the alignment build in
 [../msa_conservation/](../msa_conservation/).
@@ -31,8 +31,8 @@ score(candidate) = z(logp_proposal) − 1.0·z(|λ_ex_pred − λ_ex_target|) �
 with the z-scores taken over the k = 10 candidates at the current position and the substitution
 drawn by multinomial sampling at T = 1. The only difference between the arms is where
 `logp_proposal` comes from — one line in the loop
-([design_knownstruct.py:324](3.1_design_run_MSA/design_knownstruct.py#L324) vs
-[design_knownstruct_esm2.py:415](3.2_design_run_ESM2/design_knownstruct_esm2.py#L415)). That makes
+([design_knownstruct.py:324](archive/3.1_design_run_MSA/design_knownstruct.py#L324) vs
+[design_knownstruct_esm2.py:432](3.1_design_run_ESM2/design_knownstruct_esm2.py#L432)). That makes
 the comparison a controlled swap rather than two pipelines that happen to differ.
 
 The design window is shared but is not entirely model-neutral, so it is worth being precise about
@@ -117,7 +117,7 @@ and the row must ungap to exactly the scaffold length — otherwise the scaffold
 window is a set of indices *into* that sequence and a mis-mapped column would produce a wrong
 window rather than a worse one). That gives `col_of[p]`: alignment column for sequence position
 `p`. Then for every editable position
-([build_windows.py:132-149](2_design_task_specification/build_windows.py#L132-L149)):
+([build_windows.py:138-155](2_design_task_specification/build_windows.py#L138-L155)):
 
 1. `f = F[col_of[p]]` — the 20-vector of Henikoff-weighted frequencies at that column, gaps
    excluded from the denominator.
@@ -178,7 +178,7 @@ campaign.
 ## 3. Model B — ESM-2 650M masked-LM
 
 `esm2_t33_650M_UR50D`, final layer 33, 1280-dim. The proposal is the **masked marginal** at the
-edited position ([design_knownstruct_esm2.py:253-267](3.2_design_run_ESM2/design_knownstruct_esm2.py#L253-L267)):
+edited position ([design_knownstruct_esm2.py:270-284](3.1_design_run_ESM2/design_knownstruct_esm2.py#L270-L284)):
 
 1. Tokenize the design's **current** sequence (scaffold plus every edit made so far this cycle).
 2. Replace the token at the edited position with `<mask>` (`+1` for the BOS token).
@@ -273,7 +273,7 @@ What the trials do not wash out is the trade:
   ahead: a sequence-conditioned proposal is more repeatable than a static profile sampled at T = 1.
 
 Read all of this against the unguided null in
-[3.3_design_run_gibbs/](3.3_design_run_gibbs/), not against zero: resampling the pocket from the
+[3.2_design_run_gibbs/](3.2_design_run_gibbs/), not against zero: resampling the pocket from the
 same proposal with the surrogate switched off already reaches 105.8 nm, so ~65% of the
 133.2 → 87.2 gain is the window and the prior, not the guidance. The same control shows that
 ESM-2's looser editing and worse family likelihood are properties of the *proposal* — unguided

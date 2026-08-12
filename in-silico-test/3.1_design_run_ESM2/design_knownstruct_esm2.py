@@ -1,20 +1,36 @@
 #!/usr/bin/env python
-"""Known-structure cohort design -- ESM-2 proposal arm of ``3_design_run``.
+"""Known-structure cohort design -- the ESM-2-proposal guided search. THE DESIGN ENGINE.
 
-Identical to ``3_design_run/design_knownstruct.py`` in every respect EXCEPT where the
-per-position proposal distribution comes from. This is the controlled comparison: same tasks,
-same Tier-B windows, same surrogate/oracle, same 1/1/1 guided-score weights, same seed --
-only the proposal is swapped, so any difference in outcome is attributable to it.
+This is the search itself; ``run_task2_esm2.py`` beside it is the named stage entry point, a thin
+runner that passes the same defaults explicitly plus ``--no-ppl``. Nothing in the search is
+task-specific -- the defaults below are simply stage 3.1's live task-2 configuration
+(``pairs_task2/``, the two merged cohorts, ``C.PIPE_OUT_ESM2_T2_R3``). The same file, run as
+::
 
-Cohorts here are the same three role manifests, reported as two conditions (``seen`` = S-train +
-S-val, ``held-out`` = S-test) since the deployed surrogate was refit on train+val -- see
-``design_common.COHORT_CONDITION``. Analysis-time grouping only; it does not change what runs.
+    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --pairs-dir pairs \\
+        --cohorts knownstruct_Strain knownstruct_Sval knownstruct_Stest \\
+        --outdir peak_designs/structure/knownstruct_esm2_rand3 --no-ppl
 
-  3_design_run/     proposal = family-MSA PSSM (static per-position Henikoff-weighted
+reproduces the ARCHIVED task-1 ESM-2 arm -- it is the same code that produced it, moved here
+when task set 1 was archived. (``archive/`` keeps task 1's own stage numbering, which does not
+line up with the live stages; archived paths are always written with the ``archive/`` prefix.)
+
+Per-position proposal distributions are the one component this arm swaps out. The archived
+family-PSSM arm (``archive/3.1_design_run_MSA/design_knownstruct.py``) is identical in every other
+respect -- same tasks, same Tier-B windows, same surrogate/oracle, same 1/1/1 guided-score
+weights, same seed -- so any difference in outcome is attributable to the proposal:
+
+  archived MSA arm  proposal = family-MSA PSSM (static per-position Henikoff-weighted
                     log-frequencies read out of ``design_windows.json``)
-  THIS FOLDER       proposal = ESM-2 650M masked-LM logits at the position being edited,
+  THIS FILE         proposal = ESM-2 650M masked-LM logits at the position being edited,
                     conditioned on the design's CURRENT sequence -- the mechanism
                     ``archive/esm2_design/parallel_pipeline/design_knownstruct.py`` uses
+
+Cohorts follow whichever manifests are passed. Task 1's three role manifests report as two
+conditions (``seen`` = S-train + S-val, ``held-out`` = S-test) since the deployed surrogate was
+refit on train+val; task 2 merges those pools up front into ``knownstruct_Spool`` /
+``knownstruct_Stest``. Either way see ``design_common.COHORT_CONDITION`` -- it is an
+analysis-time grouping and does not change what runs.
 
 What "same window" means here, precisely. ``design_windows.json`` carries two separable things,
 and only the second is MSA-derived:
@@ -53,11 +69,12 @@ proposal distribution at every later position, not just which candidates get sco
 
 Usage
 -----
-    python 3.2_design_run_ESM2/design_knownstruct_esm2.py --no-ppl          # all cohorts
-    python 3.2_design_run_ESM2/design_knownstruct_esm2.py --cohorts knownstruct_Stest
-    python 3.2_design_run_ESM2/design_knownstruct_esm2.py --iters 3
-    python 3.2_design_run_ESM2/design_knownstruct_esm2.py --trials 1 --visit-order sequence
-    python 3.2_design_run_ESM2/design_knownstruct_esm2.py --smoke 2        # wiring/timing probe
+    python 3.1_design_run_ESM2/run_task2_esm2.py                            # task 2 -- the live arm
+    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --no-ppl          # bare: the same, minus the runner
+    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --cohorts knownstruct_Stest
+    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --iters 3
+    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --trials 1 --visit-order sequence
+    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --smoke 2        # wiring/timing probe
 
 ``--no-ppl`` leaves the ``ppl`` column blank and is worth using whenever the pseudo-perplexity
 diagnostic is not needed: it masks every residue of every design in turn, so it costs about as
@@ -146,10 +163,11 @@ def _rng_pair(dev, trial, si, ti):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cohorts", nargs="*", default=C.DEFAULT_COHORTS)
-    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR),
+    ap.add_argument("--cohorts", nargs="*", default=C.TASK2_COHORTS)
+    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR_T2),
                     help=f"manifest directory, i.e. which task set to run (default "
-                         f"{C.PAIRS_DIR.name}; {C.PAIRS_DIR_T2.name} is stage 4's random-target set)")
+                         f"{C.PAIRS_DIR_T2.name}, stage 2's random-target set; {C.PAIRS_DIR.name} "
+                         f"is the archived furthest-target set)")
     ap.add_argument("--smoke", type=int, default=0, help="run only the first N tasks (wiring/timing probe)")
     ap.add_argument("--iters", type=int, default=N_ITERS, help=f"design cycles per task (default {N_ITERS})")
     ap.add_argument("--no-ppl", action="store_true", help="skip the ESM-2 pseudo-perplexity diagnostic")
@@ -157,8 +175,8 @@ def main():
                     help=f"independent searches per task (default {N_TRIALS})")
     ap.add_argument("--visit-order", choices=["random", "sequence"], default="random",
                     help="order of editable positions within a phase step (default random)")
-    ap.add_argument("--outdir", default=str(C.PIPE_OUT_ESM2_R3),
-                    help=f"output root (default {C.PIPE_OUT_ESM2_R3.name})")
+    ap.add_argument("--outdir", default=str(C.PIPE_OUT_ESM2_T2_R3),
+                    help=f"output root (default {C.PIPE_OUT_ESM2_T2_R3.name})")
     args = ap.parse_args()
 
     if not os.path.exists(C.WINDOWS_JSON):
@@ -363,7 +381,7 @@ def main():
     print(f"running {len(todo)} tasks x {args.trials} trials = {len(T)} searches | {args.iters} "
           f"iters x (chromo -> pocket) | k={K_TOP} T={TEMP} lam_prior={LAM_PRIOR} "
           f"lam_ex={LAM_EX} lam_em={LAM_EM} | editable min/med/max = "
-          f"{min(ns)}/{int(np.median(ns))}/{max(ns)} (Tier-B, same windows as 3.1_design_run_MSA) | "
+          f"{min(ns)}/{int(np.median(ns))}/{max(ns)} (Tier-B, same windows as the archived MSA arm) | "
           f"visit order = {args.visit_order} | ppl = {'off' if args.no_ppl else 'on'} | "
           f"proposal = ESM-2 masked-LM (family PSSM not used for selection; "
           f"{n_constrained} structurally constrained positions across tasks, rest = 20 AAs)")

@@ -1,6 +1,11 @@
 #!/usr/bin/env python
-"""Pre-validate every candidate scaffold's structure so curate_pairs.py can pick valid pairs in
-ONE pass, with no reselect/rebuild loop.
+"""Pre-validate every candidate scaffold's structure so ``curate_pairs_task2.py`` can pick valid
+pairs in ONE pass, with no reselect/rebuild loop.
+
+FIRST of the three scripts in this stage: validate -> curate -> build windows. It is a property
+of the scaffolds and the RCSB cache alone, independent of any task set, so its
+``structure_validation.json`` is reused across task sets rather than recomputed (it came from task
+1's task-specification stage with this script; see ``archive/README.md``).
 
 THE PROBLEM THIS SOLVES
 -----------------------
@@ -37,9 +42,9 @@ Writes ``structure_validation.json``. Resumable: already-recorded scaffolds are 
 
 Usage
 -----
-    python validate_structures.py
-    python validate_structures.py --revalidate       # recompute every verdict from zero
-    python validate_structures.py --limit 20         # probe timing on a subset
+    python 2_design_task_specification/validate_structures.py
+    python 2_design_task_specification/validate_structures.py --revalidate   # recompute every verdict from zero
+    python 2_design_task_specification/validate_structures.py --limit 20     # probe timing on a subset
 """
 import argparse
 import json

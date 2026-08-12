@@ -3,20 +3,30 @@
 This module lives at the experiment ROOT and is the single place every path is defined; each
 pipeline stage imports it. Stages are separate folders, run in order:
 
-  0_data_split/                  make_dual_split.py        -> data/dual_splits.csv
-  1_surrogate_oracle_training/   sweep + 3-fold CV + refit -> trained_models/
-  2_design_task_specification/   validate + curate + build -> pairs/, design_windows.json
-  3.1_design_run_MSA/            design_knownstruct.py     -> peak_designs/  (family-PSSM arm)
-  3.2_design_run_ESM2/           design_knownstruct_esm2.py-> peak_designs/  (ESM-2 proposal arm)
-  3.3_design_run_gibbs/          design_knownstruct_gibbs.py -> peak_designs/  (unguided null)
+  0_data_split/                  make_dual_split.py         -> data/dual_splits.csv
+  1_surrogate_oracle_training/   sweep + 3-fold CV + refit  -> trained_models/
+  2_design_task_specification/   validate + curate + build  -> pairs_task2/, design_windows.json
+  3.1_design_run_ESM2/           design_knownstruct_esm2.py -> peak_designs/  (guided, ESM-2)
+  3.2_design_run_gibbs/          design_knownstruct_gibbs.py-> peak_designs/  (unguided null)
 
-Stages 4 / 5.1 / 5.2 repeat the task specification and the two ESM-2 arms on a SECOND task set,
-identical in every rule except that each scaffold is paired with a random qualifying target rather
-than its most spectrally distant one, over two merged cohorts (S-pool = train+val, S-test):
+That chain runs TASK SET 2: each scaffold paired with a RANDOM qualifying target, over two merged
+cohorts (S-pool = train+val, S-test). The ORIGINAL task set -- each scaffold paired with its most
+spectrally distant qualifying target -- and its three design arms are archived under ``archive/``
+with the notebooks and the cross-set comparison that read them. Four scripts stayed live and moved
+INTO the stages above rather than into the archive:
 
-  4_design_task2/                curate_pairs_task2.py     -> pairs_task2/
-  5.1_design_run_ESM2/           run_task2_esm2.py         -> peak_designs/  (task 2, guided)
-  5.2_design_run_gibbs/          run_task2_gibbs.py        -> peak_designs/  (task 2, null)
+  * ``validate_structures.py`` and ``build_windows.py``, from task 1's task-specification stage;
+  * the two design engines, from task 1's two ESM-2 arms. ``run_task2_*.py`` beside each is the
+    named entry point; the engine's own CLI defaults are the live task-2 configuration.
+
+WATCH THE STAGE NUMBERS. ``archive/`` keeps task 1's own numbering (2, 3.1, 3.2, 3.3), which does
+NOT line up with the live stages above -- e.g. live 3.1 is the ESM-2 guided arm, while archived
+3.1 is task 1's MSA arm. Archived paths are always written with the ``archive/`` prefix.
+
+Task 1's OUTPUTS stay where they were written (``pairs/``, the PIPE_OUT_* paths below,
+``design_windows.json``'s task-1 scaffolds): only code was archived, never results, so
+``archive/compare_task_sets.py`` and the two notebooks in ``archive/`` still run against them.
+Nothing in the live chain reads them. See ``archive/README.md``.
 
 Stage scripts sit one level down, so each begins with a small bootstrap putting this root plus
 ``lib/`` and ``msa/`` on ``sys.path``. Artifacts and shared inputs stay at the root, since they
@@ -50,10 +60,10 @@ inputs to every experiment in the repo (duplicating them per folder would be was
 Both hold immutable public downloads, so sharing them across experiments cannot leak anything
 between splits.
 
-Pairs (``pairs/pairs_knownstruct_{Strain,Sval,Stest}.csv``, from ``curate_pairs.py``) and their
-Tier-B windows + MSA PSSMs (``design_windows.json``, from ``build_windows.py``) are generated
-here from scratch, so cohort membership follows THIS experiment's nested split (surrogate
-train/val/test) rather than the original esm2_design dual split.
+Pairs (``pairs_task2/pairs_knownstruct_{Spool,Stest}.csv``, from ``curate_pairs_task2.py``) and
+their Tier-B windows + MSA PSSMs (``design_windows.json``, from ``build_windows.py``) are
+generated here from scratch, so cohort membership follows THIS experiment's nested split
+(surrogate train/val/test) rather than the original esm2_design dual split.
 
 THREE COHORT FILES, TWO REPORTING CONDITIONS. The pair manifests are split by the scaffold's
 surrogate ROLE because that is what makes the per-cohort distance spread balanced, but the model
@@ -97,9 +107,17 @@ STRUCT_DIR = HERE / "structures" / "experimental"     # RCSB PDBx cache, self-po
 HITS_CSV = HERE / "structure_hits.csv"                # structure-known scaffolds (split-independent)
 MSA_DIR = HERE / "msa"                                # conservation.py + data/fp_all.aln.fasta
 WINDOWS_JSON = HERE / "design_windows.json"           # OURS: build_windows.py (built from scratch)
-PAIRS_DIR = HERE / "pairs"                            # OURS: curate_pairs.py (our split, distance-spread)
-PAIRS_DIR_T2 = HERE / "pairs_task2"                   # OURS: 4_design_task2 (random target per scaffold)
+PAIRS_DIR_T2 = HERE / "pairs_task2"                   # OURS: 2_design_task_specification (random target per scaffold)
+PAIRS_DIR = HERE / "pairs"                            # ARCHIVED task 1 (furthest target); outputs kept
 
+# TASK SET 2 (stages 2 / 3.1 / 3.2) -- THE LIVE ARMS. Each scaffold paired with a RANDOM
+# qualifying target instead of its furthest one, over two merged cohorts (S-pool, S-test).
+PIPE_OUT_ESM2_T2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_task2_esm2_rand3"
+PIPE_OUT_GIBBS_T2_R12 = HERE / "peak_designs" / "structure" / "knownstruct_task2_gibbs_r12"
+
+# ---- ARCHIVED task set 1 (each scaffold paired with its most spectrally distant target). The
+# code that produced these runs is under archive/; the runs themselves stay here, and archive/'s
+# compare_task_sets.py and notebooks read them as task 2's baseline.
 PIPE_OUT = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate"
 # same tasks + same Tier-B windows, ESM-2 masked-LM proposal instead of the family PSSM
 PIPE_OUT_ESM2 = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate_esm2"
@@ -112,27 +130,24 @@ PIPE_OUT_ESM2 = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate_
 PIPE_OUT_R3 = HERE / "peak_designs" / "structure" / "knownstruct_msa_rand3"
 PIPE_OUT_ESM2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_esm2_rand3"
 
-# UNGUIDED CONTROL (3.3): the ESM-2 arm with lam_ex = lam_em = 0, i.e. Gibbs sampling from the
+# UNGUIDED CONTROL (archived 3.3): the ESM-2 arm with lam_ex = lam_em = 0, i.e. Gibbs sampling from the
 # masked-LM inside the same Tier-B window, with the surrogate removed from the loop entirely.
 # It answers "how much of 3.1/3.2's movement is the guidance, and how much is resampling the
 # pocket at all?". Run on S-train + S-test only (36 + 36), 12 trials, so the null distribution
 # of a task's outcome is estimated well enough to compare against a 3-trial guided run.
 PIPE_OUT_GIBBS_R12 = HERE / "peak_designs" / "structure" / "knownstruct_gibbs_r12"
 
-# TASK SET 2 (stages 4 / 5.1 / 5.2): the same eligibility rules, but each scaffold paired with a
-# RANDOM qualifying target instead of its furthest one, over two merged cohorts (S-pool, S-test).
-# Same scripts, same models, same windows -- only the pair manifests differ, so these arms are
-# read against 3.2 / 3.3 directly.
-PIPE_OUT_ESM2_T2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_task2_esm2_rand3"
-PIPE_OUT_GIBBS_T2_R12 = HERE / "peak_designs" / "structure" / "knownstruct_task2_gibbs_r12"
+# Same scripts, same models, same windows as task 2 -- only the pair manifests differ, which is
+# what lets the two task sets be read against each other directly.
 
 SURR_CKPT = HERE / "trained_models" / "surrogate_final" / "cnn-max-d1_trainval.pt"  # final refit
 ORAC_CKPT = HERE / "trained_models" / "oracle_sweep" / "cnn-max-d1_s0.pt"           # oracle winner
 
 SEED = 42
-# One pair manifest per scaffold surrogate role. These stay three files: the design outputs are
-# keyed by cohort directory, and selecting per role is what keeps the distance spread balanced.
-DEFAULT_COHORTS = ["knownstruct_Strain", "knownstruct_Sval", "knownstruct_Stest"]
+# Task 1 kept one pair manifest per scaffold surrogate role -- the design outputs are keyed by
+# cohort directory, and selecting per role is what kept its distance spread balanced. Task 2
+# merges train+val up front instead (TASK2_COHORTS below), since only the condition matters.
+DEFAULT_COHORTS = ["knownstruct_Strain", "knownstruct_Sval", "knownstruct_Stest"]   # archived
 
 # ...but only TWO conditions are meaningful for the DEPLOYED surrogate (see the module docstring):
 #   seen      -- scaffold is inside the refit surrogate's train+val pool   (S-train + S-val, 72)
@@ -146,7 +161,7 @@ CONDITIONS = ["seen", "held-out"]
 CONDITION_COHORTS = {c: [k for k in DEFAULT_COHORTS if COHORT_CONDITION[k] == c] for c in CONDITIONS}
 CONDITION_LABEL = {"seen": "S-pool", "held-out": "S-test"}   # display names for figures/tables
 
-TASK2_COHORTS = ["knownstruct_Spool", "knownstruct_Stest"]   # 36 + 36, see 4_design_task2/
+TASK2_COHORTS = ["knownstruct_Spool", "knownstruct_Stest"]   # 36 + 36, THE LIVE PAIR -- stage 2
 
 
 def load_dataset(cur=CUR):

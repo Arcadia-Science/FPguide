@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Post-hoc: score every trajectory sequence with the SURROGATE, for the notebook viewers.
 
-``design_knownstruct.py`` logs only the ORACLE prediction per round (``pred_ex``/``pred_em``/
+A design run logs only the ORACLE prediction per round (``pred_ex``/``pred_em``/
 ``peak_err``): the surrogate is consulted inside a round, on the k=10 single-mutation candidates
 at each editable position, and only the accepted candidate's sequence survives -- its surrogate
 prediction is never written out. So the trajectory CSVs cannot show what the search *thought*
@@ -20,11 +20,14 @@ scored and the cache is keyed by (example, trial, round), so a caller merges on 
 
 Usage
 -----
-    python score_traj_surrogate.py                       # family-PSSM first pass  -> PIPE_OUT
-    python score_traj_surrogate.py --arm esm2            # ESM-2 first pass        -> PIPE_OUT_ESM2
-    python score_traj_surrogate.py --arm msa_rand3       # 3-trial random-order    -> PIPE_OUT_R3
-    python score_traj_surrogate.py --arm esm2_rand3      # ditto, ESM-2 arm        -> PIPE_OUT_ESM2_R3
-    python score_traj_surrogate.py --arm gibbs_r12       # unguided control (3.3)  -> PIPE_OUT_GIBBS_R12
+    python score_traj_surrogate.py --arm esm2_t2_rand3   # task 2 guided (3.1)     -> PIPE_OUT_ESM2_T2_R3
+    python score_traj_surrogate.py --arm gibbs_t2_r12    # task 2 null (3.2)       -> PIPE_OUT_GIBBS_T2_R12
+    python score_traj_surrogate.py                       # = --arm esm2_t2_rand3 (the default)
+
+    # the archived task-1 arms, whose CSVs are still on disk:
+    python score_traj_surrogate.py --arm msa_rand3       # task-1 MSA, 3 trials    -> PIPE_OUT_R3
+    python score_traj_surrogate.py --arm esm2_rand3      # task-1 ESM-2, 3 trials  -> PIPE_OUT_ESM2_R3
+    python score_traj_surrogate.py --arm gibbs_r12       # task-1 unguided control -> PIPE_OUT_GIBBS_R12
     python score_traj_surrogate.py --force               # recompute even if the cache exists
 """
 from __future__ import annotations
@@ -50,16 +53,19 @@ CACHE_NAME = "surrogate_traj.csv"
 ESM_BS = 32
 
 
-ARMS = {"msa": C.PIPE_OUT, "pssm": C.PIPE_OUT,          # "pssm" kept as an alias for "msa"
+# The live arms are the task-2 pair; the rest are the archived task-1 runs, kept because their
+# design CSVs are still on disk and archive/'s script + notebooks read them (archive/README.md).
+ARMS = {# task set 2 (random target per scaffold): 3.1 guided, 3.2 unguided null
+        "esm2_t2_rand3": C.PIPE_OUT_ESM2_T2_R3, "gibbs_t2_r12": C.PIPE_OUT_GIBBS_T2_R12,
+        # --- archived task set 1 ---
+        "msa": C.PIPE_OUT, "pssm": C.PIPE_OUT,          # "pssm" kept as an alias for "msa"
         "esm2": C.PIPE_OUT_ESM2,
         "msa_rand3": C.PIPE_OUT_R3, "esm2_rand3": C.PIPE_OUT_ESM2_R3,
-        # the unguided control (3.3) never consulted the surrogate during the search, so here the
+        # the unguided control never consulted the surrogate during the search, so here the
         # surrogate curve is not "what the search thought" but a counterfactual: what it would
         # have said about sequences chosen without it -- and the axis a surrogate-selected
         # best-of-12 has to be computed on, to price trial selection against the guided arms
-        "gibbs_r12": C.PIPE_OUT_GIBBS_R12,
-        # task set 2 (random target per scaffold): 5.1 guided, 5.2 unguided null
-        "esm2_t2_rand3": C.PIPE_OUT_ESM2_T2_R3, "gibbs_t2_r12": C.PIPE_OUT_GIBBS_T2_R12}
+        "gibbs_r12": C.PIPE_OUT_GIBBS_R12}
 
 
 def pipe_dir(arm):
@@ -134,7 +140,8 @@ def compute(arm="msa", force=False, verbose=True):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--arm", choices=sorted(set(ARMS)), default="msa")
+    ap.add_argument("--arm", choices=sorted(set(ARMS)), default="esm2_t2_rand3",
+                    help="which design run to score; default is stage 3.1, the live guided arm")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
     compute(args.arm, force=args.force)

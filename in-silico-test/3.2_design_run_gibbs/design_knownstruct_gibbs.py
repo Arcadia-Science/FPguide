@@ -1,64 +1,72 @@
 #!/usr/bin/env python
 """Unguided control -- ESM-2 Gibbs sampling in the same design window, no surrogate.
 
-This is ``3.2_design_run_ESM2/design_knownstruct_esm2.py`` with **lam_ex = lam_em = 0**. Same
+This is ``3.1_design_run_ESM2/design_knownstruct_esm2.py`` with **lam_ex = lam_em = 0**. Same
 tasks, same Tier-B windows, same ESM-2 650M masked-LM proposal, same k = 10 / T = 1.0 / 2 cycles,
 same per-trial random visiting order, same seeding scheme. The only change is that the two
 guidance terms are switched off, which leaves::
 
-    3.1 / 3.2   score = z(logp_proposal) - 1.0 * z(|ex_err|) - 1.0 * z(|em_err|)
+    GUIDED      score = z(logp_proposal) - 1.0 * z(|ex_err|) - 1.0 * z(|em_err|)
     THIS ARM    score = z(logp_esm)                                                 (lam_ex = lam_em = 0)
 
 so the target spectrum never enters the search. Each editable position is resampled from ESM-2's
 conditional at that position given the design's current sequence -- a Gibbs sweep over the pocket
 under the window's structural constraints -- and the oracle simply watches where that wanders.
 
-WHY. Every number in 3.1 and 3.2 is an improvement *over the scaffold*, and a scaffold is not a
-null: mutating 26 pocket positions moves ex/em whether or not anything is steering. This arm is
-the null those results need. Read the three arms as::
+THE DESIGN ENGINE. ``run_task2_gibbs.py`` beside it is the named stage entry point, a thin runner
+passing the same defaults explicitly plus ``--no-ppl``. The defaults below are stage 3.2's live
+task-2 configuration (``pairs_task2/``, S-pool + S-test, ``C.PIPE_OUT_GIBBS_T2_R12``); pointing
+``--pairs-dir``/``--cohorts``/``--outdir`` at task 1 reproduces the ARCHIVED task-1 null, which
+this same code produced before task set 1 was archived. See ``archive/README.md`` -- its stage
+numbering is task 1's own and does not line up with the live stages.
 
-    scaffold error  ->  Gibbs (this arm)  ->  guided (3.1 MSA / 3.2 ESM-2)
+WHY. Every number a guided arm reports is an improvement *over the scaffold*, and a scaffold is
+not a null: mutating 26 pocket positions moves ex/em whether or not anything is steering. This
+arm is the null those results need. Read the arms as::
+
+    scaffold error  ->  Gibbs (this arm)  ->  guided (3.1 ESM-2; archived task-1 MSA / ESM-2)
 
 If Gibbs closes most of the gap the guided arms report, the guidance is doing little; if it
-drifts or worsens, the gap between it and 3.1/3.2 is what the surrogate is actually buying.
+drifts or worsens, the gap between it and the guided arm is what the surrogate is really buying.
 
 COHORTS AND TRIALS. S-train (36) + S-test (36) only, 12 trials each = 864 searches. S-val is
 skipped: it is the same reporting condition as S-train (``seen``, see ``design_common``), so a
 balanced 36 seen / 36 held-out pair of cohorts costs a third of the compute and says the same
-thing. **Comparisons against 3.1/3.2 must therefore be restricted to these same 72 tasks**, not
+thing. **Comparisons against the archived task-1 arms must be restricted to those 72 tasks**, not
 run against their published 108-task means. 12 trials rather than 3 because this arm's whole
 output is a distribution -- with a 24-28 nm within-task trial spread in the guided arms, a null
 estimated from 3 draws is not a null.
 
 NO SURROGATE IN THE LOOP. With both lambdas at 0 the k = 10 candidates' surrogate predictions are
 multiplied by zero, so this arm skips the surrogate forward pass entirely (that pass is 10 seqs
-per position per search; dropping it is where the ~10x speedup over 3.2 comes from). It is an
+per position per search; dropping it is where the ~10x speedup over 3.1 comes from). It is an
 exact short-circuit, not an approximation: the RNG streams and the sampled candidate are
 unchanged. ``--lam-ex``/``--lam-em`` restore the guided path (and the surrogate load) if given.
 The surrogate can still be applied post-hoc for analysis --
 ``python score_traj_surrogate.py --arm gibbs_r12``.
 
-IS THIS *EXACTLY* GIBBS? Not quite, by design: the step keeps 3.2's machinery so the arms differ
+IS THIS *EXACTLY* GIBBS? Not quite, by design: the step keeps 3.1's machinery so the arms differ
 in one place only. Two deviations from sampling p(x_p | x_-p):
 
   * candidates are the **top k = 10** tokens of the allowed alphabet, not all of it (a truncated
     conditional -- it drops tail mass ESM-2 assigns to residues it considers implausible);
-  * their log-probs are **z-scored** before the softmax, exactly as 3.2 z-scores them against the
+  * their log-probs are **z-scored** before the softmax, exactly as 3.1 z-scores them against the
     error terms, which rescales the conditional by its own spread rather than preserving it.
 
 ``--proposal raw`` removes the z-scoring and samples ``softmax(logp / T)`` over the same top-k,
-i.e. the truncated conditional itself. Default is ``zscore``, the controlled 3.2-minus-guidance
-setting, because that is what makes the difference between this arm and 3.2 attributable to the
+i.e. the truncated conditional itself. Default is ``zscore``, the controlled guided-minus-guidance
+setting, because that is what makes the difference between this arm and 3.1 attributable to the
 guidance alone.
 
 Usage
 -----
-    python 3.3_design_run_gibbs/design_knownstruct_gibbs.py --no-ppl        # the control run
-    python 3.3_design_run_gibbs/design_knownstruct_gibbs.py --proposal raw  # untruncated-scale Gibbs
-    python 3.3_design_run_gibbs/design_knownstruct_gibbs.py --smoke 2 --trials 2   # wiring probe
-    python 3.3_design_run_gibbs/design_knownstruct_gibbs.py --lam-ex 1 --lam-em 1  # reproduces 3.2
+    python 3.2_design_run_gibbs/run_task2_gibbs.py                          # task 2 -- the live null
+    python 3.2_design_run_gibbs/design_knownstruct_gibbs.py --no-ppl        # bare: the same, minus the runner
+    python 3.2_design_run_gibbs/design_knownstruct_gibbs.py --proposal raw  # untruncated-scale Gibbs
+    python 3.2_design_run_gibbs/design_knownstruct_gibbs.py --smoke 2 --trials 2   # wiring probe
+    python 3.2_design_run_gibbs/design_knownstruct_gibbs.py --lam-ex 1 --lam-em 1  # reproduces 3.1
 
-Writes one CSV per task with every trial in it, identical columns to 3.2 (``lam_ex``/``lam_em``
+Writes one CSV per task with every trial in it, identical columns to 3.1 (``lam_ex``/``lam_em``
 record the 0/0 used). Resumable: a task whose CSV already covers the requested --trials and
 --iters is skipped.
 """
@@ -83,10 +91,10 @@ import design_common as C
 import peak_models as pm      # vendored copy -- this experiment folder is self-contained
 import prostt5_embed as pe
 
-# ---- design hyper-parameters -- 3.2's, with the two guidance weights zeroed -----------------
+# ---- design hyper-parameters -- 3.1's, with the two guidance weights zeroed -----------------
 LAM_PRIOR = 1.0      # weight on the ESM-2 masked-LM log-prob (now the ONLY term in the score)
-LAM_EX = 0.0         # <- 3.2 uses 1.0; this is the whole point of the arm
-LAM_EM = 0.0         # <- 3.2 uses 1.0
+LAM_EX = 0.0         # <- 3.1 uses 1.0; this is the whole point of the arm
+LAM_EM = 0.0         # <- 3.1 uses 1.0
 K_TOP = 10
 TEMP = 1.0
 N_ITERS = 2          # design cycles per task; override with --iters
@@ -96,9 +104,11 @@ ESM_BS = 48          # surrogate ESM-2 embedding batch (only used if --lam-ex/--
 LOGIT_BS = 64        # masked-LM proposal batch (all searches share one position slot per step)
 PPL_BS = 96          # pseudo-perplexity: masked single-residue rows per forward
 
-# S-val is dropped: same reporting condition as S-train, so 36 seen + 36 held-out is balanced
-# and costs a third less. See the module docstring.
-GIBBS_COHORTS = ["knownstruct_Strain", "knownstruct_Stest"]
+# The archived task-1 control's cohorts: S-val was dropped there because it is the same
+# reporting condition as S-train, so 36 seen + 36 held-out is balanced and costs a third
+# less. Task 2 (the default, C.TASK2_COHORTS) merges train+val up front and needs no such
+# choice. Kept for reproducing the archived run: --cohorts knownstruct_Strain knownstruct_Stest
+GIBBS_COHORTS_TASK1 = ["knownstruct_Strain", "knownstruct_Stest"]
 
 STD_AA = "ACDEFGHIKLMNPQRSTVWY"
 
@@ -135,7 +145,7 @@ def _complete(fn, trials, iters):
 def _rng_pair(dev, trial, si, ti):
     """Independent (numpy, torch) streams for one trial, reproducible from its identity alone.
 
-    Same construction as 3.1/3.2, so trial `t` of a task here starts from the same state it would
+    Same construction as the guided arm, so trial `t` of a task starts from the same state it would
     have there -- the arms differ in the score, not in the randomness fed to it.
     """
     ss = np.random.SeedSequence([C.SEED, trial, si, ti])
@@ -147,10 +157,11 @@ def _rng_pair(dev, trial, si, ti):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cohorts", nargs="*", default=GIBBS_COHORTS)
-    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR),
+    ap.add_argument("--cohorts", nargs="*", default=C.TASK2_COHORTS)
+    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR_T2),
                     help=f"manifest directory, i.e. which task set to run (default "
-                         f"{C.PAIRS_DIR.name}; {C.PAIRS_DIR_T2.name} is stage 4's random-target set)")
+                         f"{C.PAIRS_DIR_T2.name}, stage 2's random-target set; {C.PAIRS_DIR.name} "
+                         f"is the archived furthest-target set)")
     ap.add_argument("--smoke", type=int, default=0, help="run only the first N tasks (wiring/timing probe)")
     ap.add_argument("--iters", type=int, default=N_ITERS, help=f"design cycles per task (default {N_ITERS})")
     ap.add_argument("--no-ppl", action="store_true", help="skip the ESM-2 pseudo-perplexity diagnostic")
@@ -159,14 +170,14 @@ def main():
     ap.add_argument("--visit-order", choices=["random", "sequence"], default="random",
                     help="order of editable positions within a phase step (default random)")
     ap.add_argument("--proposal", choices=["zscore", "raw"], default="zscore",
-                    help="zscore: 3.2's z-scored top-k log-probs (default, the controlled setting); "
+                    help="zscore: 3.1's z-scored top-k log-probs (default, the controlled setting); "
                          "raw: softmax of the top-k log-probs themselves (the truncated conditional)")
     ap.add_argument("--lam-ex", type=float, default=LAM_EX,
-                    help=f"weight on z(|ex_err|); default {LAM_EX} -- nonzero restores 3.2's guided search")
+                    help=f"weight on z(|ex_err|); default {LAM_EX} -- nonzero restores 3.1's guided search")
     ap.add_argument("--lam-em", type=float, default=LAM_EM,
                     help=f"weight on z(|em_err|); default {LAM_EM}")
-    ap.add_argument("--outdir", default=str(C.PIPE_OUT_GIBBS_R12),
-                    help=f"output root (default {C.PIPE_OUT_GIBBS_R12.name})")
+    ap.add_argument("--outdir", default=str(C.PIPE_OUT_GIBBS_T2_R12),
+                    help=f"output root (default {C.PIPE_OUT_GIBBS_T2_R12.name})")
     args = ap.parse_args()
 
     # with both lambdas at 0 the surrogate's predictions are multiplied by zero, so it is not
@@ -312,9 +323,9 @@ def main():
         return torch.exp(-tot / nsn).cpu().tolist()
 
     def fam_logp_batch(T_list):
-        """DIAGNOSTIC ONLY (3.1's objective, reported here so all three arms share a naturalness
+        """DIAGNOSTIC ONLY (the archived MSA arm's objective, reported so every arm shares a naturalness
         axis): the design's log-likelihood over its editable positions under its own scaffold's
-        family PSSM. Never enters the score in this arm, exactly as in 3.2."""
+        family PSSM. Never enters the score in this arm, exactly as in 3.1."""
         out = []
         for t in T_list:
             lp = 0.0
@@ -344,7 +355,7 @@ def main():
         print("all tasks cached; nothing to run")
         return
 
-    # ---- per-task window: editable set + structural alphabets. Identical to 3.2, including
+    # ---- per-task window: editable set + structural alphabets. Identical to 3.1, including
     # ---- that the PSSM is read for the fam_logp diagnostic only and gates nothing. ---------
     torch.manual_seed(C.SEED); np.random.seed(C.SEED)
     T = []
@@ -379,7 +390,7 @@ def main():
     print(f"running {len(todo)} tasks x {args.trials} trials = {len(T)} searches | {args.iters} "
           f"iters x (chromo -> pocket) | k={K_TOP} T={TEMP} lam_prior={LAM_PRIOR} "
           f"lam_ex={args.lam_ex} lam_em={args.lam_em} | editable min/med/max = "
-          f"{min(ns)}/{int(np.median(ns))}/{max(ns)} (Tier-B, same windows as 3.1/3.2) | "
+          f"{min(ns)}/{int(np.median(ns))}/{max(ns)} (Tier-B, same windows as the guided arm) | "
           f"visit order = {args.visit_order} | proposal = ESM-2 masked-LM ({args.proposal}) | "
           f"ppl = {'off' if args.no_ppl else 'on'} | "
           + ("guided (surrogate in the loop)" if guided
@@ -449,7 +460,7 @@ def main():
                     Pk = surrogate_peaks_batched(cand_all) if guided else None
                     off = 0
                     for (t, pos, topv, aas, k_eff) in meta:
-                        # the proposal term: 3.2's z-scored log-probs, or the truncated
+                        # the proposal term: 3.1's z-scored log-probs, or the truncated
                         # conditional itself under --proposal raw
                         scores = LAM_PRIOR * (_zc(topv) if args.proposal == "zscore" else topv)
                         if guided:

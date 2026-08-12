@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Build Tier-B design windows + per-scaffold family PSSMs FROM SCRATCH for this experiment's
-own scaffold/target pairs (``curate_pairs.py`` -> ``pairs/``).
+own scaffold/target pairs (``curate_pairs_task2.py`` -> ``pairs_task2/``).
 
 Everything is computed locally and nothing is reused from other pipeline folders: the pocket
 geometry comes from ``pockets.py`` against the local ``structures/experimental/`` RCSB cache
@@ -18,9 +18,10 @@ The window rule itself (unchanged from the Tier-B + family-support design it was
     the whole-family alignment actually supports at that column (Henikoff-weighted frequencies).
     A position with empty intersection falls back to the constraint alone (or the wild-type).
 
-Every scaffold reaching this point should already be buildable: ``validate_structures.py`` checks
-the structure-quality gate (>=90% local identity, >=70% coverage) and the family-alignment
-precondition for every candidate, and ``curate_pairs.py`` selects only from the ones that passed.
+Every scaffold reaching this point should already be buildable: ``validate_structures.py``
+(beside it) checks the structure-quality gate (>=90% local identity, >=70% coverage) and the
+family-alignment precondition for every candidate, and curation selects only from the ones that
+passed.
 A skip here therefore means the validation cache is stale relative to ``structures/experimental/``,
 or curation was run with ``--no-validation``.
 
@@ -29,16 +30,21 @@ and only missing ones are computed. Use ``--rebuild`` to recompute everything fr
 
 ``design_windows.json`` is a UNION over every task set built so far, not a snapshot of one
 cohort's scaffolds: a window is a property of the scaffold (its structure and its alignment row),
-independent of which target it was paired with, so pointing ``--pairs-dir`` at task set 2
-(``pairs_task2/``, from ``4_design_task2/curate_pairs_task2.py``) adds its new scaffolds and
-leaves task 1's in place. Both task sets then read the same file and share the scaffolds they
-have in common instead of recomputing their geometry.
+independent of which target it was paired with. The file on disk therefore holds 137 scaffolds --
+task 2's (the default here) plus the 108 of the archived task 1, which were built first and are
+left in place. Both task sets read the same file and share the scaffolds they have in common
+instead of recomputing their geometry.
+
+This script and ``validate_structures.py`` came from task 1's task-specification stage, now under
+``archive/``; they live here because task 2's curation is their only live caller. See
+``archive/README.md``.
 
 Usage
 -----
-    python build_windows.py
-    python build_windows.py --rebuild
-    python build_windows.py --pairs-dir pairs_task2 --cohorts knownstruct_Spool knownstruct_Stest
+    python 2_design_task_specification/build_windows.py            # task 2's cohorts (the default)
+    python 2_design_task_specification/build_windows.py --rebuild
+    python 2_design_task_specification/build_windows.py --pairs-dir pairs \
+        --cohorts knownstruct_Strain knownstruct_Sval knownstruct_Stest   # archived task 1
 """
 import argparse
 import json
@@ -67,9 +73,10 @@ OUT = C.WINDOWS_JSON
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rebuild", action="store_true", help="recompute every window from zero")
-    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR),
-                    help=f"manifest directory -- the task set to build for (default {C.PAIRS_DIR.name})")
-    ap.add_argument("--cohorts", nargs="*", default=C.DEFAULT_COHORTS,
+    ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR_T2),
+                    help=f"manifest directory -- the task set to build for (default "
+                         f"{C.PAIRS_DIR_T2.name}; {C.PAIRS_DIR.name} is the archived task 1)")
+    ap.add_argument("--cohorts", nargs="*", default=C.TASK2_COHORTS,
                     help="cohorts to read from --pairs-dir")
     args = ap.parse_args()
 

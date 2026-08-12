@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 """Curate design task set #2: a RANDOM qualifying target per scaffold, not the furthest one.
 
-This is ``2_design_task_specification/curate_pairs.py`` with one thing changed and two cohorts
+This is ``archive/2_design_task_specification/curate_pairs.py`` (task 1, archived) with one thing
+changed and two cohorts
 instead of three. Every filter is identical -- identity floor/cap, minimum ex/em distance,
 length tolerance, oracle-train target pool with a moderate Stokes shift and a chromophore motif,
 and the ``validate_structures.py`` gate on scaffolds. What changes is which of the qualifying
 targets a scaffold is paired with:
 
-    task 1 (stage 2)   argmax over distance -- the scaffold's hardest legitimate target
+    task 1 (archived)  argmax over distance -- the scaffold's hardest legitimate target
     task 2 (HERE)      a uniform random draw over the same qualifying set
 
 WHY. Task 1's cohorts are extreme by construction: taking the furthest target of ~85 candidates
@@ -36,7 +37,7 @@ THE CANDIDATE POOL CACHE
 ------------------------
 Random selection needs the whole qualifying set per scaffold, so this stage caches
 ``pairs_task2/_candidate_pool_cache.json`` -- EVERY (scaffold, target) pair passing the criteria,
-not just the winner. Stage 2's ``_full_pool_cache.json`` is one row per scaffold (its argmax)
+not just the winner. Task 1's ``_full_pool_cache.json`` is one row per scaffold (its argmax)
 and cannot be re-drawn from, which is why the ~10 min all-pairs identity scan is redone once here
 rather than reused. Afterwards ``--from-cache`` re-selects instantly.
 
@@ -45,9 +46,9 @@ Draws are reproducible from identity alone: a scaffold's target is drawn from a 
 in, or on how many scaffolds were selected.
 
 Usage:
-    python 4_design_task2/curate_pairs_task2.py                 # ~10 min scan, then select
-    python 4_design_task2/curate_pairs_task2.py --from-cache    # re-select, instant
-    python 4_design_task2/curate_pairs_task2.py --from-cache --select spread
+    python 2_design_task_specification/curate_pairs_task2.py                 # ~10 min scan, then select
+    python 2_design_task_specification/curate_pairs_task2.py --from-cache    # re-select, instant
+    python 2_design_task_specification/curate_pairs_task2.py --from-cache --select spread
 """
 import argparse
 import csv
