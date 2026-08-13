@@ -1,0 +1,4 @@
+# Scratch output from the two pre-flight checks (check_scale.py, check_lam_bright0.py).
+# Both probe the sampler and throw the designs away; only their printed tables matter.
+_probe/
+_equiv/

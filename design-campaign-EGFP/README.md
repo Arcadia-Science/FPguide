@@ -11,27 +11,40 @@ patent-expired, **non**-large-Stokes-shift targets that bracket the problem — 
 | mOrange  | 548 / 562 | orange | 30.4 % | DsRed/mFruit (Tsien, expired 2021) |
 
 > **Consolidated scope.** This campaign was narrowed to the two targets above and the strategies
-> below (with the parameters here). Earlier exploratory targets (**mEmerald**, **mCherry**), other
-> `λ_bright` / `λ_edit` settings, and the previous post-hoc brightness-filter effort now live under
-> [`archive/`](archive/) — see [`archive/README.md`](archive/README.md). Strategies 1–4 were the
-> original consolidated set; **strategy 5 (`msa-guided/`) was added afterwards**, once the family
-> MSA showed how little the ESM-2 proposal was constraining the search, and **strategy 6
-> (`msa-gibbs/`) after that** as its unguided control.
+> below. Earlier exploratory targets (**mEmerald**, **mCherry**) and the previous post-hoc
+> brightness-filter effort live under [`archive/`](archive/) — see
+> [`archive/README.md`](archive/README.md). `archive/` is **gitignored and read by nothing**; if
+> active code needs a file, that file does not belong there.
 
-All six design strategies here share the **same** scaffold, target palette, edit window, and
+> **Two retirements.** The ESM-2 guided arm was originally run at **T = 10, λ = 20/60/10** in three
+> separate folders (`guided-design/`, `guided-design-constraint/`, `brightness-guided/`) plus a
+> 27-cell λ sweep. That whole arm was superseded by
+> [`esm2_guided/`](esm2_guided/), which runs the MSA effort's exact λ grid on the
+> real ESM-2 proposal, so the two arms finally differ **only** in the proposal distribution. The
+> T=10 runs are in `archive/superseded-unmatched-runs/` and have no shortlists.
+> Separately, the **constrained spectra guide** (peaks + edit penalty, no brightness term) was
+> **retired outright**: its 20 matched-sweep cells were run and are still on disk, but they are
+> excluded from every analysis. Strategy numbering keeps its gap so "strategy 4" still means what
+> it means in the write-ups.
+
+The five surviving strategies share the **same** scaffold, target palette, edit window, and
 underlying engine (`fpdesign.campaign`), and differ **only** in how residues are selected. This lets
-us compare the strategies head-to-head on the identical design problem. Two axes account for every
-difference between them — where candidate residues come from, and whether anything steers the choice
-among them — so the set forms a 2 × 2:
+us compare them head-to-head on the identical design problem. Two axes account for every difference
+between them — where candidate residues come from, and whether anything steers the choice among
+them — so the set forms a 2 × 2:
 
 | | unguided (gibbs) | surrogate-guided |
 |---|---|---|
-| **ESM-2 proposal** | 1. `gibbs-sampling/` | 2. `guided-design/`, 3. `guided-design-constraint/`, 4. `brightness-guided/` |
+| **ESM-2 proposal** | 1. `gibbs-sampling/` | 2. + 4. `esm2_guided/` (λ-cell slices) |
 | **family profile** | 6. `msa-gibbs/` | 5. `msa-guided/` |
 
 Reading down a column isolates the **proposal**; reading across a row isolates the **steering**.
 Strategy 6 exists because without it you cannot tell whether the MSA guide's advantage comes from
-the family profile or from the λ retuning that came with it.
+the family profile or from the λ retuning that came with it. Strategies 2 and 4 are **slices of one
+sweep** rather than separate runs: `λ_bright = 0` contributes exactly nothing to the guided score,
+so the peaks-only cells reproduce strategy 2 bit-for-bit while still logging `pred_bright` — which
+is what lets one uniform ID-and-bright filter judge every strategy. Verified, not assumed:
+[`esm2_guided/check_lam_bright0.py`](esm2_guided/check_lam_bright0.py).
 
 > **No oracle / in-sample predictions.** The surrogate that *guides* the search is the same model
 > that *predicts* the resulting `(ex, em)`, and it was trained on all FP data (these popular FPs
@@ -46,33 +59,26 @@ design-campaign-EGFP/
 ├─ make_pairs.py                       # setup: build the 2 EGFP→target pairs CSV
 ├─ pairs/campaign_pairs_egfp.csv       # shared: the 2 scaffold→target pairs (EBFP, mOrange)
 ├─ design_windows_egfp_tierB.json      # shared: 5 Å Tier-B edit window (copied into each effort)
+├─ references/                         # shared: the 2 rows every shortlist opens with
+│  ├─ reference_EGFP-<target>.csv       #   seqs + TRUE peaks; tracked, run-tree-independent
+│  └─ README.md                         #   provenance + why these are not read out of a run
 │
 ├─ gibbs-sampling/                     # STRATEGY 1 "gibbs": pure ESM-2 masked-LM (target-free)
 │  ├─ design_campaign.py                #   driver (strategy="gibbs", target_free=True)
-│  ├─ run_campaign.sh
-│  └─ designs/design_EGFP.csv           #   single target-free trajectory CSV
+│  ├─ design_campaign_benchmark.py      #   375-trial equal-budget variant
+│  ├─ PROVENANCE.md                     #   ⚠ designs/ backs the gibbs shortlists — do not extend
+│  ├─ designs/design_EGFP.csv           #   96 trials × 3 rounds; the shortlist source
+│  └─ designs_benchmark375/design_EGFP.csv    #   375 × 3 = 1,125, for benchmark_report.py
 │
-├─ guided-design/                      # STRATEGY 2 "spectra guide": surrogate-guided (peaks only)
-│  ├─ design_campaign.py                #   driver (strategy="guided", λ_ex=λ_em=20)
-│  ├─ run_campaign.sh
-│  └─ designs/design_EGFP-<target>.csv
-│
-├─ guided-design-constraint/           # STRATEGY 3 "constrained spectra guide": guided + λ_edit=10
-│  ├─ design_campaign.py                #   driver (adds the edit penalty)
-│  ├─ run_campaign.sh
-│  └─ designs_lam-edit10/design_EGFP-<target>.csv
-│
-├─ brightness-guided/                  # STRATEGY 4 "DMS guide": surrogate + brightness + edit penalty
-│  └─ guided_design/
-│     ├─ design_campaign.py             #   driver (λ_bright=60, λ_edit=10)
-│     ├─ run_campaign.sh
-│     └─ designs_lam-bright60_lam-edit10/design_EGFP-<target>.csv
-│
-├─ lambda_sweep/                       # SIDE STUDY: strategy 4 across a 3×3×3 grid of its λ weights
+├─ esm2_guided/                        # STRATEGIES 2 + 4: ESM-2 proposal at the MSA λ scale (T=1)
 │  ├─ design_campaign.py               #   driver (per-cell outdir, pseudo-perplexity skipped)
-│  ├─ run_sweep.sh                     #   27 cells × 12 trials per target, ~35 min per target
-│  ├─ visualize_sweep.ipynb            #   heatmaps: mutations, |Δex|/|Δem|, ID & brightness hits
+│  ├─ run_sweep.sh                     #   the 5×5×5 grid, both targets
+│  ├─ analyze.py                       #   per-slice table, λ heatmap, head-to-head vs strategy 5
+│  ├─ check_lam_bright0.py             #   proves λ_bright=0 == the peaks-only strategy
+│  ├─ metrics_<target>.csv             #   per-cell metrics, written by analyze.py
 │  └─ designs/lam-ex{P}_lam-em{P}_lam-bright{B}_lam-edit{E}/design_EGFP-<target>.csv
+│                                      #   125 cells = 5 (strategy 2) + 100 (strategy 4)
+│                                      #   + 20 RETIRED constrained-guide cells, excluded
 │
 ├─ msa-guided/                         # STRATEGY 5 "MSA guide": family profile replaces ESM-2
 │  ├─ build_msa_pssm.py                #   setup: 763-seq alignment → per-position family alphabets
@@ -83,19 +89,20 @@ design-campaign-EGFP/
 │  └─ designs/lam-ex{P}_lam-em{P}_lam-bright{B}_lam-edit{E}/design_EGFP-<target>.csv
 │
 ├─ msa-gibbs/                          # STRATEGY 6 "MSA gibbs": strategy 5's proposal, no steering
-│  ├─ design_campaign.py               #   driver (target-free; reads ../msa-guided/msa_pssm_egfp.json)
-│  ├─ run_campaign.sh                  #   96 trials × 3 rounds, ~11 s (no ESM-2 forward, no candidate scoring)
-│  └─ designs/design_EGFP.csv          #   target-free COLS_FREE schema, one effort per scaffold
+│  ├─ design_campaign.py                #   driver (target-free; reads ../msa-guided/msa_pssm_egfp.json)
+│  ├─ design_campaign_benchmark.py      #   375-trial equal-budget variant
+│  ├─ designs/design_EGFP.csv           #   target-free COLS_FREE schema, one effort per scaffold
+│  └─ designs_benchmark375/design_EGFP.csv
 │
-├─ make_shortlist_case.py              # build ONE per-strategy shortlist xlsx (ID + bright + diverse)
+├─ make_shortlist_case.py              # build ONE shortlist xlsx (ID + bright + diverse); --all
 ├─ make_batch.py                       # pick the wet-lab batch out of those shortlists
-├─ scale_to_96.sh                      # scale the consolidated efforts to 96 trials (resumable)
-├─ gen_shortlists.sh                   # watcher: emit each shortlist as its run finishes
-├─ visualize_campaign.ipynb            # cross-strategy analysis + all figures
-├─ figures/                            # saved PNGs from the notebook
-├─ shortlists/                         # final wet-lab shortlists: one xlsx per (strategy × target)
+├─ benchmark_report.py                 # equal-budget comparison across all five strategies
+├─ embed_cache.py, xlsx_io.py          # shared helpers (sequence-keyed embeddings, xlsx writer)
+├─ figures/                            # FROZEN PNGs from the archived notebook — not regenerable
+├─ shortlists/                         # wet-lab shortlists: one xlsx per (strategy × target)
 │  └─ FPdesign-batch1.xlsx             #   batch 1: 8 MSA-guide candidates + 2 MSA-gibbs controls
-└─ archive/                            # dropped targets, param variants, old single-file shortlists
+└─ archive/                            # GITIGNORED, read by nothing: dropped targets, the retired
+                                       # T=10 arm, superseded shortlists, visualize_campaign.ipynb
 ```
 
 Shared models live in the repo's `fpdesign/models/`:
@@ -118,8 +125,20 @@ scaffold↔target identity band is imposed (identity is metadata only).
 
 Each trial starts from the EGFP sequence and does **any-order masking** (a fresh random permutation
 of the window positions each iteration). At each visited position we mask it, read the ESM-2
-conditional logits, and keep the top-k allowed residues; strategies 1–4 differ in what happens next.
-Strategy 5 changes the first step instead, replacing ESM-2 with the family alignment.
+conditional logits, and keep the top-k allowed residues; strategies 1, 2 and 4 differ in what
+happens next. Strategy 5 changes the first step instead, replacing ESM-2 with the family alignment.
+
+All the guided strategies score candidates with the same expression, and differ only in which terms
+carry non-zero weight:
+
+```
+s = z(logp_proposal) − λ_ex·z(|Δex|) − λ_em·z(|Δem|) + λ_bright·z(pred_bright) − λ_edit·z(is_edit)
+```
+
+`is_edit = 1` when a candidate residue differs from the **scaffold** residue at that position, so
+`λ_edit` steers toward fewer mutations from the (bright, well-folded) parent; forced positions
+(e.g. pos2→aromatic) are unaffected. Every term is z-scored across the k candidates, so **λ is a
+relative weight** — which is why the two arms are only comparable once run at the same λ scale.
 
 **1. `gibbs` (`gibbs-sampling/`) — pure ESM-2 masked-LM (target-free).** A true Gibbs draw from the
 masked-LM conditional `p(x_i | x_{−i})`: sample directly from `softmax(logp / T)` at `T=1` with **no
@@ -127,22 +146,19 @@ target** term. The surrogate is loaded only to record each design's own `(ex, em
 Because it never uses a target, a run is a single design effort **per scaffold** → one target-free
 `designs/design_EGFP.csv`.
 
-**2. `spectra guide` (`guided-design/`) — surrogate-guided (peaks only).** Splice each candidate,
-predict `(ex, em)` with the surrogate, and sample at temperature `T` from
-`s = z(logp_ESM) − λ_ex·z(|Δex|) − λ_em·z(|Δem|)`. Defaults: `T=10, k=10, λ_ex=λ_em=20`.
+**2. `spectra guide` (`esm2_guided/`, `λ_bright = 0, λ_edit = 0`) — surrogate-guided
+(peaks only).** Splice each candidate, predict `(ex, em)` with the surrogate, and sample at
+temperature `T` from the peaks-only score. 5 cells × 75 trials at `T=1, k=10`.
 
-**3. `constrained spectra guide` (`guided-design-constraint/`) — guided + edit penalty.** Same as (2)
-plus `− λ_edit·z(is_edit)`, where `is_edit=1` if a candidate residue differs from the **scaffold**
-residue at that position. This steers toward **fewer** mutations from the (bright, well-folded) parent;
-forced positions (e.g. pos2→aromatic) are unaffected. Run at `λ_edit=10` → `designs_lam-edit10/`.
+**4. `DMS guide` (`esm2_guided/`, `λ_bright > 0`) — surrogate + brightness + edit
+penalty.** The full score, with `λ_bright` steering toward designs the classifier calls bright and
+`pred_bright` logged per design. 100 cells × 4 trials. In analysis this set is restricted to
+designs that are both **in-distribution** and **predicted bright** (the "DMS guide - bright" group).
 
-**4. `DMS guide` (`brightness-guided/`) — surrogate + brightness + edit penalty.** Adds the brightness
-term as well:
-`s = z(logp_ESM) − λ_ex·z(|Δex|) − λ_em·z(|Δem|) + λ_bright·z(pred_bright) − λ_edit·z(is_edit)`.
-`λ_bright` steers toward designs the classifier calls bright. Run at `λ_bright=60, λ_edit=10` →
-`designs_lam-bright60_lam-edit10/`; `pred_bright` is logged per design. In analysis this set is
-restricted to designs that are both **in-distribution** and **predicted bright** (the "DMS guide -
-bright" group).
+> **Retired: `constrained spectra guide`** (peaks + edit penalty, `λ_bright = 0, λ_edit > 0`) was
+> strategy 3. Its 20 cells were run and are still on disk under `esm2_guided/designs/`,
+> but nothing reads them — `analyze.py` drops them before pooling and `benchmark_report.py` has no
+> row for them, so both report **105 cells, not 125**.
 
 **5. `MSA guide` (`msa-guided/`) — the family alignment proposes, not ESM-2.** Same score as (4),
 but `z(logp_ESM)` becomes `z(logp_MSA)`: the Henikoff-weighted residue frequency of the 763-sequence
@@ -180,22 +196,26 @@ Each effort has a driver + a detachable wrapper. From inside the effort's folder
 cd design-campaign-EGFP/gibbs-sampling
 setsid bash run_campaign.sh < /dev/null > /dev/null 2>&1 &
 
-# spectra guide
-cd design-campaign-EGFP/guided-design
+# strategies 2 + 4: the whole matched-λ grid, both targets
+cd design-campaign-EGFP/esm2_guided
 python design_campaign.py --probe                       # time one pair, project total, exit (no writes)
-setsid bash run_campaign.sh < /dev/null > /dev/null 2>&1 &
+setsid bash run_sweep.sh < /dev/null > /dev/null 2>&1 &
 
-# constrained spectra guide (λ_edit=10)
-cd design-campaign-EGFP/guided-design-constraint
-setsid bash run_campaign.sh --lam-edit 10 < /dev/null > /dev/null 2>&1 &
-
-# DMS guide (λ_bright=60, λ_edit=10)
-cd design-campaign-EGFP/brightness-guided/guided_design
-setsid bash run_campaign.sh --lam-bright 60 --lam-edit 10 < /dev/null > /dev/null 2>&1 &
+# MSA guide (strategy 5) / MSA gibbs (strategy 6)
+cd design-campaign-EGFP/msa-guided  && setsid bash run_sweep.sh    < /dev/null > /dev/null 2>&1 &
+cd design-campaign-EGFP/msa-gibbs   && setsid bash run_campaign.sh < /dev/null > /dev/null 2>&1 &
 
 # monitor any effort
 tail -f "$(cat .last_log)"
 pgrep -af design_campaign.py            # empty = finished/stopped
+```
+
+A single matched-λ cell is just the driver with its four weights, which is how a retired strategy
+can still be reproduced without reviving its folder:
+
+```bash
+cd design-campaign-EGFP/esm2_guided
+python design_campaign.py --lam-ex 1 --lam-em 1 --lam-bright 0 --lam-edit 1 --temp 1   # ex-strategy 3
 ```
 
 Useful flags: `--trials --iters --temp --k --lam-ex --lam-em --lam-bright --lam-edit --pairs-limit
@@ -215,153 +235,138 @@ lam_em, pred_ex, pred_em, peak_err, ppl, ident_to_scaffold, designed_seq, scaffo
 
 - `peak_err = ½(|pred_ex − target_ex| + |pred_em − target_em|)` (mean of the two peak errors), with
   `pred_ex/pred_em` from the surrogate.
-- the brightness-guided ("DMS guide") CSVs add `pred_bright, lam_bright`.
+- every guided CSV that had the classifier loaded adds `pred_bright, lam_bright` — which, in the
+  matched sweep, is **all 125 cells**, including the `λ_bright = 0` ones where the term is
+  zero-weighted. That is deliberate: it is what lets one uniform ID-and-bright filter apply to the
+  peaks-only strategy too.
 - the two gibbs CSVs are **target-free** (no `target_*` / `peak_err` columns); reconstruct per-target
-  error from their `pred_ex/pred_em` as needed (the notebook's `load_target_free` does this).
+  error from their `pred_ex/pred_em` as needed — `make_shortlist_case.build` does this for the
+  `gibbs` cases, and `benchmark_report.py` for the target-free rows.
 - the MSA strategies leave `ppl` blank on purpose — ESM-2 pseudo-perplexity is not their naturalness
   measure, and the family log-likelihood under the PSSM is recoverable from the CSV without a GPU.
 
 ## Analysis
 
-`visualize_campaign.ipynb` is the cross-strategy view (all figures land in `figures/`):
-
-- **Overview & per-pair error** — designs vs scaffold vs target in `(ex, em)` space; per-pair
-  surrogate design error and convergence vs iteration round. The MSA-gibbs convergence panel is flat
-  by construction: a PSSM is context-independent, so each round is an independent redraw rather than
-  a refinement, and the chain has no memory to converge with.
-- **In-distribution / OOD check** — ESM-2 max-pool embeddings of each strategy's designs projected
-  onto the four-scaffold GFP-DMS clouds (PCA), shown as KDE density contours alongside the 758 curated
-  true FPs, with a nearest-neighbour distance OOD metric. The reference is **40,000 DMS sequences
-  (10k per scaffold: avGFP, amacGFP, cgreGFP, ppluGFP)**; a design is "in-distribution" if its NN
-  distance ≤ the DMS 99th percentile (`p99 ≈ 30.2`). One panel per strategy × target (10) plus the
-  OOD metric. The MSA-guide (29–31 % OOD) and DMS-guide (36–37 %) designs stay largely
-  in-distribution; the pure-guided (85–98 %), MSA-gibbs (92 %) and ESM-gibbs (100 %) designs
-  extrapolate much further out.
-- **Top-10 per strategy (EBFP, mOrange)** — two bar plots per target (ex and em) that **load the
-  finalized `shortlists/*.xlsx`** (rather than re-selecting designs), so the figures match the wet-lab
-  hand-off exactly. Each bar = mean ± sd of that strategy's shortlisted top-10, with the individual
-  designs overlaid, a green bar for the EGFP scaffold, and a dashed line at the target. Bars run
-  **unguided first, then guided**, so each target reads left-to-right as "what the proposal alone
-  gives you" → "what adding the surrogate gives you". mOrange shows all six strategies; EBFP shows
-  the four run for it (both gibbs strategies, **DMS guide - bright** and **MSA guide - bright**).
-- **Mutation load of the top-10** (`campaign_top10_mutations.png`) — the same shortlists counted as
-  substitutions from EGFP rather than predicted peaks, against the 25-position window ceiling. The
-  ordering tracks the objective exactly: unguided sits near the ceiling (gibbs 22–23, MSA gibbs
-  18–19), spectra guide 21.1, +edit penalty 15.5, and the brightness-steered strategies 9–11.
-  **MSA guide is the most parsimonious on both targets** (9.7 EBFP, 9.6 mOrange) as well as the most
-  accurate in-distribution strategy on mOrange, so it is not buying peak accuracy with mutations.
-  Worth staring at: **real EBFP is 2 substitutions from EGFP**, while our best confidently-bright
-  shortlist entry needs ~10 and still misses by 12.5 nm — the winning λ cell runs `λ_edit = 0`, so
-  parsimony was never rewarded, which makes an edit-penalty-weighted rerun worth doing for EBFP
-  specifically.
-- **Strategy comparison** — mean/best surrogate error per strategy on the two shared pairs, plus a
-  uniform `% predicted-bright` scored by the same cnn-max-d2 classifier across every strategy.
-
-Regenerate everything with:
+Two scripts, both read-only, both importing their filters from `make_shortlist_case.py` so the
+numbers are identical by construction to what the shortlists select on:
 
 ```bash
-conda run -n esm2-fp-design jupyter nbconvert --to notebook --execute --inplace visualize_campaign.ipynb
+python benchmark_report.py                      # equal-budget table, all five strategies
+python esm2_guided/analyze.py          # per-slice table + λ heatmap for strategies 2 + 4
 ```
 
-The design CSVs record `pred_ex` / `pred_em` / `pred_bright`, so the notebook never recomputes those,
-but the **ESM-2 max-pool embedding is not recorded anywhere** — it exists only to place designs on the
-DMS PCA and to run the ID test, and it is the expensive part of both the notebook and
-`make_shortlist_case.py`. `embed_cache.py` keys those vectors by sequence in `.embed_cache/`
-(gitignored, ~36 MB, safe to delete) so each sequence is embedded once ever. This matters now that the
-MSA sweep contributes ~5.4k designs: a full notebook run does **14,227 embedding lookups against
-7,316 distinct sequences**, so more than half are served from the cache even within a single run. It
-turned the run measured when the cache was added from **5m27s cold to 2m44s warm**, and a shortlist
-rebuild from ~80 s to 13 s; with `msa-gibbs/` included a warm run is **3m29s**.
+**`benchmark_report.py` — equal budget.** Every strategy gets a comparable **raw-design budget of
+≥ 1,125 per target** (raw = cells × trials × 3 iterations), so no row wins by having been allowed
+to draw more. Strategy 5 is deliberately left at 4× budget and flagged as such — read it as a
+best-achievable reference, not a like-for-like competitor. It reports, per strategy: unique
+designs, best/mean surrogate error, `% in-distribution`, `% predicted-bright`, and the count and
+best error among designs clearing **both** filters — the shortlist's own admission bar.
+
+**`esm2_guided/analyze.py` — where inside the λ grid the ESM-2 arm works.** Per-slice
+summary (strategy 2 vs strategy 4), a `λ_bright × λ_edit` heatmap of best ID-and-bright error, and
+a head-to-head against strategy 5 pooled and filtered exactly as the shortlists do. It writes
+`metrics_<target>.csv`.
+
+**Where the ID test comes from.** A design is "in-distribution" if the NN distance from its ESM-2
+max-pool embedding to the **40,000-sequence GFP-DMS reference** (10k each of avGFP, amacGFP,
+cgreGFP, ppluGFP) is ≤ that reference's 99th percentile (`p99 ≈ 30.2`). The design CSVs record
+`pred_ex` / `pred_em` / `pred_bright`, so nothing recomputes those — but the **embedding is not
+recorded anywhere**, and it is the expensive part of every consumer here. `embed_cache.py` keys
+those vectors by sequence in `.embed_cache/` (gitignored, ~36 MB, safe to delete) so each sequence
+is embedded once ever.
+
+> **`figures/` is frozen.** The 13 PNGs there were produced by `visualize_campaign.ipynb`, which
+> has been retired to `archive/` — it was written against the T=10 folder layout and six
+> shortlists, four of which no longer exist. The figures are kept because the write-up references
+> them; they are **not** regenerable from the current tree, and `nbconvert` will not reproduce
+> them. Anything that needs to be recomputed lives in the two scripts above.
 
 ## Wet-lab shortlist
 
-The final hand-off lives in `shortlists/` as **one xlsx per (strategy × target)** (the consolidated
-efforts were scaled to **96 trials** each via `scale_to_96.sh`):
+The final hand-off lives in `shortlists/` as **one xlsx per (strategy × target)** — six files, one
+per surviving case:
 
-- `shortlist_mOrange_gibbs.xlsx`, `shortlist_mOrange_MSA-gibbs.xlsx`,
-  `shortlist_mOrange_spectra-guide.xlsx`, `shortlist_mOrange_constrained-spectra-guide.xlsx`,
-  `shortlist_mOrange_DMS-guide.xlsx`, `shortlist_mOrange_MSA-guide.xlsx`
-- `shortlist_EBFP_gibbs.xlsx`, `shortlist_EBFP_MSA-gibbs.xlsx`, `shortlist_EBFP_DMS-guide.xlsx`,
-  `shortlist_EBFP_MSA-guide.xlsx`
+- `shortlist_mOrange_gibbs.xlsx`, `shortlist_mOrange_MSA-gibbs.xlsx`, `shortlist_mOrange_MSA-guide.xlsx`
+- `shortlist_EBFP_gibbs.xlsx`, `shortlist_EBFP_MSA-gibbs.xlsx`, `shortlist_EBFP_MSA-guide.xlsx`
+
+The retired ESM-2 arm has none. Its six superseded files are in `archive/superseded-shortlists/`
+(gitignored, read by nothing); the strategy-2/4 comparison now lives in `benchmark_report.py`,
+which scores those pools on the identical filters without minting a wet-lab hand-off for them.
 
 Each file starts with the two references (**EGFP** scaffold + the target, with their true dataset
-ex/em) followed by the **top-10 diverse** designs (greedy, ≥ 5 residues apart, ranked by surrogate
-peak error). Every case pools **all 3 iteration rounds of every trial** before selecting. The
-**DMS-guide** and **MSA-guide** files then restrict the pool to designs that are both
+ex/em, read from `references/`) followed by the **top-10 diverse** designs (greedy, ≥ 5 residues
+apart, ranked by surrogate peak error). Every case pools **all 3 iteration rounds of every trial**
+before selecting. The **MSA-guide** files then restrict the pool to designs that are both
 **in-distribution** (NN-distance to the 40k reference ≤ p99 ≈ 30.2) **and confidently predicted
 bright**; the other strategies take the plain closest-10. "Confidently" means classifier
 **logit > 0.5** (`BRIGHT_T` in `make_shortlist_case.py`), not the model's own `> 0` decision
 boundary: designs were clearing 0 by hundredths of a logit, which is a 0.51-probability call and not
-worth a wet-lab slot. `is_bright` in the output still reports the model's plain `> 0` verdict. Every design row is annotated with `is_id`, `is_bright`,
-`bright_logit`, predicted ex/em, `n_mut_vs_EGFP` (substitutions from the scaffold — a plain Hamming
-distance, since designs only ever substitute inside the Tier-B window), the `source` run it came
-from, and an E. coli codon-optimized DNA sequence. The reference rows carry it too, so EGFP reads 0
-and EBFP reads 2; mOrange is left blank because at 236 aa it is a different length from the 239-aa
-scaffold and a Hamming distance would be meaningless. Build one file (or rebuild all):
+worth a wet-lab slot. `is_bright` in the output still reports the model's plain `> 0` verdict. Every
+design row is annotated with `is_id`, `is_bright`, `bright_logit`, predicted ex/em, `n_mut_vs_EGFP`
+(substitutions from the scaffold — a plain Hamming distance, since designs only ever substitute
+inside the Tier-B window), the `source` run it came from, and an E. coli codon-optimized DNA
+sequence. The reference rows carry it too, so EGFP reads 0 and EBFP reads 2; mOrange is left blank
+because at 236 aa it is a different length from the 239-aa scaffold and a Hamming distance would be
+meaningless. Build one file, or all six:
 
 ```bash
-conda run -n esm2-fp-design python make_shortlist_case.py mOrange_DMS   # -> shortlists/shortlist_mOrange_DMS-guide.xlsx
-# cases: mOrange_gibbs     mOrange_spectra  mOrange_constr  mOrange_DMS  EBFP_DMS
-#        mOrange_MSA       EBFP_MSA
-#        mOrange_MSAgibbs  EBFP_MSAgibbs    EBFP_gibbs
+conda run -n esm2-fp-design python make_shortlist_case.py mOrange_MSA
+conda run -n esm2-fp-design python make_shortlist_case.py --all
+conda run -n esm2-fp-design python make_shortlist_case.py --verify-refs   # references/ vs the runs
+# cases: mOrange_gibbs  EBFP_gibbs  mOrange_MSAgibbs  EBFP_MSAgibbs  mOrange_MSA  EBFP_MSA
 ```
+
+### The four MSA shortlists are FROZEN
+
+Design names are **rank-derived** (`<target>_<code>_<NN>`, assigned in peak-error order), so a name
+does not pin a sequence — rebuilding under a different threshold, model or input silently repoints
+the same name at a different design. Wet-lab batch 1 was chosen off these files and pins those
+names, so the four MSA cases are frozen:
+
+> a frozen case still **rebuilds in full** — pool, dedupe, ID filter, brightness, greedy top-10 —
+> and the result is compared against the xlsx on disk. Match ⇒ the file is **not rewritten** (xlsx
+> bytes are not reproducible; rewriting would dirty `git status` on every passing run). Mismatch ⇒
+> a hard failure naming which designs were dropped or added, which cells changed, and whether it is
+> a pure re-rank. To accept a new selection deliberately: delete the file, rebuild to mint a new
+> baseline, then re-verify every pick in `make_batch.py`.
+
+That check is what makes the reproduction claim testable rather than aspirational — all four were
+confirmed to rebuild identically after `REF_CSV` moved to `references/`.
 
 The two **gibbs** strategies are target-free, so one 288-design run backs both of their per-target
 files and only the ranking differs. Neither produces a single predicted-bright design, so both take
 the plain closest-10 — the ID-and-bright filter would return an empty pool.
 
-**Both "- bright" strategies pool their whole λ sweep**, so neither is judged on a single setting.
-MSA guide pools its **125 cells** (12 trials × 3 rounds each) — 2,635 (mOrange) and 2,835 (EBFP)
-unique designs, of which 782 and 572 are ID & confidently bright. DMS guide pools its **27 cells** (λ_ex=λ_em ∈
-10/20/30 × λ_bright ∈ 40/50/60 × λ_edit ∈ 10/15/20) on top of the tuned 96-trial run — 1,110 and 948
-unique, of which 131 and 394 are ID & confidently bright. `source` records which cell every pick came from. Note
-the tuned setting also exists as a sweep cell and the two are byte-identical, so the tuned run is
-listed first and dedupe attributes shared designs to it.
+**MSA guide pools its whole λ sweep**, so it is not judged on a single setting: **125 cells**
+(12 trials × 3 rounds each) → 2,635 (mOrange) and 2,835 (EBFP) unique designs, of which 782 and 572
+are ID & confidently bright. `source` records which cell every pick came from.
 
-MSA guide still draws from ~2.5× more candidates, so this is not an *equal*-budget comparison — but
-pooling was worth doing precisely because it tests whether pool depth is the explanation. **It is
-not.** Quadrupling the DMS-guide pool (287 → 1,110 for mOrange, 284 → 948 for EBFP) moved its best
-peak error from 24.2 to 23.7 nm and from 7.9 to 7.9 nm. The 3.4-vs-23.7 nm gap on mOrange survives
-giving the ESM-based strategy four times as many candidates to choose from.
-
-Selecting on the same criterion the shortlist uses, this is where the strategies land:
+Selecting on the same criterion the shortlist uses, this is where the strategies land. The two
+guided ESM-2 rows are the matched-λ slices scored by `benchmark_report.py` on an equal raw-design
+budget; the shortlisted rows are the frozen files:
 
 | target | strategy | top-10 mean ex/em (nm) | best peak err | ID | bright |
 |---|---|---|---|---|---|
 | mOrange (548/562) | gibbs | 495.4 / 515.2 | 44.7 nm | 0/10 | 0/10 |
 | mOrange | MSA gibbs | 508.8 / 525.1 | 29.2 nm | 0/10 | 0/10 |
-| mOrange | spectra guide | 544.5 / 562.4 | **1.7 nm** | 0/10 | 0/10 |
-| mOrange | constrained spectra guide | 542.6 / 562.4 | **0.8 nm** | 1/10 | 0/10 |
-| mOrange | DMS guide - bright | 511.9 / 536.3 | 23.7 nm | 10/10 | 10/10 |
+| mOrange | spectra guide (matched λ) | — | 0.7 nm raw, **none** pass both filters | 0.6 % | 0 % |
+| mOrange | DMS guide (matched λ) | 487.4 / 511.9 | 31.8 nm | 28.1 % | 3.8 % |
 | mOrange | **MSA guide - bright** | 541.3 / 564.3 | **3.4 nm** | **10/10** | **10/10** |
 | EBFP (380/440) | gibbs | 426.2 / 475.6 | 38.6 nm | 0/10 | 0/10 |
 | EBFP | MSA gibbs | 433.7 / 479.8 | 27.1 nm | 1/10 | 0/10 |
-| EBFP | **DMS guide - bright** | 400.5 / 463.7 | **7.9 nm** | **10/10** | **10/10** |
-| EBFP | MSA guide - bright | 395.3 / 460.8 | 12.5 nm | 10/10 | 10/10 |
+| EBFP | spectra guide (matched λ) | — | 0.0 nm raw, **none** pass both filters | 0.1 % | 0 % |
+| EBFP | DMS guide (matched λ) | 415.2 / 470.0 | 29.3 nm | 26.7 % | 8.3 % |
+| EBFP | **MSA guide - bright** | 395.3 / 460.8 | **12.5 nm** | **10/10** | **10/10** |
 
-On **mOrange** the MSA guide is the first strategy to be simultaneously on-target *and*
-in-distribution *and* confidently bright. Those used to be mutually exclusive: the strategies that
-hit the mOrange peaks (spectra guide, 1.7 nm) were 0/10 on both filters, and the only strategy that
-passed both filters (DMS guide) missed by 24 nm — still 23.7 nm after its whole λ sweep is pooled
-in. At 3.4 nm and 10/10 on both filters, the MSA guide closes that gap.
+The ESM-2 rows report pool-level ID/bright rates rather than a 10/10 count because they have no
+shortlist to count out of; `best peak err` for them is the best error among designs clearing both
+filters, the same bar the MSA rows are held to.
 
-**On EBFP it does not, and raising the brightness bar is what exposed that.** At the old `logit > 0`
-threshold the MSA guide's best EBFP design was 5.6 nm, comfortably ahead of the DMS guide's 7.9 nm.
-But that design scored a brightness logit of **0.04** — a 0.51-probability call. Requiring `> 0.5`
-drops it and the next MSA-guide design in is 12.5 nm, so the DMS guide's 7.9 nm (logit 2.21) now
-wins the blue target outright. The MSA guide's EBFP advantage was real only if you were willing to
-bet a well on a coin-flip brightness call; its mOrange advantage survives the stricter bar
-untouched. This is worth remembering whenever a strategy wins by a small margin on a filtered pool:
-check the margin on the filter, not just on the objective.
-
-The two unguided rows say which half of that is the proposal's doing. **MSA gibbs beats ESM gibbs
-without any steering at all** — 29.2 vs 44.7 nm on mOrange, 27.1 vs 38.6 nm on EBFP, and the first
-non-zero ID count any unguided strategy has produced — so the family profile is genuinely a better
-place to sample from. But both are **0/10 bright**, and so is every strategy without a brightness
-term. Neither ingredient is sufficient alone.
-
-`gen_shortlists.sh` watches a `scale_to_96.sh` run and emits each file automatically as its run
-completes. The barplots in `visualize_campaign.ipynb` load these files directly.
+**The peaks-only strategy is the sharpest illustration of why both filters matter.** It gets
+closest to the target of anything in the campaign — 0.7 nm on mOrange, 0.0 nm on EBFP — and **not a
+single one of those designs is both in-distribution and predicted bright**. Optimizing the
+surrogate alone produces sequences that hit the requested spectrum and are, by every other measure
+available, not proteins worth expressing.
 
 ## Batch 1 — first wet-lab order
 
@@ -473,8 +478,20 @@ either reproduces the same ten sequences or fails loudly.
 
 ```bash
 cd design-campaign-EGFP
-python make_pairs.py        # regenerate pairs/campaign_pairs_egfp.csv (EBFP, mOrange)
+python make_pairs.py                             # -> pairs/campaign_pairs_egfp.csv (EBFP, mOrange)
+python make_shortlist_case.py --verify-refs      # references/ still agrees with every design run
 ```
 
 The edit window `design_windows_egfp_tierB.json` is derived one level up in the conventional campaign
 tooling and copied into each effort so every strategy edits the identical positions.
+
+`references/reference_EGFP-<target>.csv` holds the two rows every shortlist opens with — the EGFP
+and target sequences and their true measured peaks. They used to be read out of whichever design
+CSV was convenient, which meant retiring a run broke **every** shortlist, including ones that had
+nothing to do with it. They are checked in instead, so a shortlist rebuilds from a fresh clone with
+no design run present; `--verify-refs` re-compares them against all 500 live design CSVs. See
+[`references/README.md`](references/README.md).
+
+> **Rule of thumb for this folder:** if active code reads a file, that file is tracked. `archive/`
+> is gitignored, so nothing under it may be a dependency — that invariant is what this layout was
+> reorganized to restore.

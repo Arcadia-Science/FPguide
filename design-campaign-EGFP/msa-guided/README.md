@@ -1,7 +1,8 @@
 # msa-guided/ — the family alignment as the generative model (EGFP → mOrange & EBFP)
 
-A fifth strategy for the EGFP campaign. Everything is shared with
-[`../lambda_sweep/`](../lambda_sweep/) — same EGFP scaffold (`4EUL`, idx 171), same Tier-B 5 Å
+A fifth strategy for the EGFP campaign. Everything is shared with the ESM-2 guided arm
+([`../esm2_guided/`](../esm2_guided/), which superseded the T=10
+`../lambda_sweep/` this was originally written against) — same EGFP scaffold (`4EUL`, idx 171), same Tier-B 5 Å
 chromophore window (25 editable positions), same all-data surrogate (train MAE 5.2 nm), same
 `cnn-max-d2` brightness classifier (val AUROC 0.982), 12 trials × 3 iterations — except for the
 one thing that decides which residues are even on the table:
@@ -61,8 +62,8 @@ edit penalty can always choose to stay put, and the scaffold is always reachable
 ### The window itself is unchanged; only the alphabet is
 
 `design_windows_egfp_tierB.json` is **byte-identical** across all strategy folders (md5
-`9ad48573…` for gibbs, guided-design, guided-design-constraint, brightness-guided, lambda_sweep and
-this one). Same 25 editable positions, same three fixed (68 Gly, 97 Arg, 223 Glu), same Tier-B
+`9ad48573…` for gibbs, esm2_guided, msa-gibbs and this one — and for the retired T=10
+folders now in `../archive/superseded-unmatched-runs/`). Same 25 editable positions, same three fixed (68 Gly, 97 Arg, 223 Glu), same Tier-B
 constraints. The support constraint is layered on top and is **strictly tighter at 23 of the 25
 positions and never looser at any**: 457 Tier-B residue options → **289**, i.e. 63 %.
 

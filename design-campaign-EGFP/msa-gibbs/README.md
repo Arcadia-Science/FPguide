@@ -8,8 +8,12 @@ strategies in this campaign — *where candidates come from* and *whether anythi
 
 |  | unguided (gibbs) | surrogate-guided |
 |---|---|---|
-| **ESM-2 proposal** | [`../gibbs-sampling/`](../gibbs-sampling/) | [`../lambda_sweep/`](../lambda_sweep/), [`../brightness-guided/`](../brightness-guided/) |
+| **ESM-2 proposal** | [`../gibbs-sampling/`](../gibbs-sampling/) | [`../esm2_guided/`](../esm2_guided/) (λ-cell slices) |
 | **family profile** | **this folder** | [`../msa-guided/`](../msa-guided/) |
+
+(The guided ESM-2 cell used to be three separate T=10 folders. They were superseded by the
+matched-λ grid and retired to `../archive/superseded-unmatched-runs/`, which is what finally makes
+the top row and the bottom row differ *only* in the proposal.)
 
 Without this cell you cannot tell whether the MSA guide's advantage comes from the family profile or
 from the λ retuning that came with it. With it, you can: read down the left column for the proposal
