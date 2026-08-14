@@ -97,8 +97,10 @@ design-campaign-EGFP/
 ├─ make_shortlist_case.py              # build ONE shortlist xlsx (ID + bright + diverse); --all
 ├─ make_batch.py                       # pick the wet-lab batch out of those shortlists
 ├─ benchmark_report.py                 # equal-budget comparison across all five strategies
+├─ visualization.ipynb                 # the 5 five-strategy figures, both targets
 ├─ embed_cache.py, xlsx_io.py          # shared helpers (sequence-keyed embeddings, xlsx writer)
 ├─ figures/                            # FROZEN PNGs from the archived notebook — not regenerable
+├─ figures_benchmark/                  # visualization.ipynb's own PNG+SVG output (regenerable)
 ├─ shortlists/                         # wet-lab shortlists: one xlsx per (strategy × target)
 │  └─ FPdesign-batch1.xlsx             #   batch 1: 8 MSA-guide candidates + 2 MSA-gibbs controls
 └─ archive/                            # GITIGNORED, read by nothing: dropped targets, the retired
@@ -247,12 +249,14 @@ lam_em, pred_ex, pred_em, peak_err, ppl, ident_to_scaffold, designed_seq, scaffo
 
 ## Analysis
 
-Two scripts, both read-only, both importing their filters from `make_shortlist_case.py` so the
-numbers are identical by construction to what the shortlists select on:
+Two scripts and one notebook, all read-only, all importing their filters from
+`make_shortlist_case.py` so the numbers are identical by construction to what the shortlists select
+on:
 
 ```bash
 python benchmark_report.py                      # equal-budget table, all five strategies
 python esm2_guided/analyze.py          # per-slice table + λ heatmap for strategies 2 + 4
+jupyter nbconvert --to notebook --execute --inplace visualization.ipynb   # the figures
 ```
 
 **`benchmark_report.py` — equal budget.** Every strategy gets a comparable **raw-design budget of
@@ -267,6 +271,45 @@ summary (strategy 2 vs strategy 4), a `λ_bright × λ_edit` heatmap of best ID-
 a head-to-head against strategy 5 pooled and filtered exactly as the shortlists do. It writes
 `metrics_<target>.csv`.
 
+**`visualization.ipynb` — the figures, both targets.** Five figures for the five strategies on the
+**equal budget** `benchmark_report.py` defines:
+
+1. the share of every pool that is in-distribution, and that is in-distribution **and** confidently
+   bright — one grey pair of bars per strategy, both targets pooled into it, with the per-target
+   rates printed below;
+2. a light swarm of every mOrange design's predicted `(ex, em)` against the scaffold and target
+   rules, with each strategy's best ten drawn over it in full colour on a mean ± 1 SD crossbar,
+   where the two **brightness-guided** strategies (`DMS guide`, `MSA guide`) are first restricted to
+   designs that are both in-distribution and confidently bright while the other three — never given
+   a brightness term — are ranked unfiltered;
+3. the same figure for EBFP;
+4. the surrogate MAE of every strategy's best ten, **one target per panel on a shared y axis** — a
+   strip and a mean ± 1 SD crossbar per strategy, orange mOrange left, blue EBFP right;
+5. the two **peaks** of that same ten with both campaigns on one axis — excitation and emission,
+   each strategy contributing an orange sub-column and a blue one, each a **raincloud** (half violin
+   of that campaign's whole ~1,125-design pool, the best ten as rain beside it), against three rules
+   (the two targets in their own colours, the EGFP scaffold in green). The target-free gibbs arms
+   get one grey violin with both campaigns' tens on it.
+
+Figures 2 – 4 bracket **Welch's t-tests** between the tens of the two columns each one compares —
+every pair inside a proposal, plus the two brightness-guided strategies against each other, on each
+peak in figures 2 and 3 and on MAE within each target in figure 4 — with Holm across each family of
+five and Mann-Whitney U printed beside it.
+
+A closing numbers-only section ranks the same pools on surrogate error alone: those designs land on
+the target and pass neither filter (0 of 50 confidently bright on either target), because inside the
+MSA guide's pool r(brightness logit, peak error) = +0.32 (mOrange) and +0.51 (EBFP) — the gate costs
+3.95 nm and 14.57 nm respectively. **Colour names a protein** (orange mOrange, blue EBFP, green EGFP)
+and appears only where one of them does: the two reference rules of figures 2 and 3, each labelled
+once on the excitation panel, and figure 4's markers, the one panel where the two targets share an
+axis. Every design elsewhere is neutral grey — and every categorical axis is labelled on two
+levels, the steering rule
+per column under a rule naming the proposal, so the campaign's 2 × 2 reads off the axis. It uses the
+shortlists' own filters, imported from `make_shortlist_case.py`, and drops only their diversity
+rule, whose cost it prints. It writes `figures_benchmark/` — **not** the frozen `figures/` — and
+costs ≈ 70 s of GPU for the 2,250 target-free sequences whose `pred_bright` the runs never recorded,
+plus the ID embeddings if `.embed_cache/` is cold.
+
 **Where the ID test comes from.** A design is "in-distribution" if the NN distance from its ESM-2
 max-pool embedding to the **40,000-sequence GFP-DMS reference** (10k each of avGFP, amacGFP,
 cgreGFP, ppluGFP) is ≤ that reference's 99th percentile (`p99 ≈ 30.2`). The design CSVs record
@@ -279,7 +322,8 @@ is embedded once ever.
 > has been retired to `archive/` — it was written against the T=10 folder layout and six
 > shortlists, four of which no longer exist. The figures are kept because the write-up references
 > them; they are **not** regenerable from the current tree, and `nbconvert` will not reproduce
-> them. Anything that needs to be recomputed lives in the two scripts above.
+> them. Anything that needs to be recomputed lives in the two scripts and the notebook above, whose
+> own figures go to `figures_benchmark/` so this directory stays as it was.
 
 ## Wet-lab shortlist
 
