@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Build the EGFP design-campaign pairs CSV: scaffold = EGFP, two commercially available
-(patent-expired -> open_likely in licensing/commercial_use_flags.csv), non-LSS targets that bracket
+(patent-expired; see the per-target patent numbers below), non-LSS targets that bracket
 the consolidated campaign -- a near, sequence-similar blue shift and a distant, sequence-far orange
 shift. (The green mEmerald and red mCherry targets were dropped in the consolidation; see archive/.)
 

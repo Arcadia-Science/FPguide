@@ -61,6 +61,3 @@ trained_models/
 # ---- Archived / superseded material (kept locally, out of git) ----
 # Any archive/ folder anywhere in the tree — old notebooks, superseded designs, EDA, etc.
 archive/
-
-# ---- Kept local, not published ----
-licensing/

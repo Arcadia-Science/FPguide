@@ -1,4 +1,4 @@
-# esm2_fp_design
+# spectrum-to-fp-design
 
 ESM-2–guided design of **fluorescent proteins (FPs)** conditioned on their photophysical
 properties. The core pipeline has three parts:
@@ -30,8 +30,8 @@ seed, same 3 trials, same score — differing in one line of the loop: the propo
 masked-LM log-probability at the edited position, or a static Henikoff-weighted PSSM read off the
 763-sequence family alignment from [`msa_conservation/`](msa_conservation).
 
-Oracle-scored mean absolute peak error, nm ([`3.1`](in-silico-test/archive/3.1_design_run_MSA) vs
-[`3.2`](in-silico-test/archive/3.2_design_run_ESM2), both archived):
+Oracle-scored mean absolute peak error, nm (`3.1` vs
+`3.2`, both archived):
 
 | proposal | scaffold | design (surrogate-selected) | mean of trials | improved | trial spread | identity | fam_logp/pos |
 |---|---|---|---|---|---|---|---|
@@ -80,7 +80,7 @@ fold, and why both arms are kept rather than picking one on priors.
 
 ### The proposal is not the axis that matters — the surrogate is
 
-Against the unguided null ([`3.3`](in-silico-test/archive/3.3_design_run_gibbs), the same search with
+Against the unguided null (`3.3`, the same search with
 λ_ex = λ_em = 0, so the target never enters), measured on the 72 tasks all three arms share:
 
 | | mean of trials | vs null |
@@ -109,12 +109,16 @@ From this directory (the project root, so the editable `fpbase-extractor` instal
 
 ```bash
 conda env create -f environment.yml
-conda activate esm2-fp-design
+conda activate spectrum-to-fp-design
 ```
 
-Apple-Silicon friendly — uses the Mac GPU via **MPS** (no CUDA on macOS); set
-`PYTORCH_ENABLE_MPS_FALLBACK=1` for any op MPS doesn't support. The ESM-2 650M weights (~650 MB)
-download to the torch cache on first use.
+Device is auto-detected at runtime: **CUDA → MPS → CPU**. Every result in this repo was produced
+on Linux + CUDA (an L4). Apple Silicon works too — macOS has no CUDA, so the Mac GPU is used via
+**MPS**; set `PYTORCH_ENABLE_MPS_FALLBACK=1` for any op MPS doesn't implement. The ESM-2 650M
+weights (~650 MB) download to the torch cache on first use.
+
+`fpdesign/` is imported but **not installed** — the folders that use it put the repo root on
+`sys.path` at the top of each script, so run them from where their own README says to.
 
 ## Pipeline
 
@@ -131,6 +135,16 @@ in-silico-test/
 ```
 
 See each subfolder's `README.md` for details.
+
+**Figures.** Every folder keeps its own `figures/`, written by that folder's notebook — there is
+no shared figure directory. [`dataset_pipeline/figures/`](dataset_pipeline/figures)
+(`visualize_curation.ipynb`), [`in-silico-test/figures/`](in-silico-test/figures)
+(`visualization.ipynb`, `visualization_task2.ipynb`),
+[`GFP_DMS/figures/`](GFP_DMS/figures) (`visualization.ipynb`, `visualize_sweep.ipynb`,
+`visualize_thresholds.ipynb`), [`msa_conservation/figures/`](msa_conservation/figures)
+(`figures.py`, `visualization.ipynb`) and
+[`design-campaign-EGFP/figures_benchmark/`](design-campaign-EGFP/figures_benchmark)
+(`visualization.ipynb`).
 
 The earlier `(sequence, spectrum)` lineage — `design/build_fpbase_dataset.py` feeding
 `fpbase-extractor/processed_data/ESM-spectrum/` — has been archived to
@@ -161,17 +175,11 @@ surrogate/oracle/pocket machinery in `fpdesign/` (`peak_models.py`, `pockets.py`
   `campaign.py` (`Campaign`/`CampaignConfig`, extracted from the campaign scripts),
   `build_design_windows.py`, and the shared checkpoints in `models/`. Not a campaign itself —
   the engine the campaigns below import, and also the source of the ESM-2 embedding helpers used
-  by `dataset_pipeline/` and `GFP_DMS/`.
+  by `dataset_pipeline/` and `GFP_DMS/`. See [`fpdesign/README.md`](fpdesign/README.md).
 - **[`design-campaign-EGFP/`](design-campaign-EGFP)** — six parallel strategies (gibbs, guided,
   guided+constraint, brightness-guided, MSA-guided, MSA-gibbs) recoloring EGFP toward EBFP/mOrange.
   The active campaign; draws on `GFP_DMS`'s brightness classifier and `msa_conservation`'s
   alignment/PSSM.
-- **[`EGFP-full-spectra/`](EGFP-full-spectra)** — the same campaign's MSA-guided strategy with the
-  objective swapped from the two peak wavelengths to the **whole ex/em curve**: a `cnn-max-d1`
-  surrogate over the 382-protein full-spectrum set (85/15 split, 1,222 outputs) guiding a 48-cell λ
-  sweep toward mOrange. Reads the window, PSSM, pairs and brightness head straight out of
-  `design-campaign-EGFP/`, so the objective is the only difference and the two are comparable.
-  Revisits `design/`'s full-spectrum idea on the current curated data and machinery.
 
 Two earlier/parallel campaigns have been archived (moved to `archive/`, untracked) and are kept
 locally for reference only:
@@ -197,5 +205,20 @@ Datasets and analyses that feed the design campaigns rather than the core pipeli
   `fpdesign/pockets.py` reads when building edit windows, plus the few whole-barrel references
   (`1GFL.pdbx`) used by `msa_conservation/`. Self-populating: `pockets.py` fetches a missing PDB
   ID from RCSB into this folder on demand.
-- **`licensing/`** — flags which curated FPs are likely patent-expired/open for commercial use
-  (used to pick campaign targets). Kept local (not published in this repo — see `.gitignore`).
+
+## What's in this repo, what's kept local
+
+Some material this README refers to is deliberately not published, so a reader who goes looking for
+it knows it is absent by design rather than missing:
+
+| not in git | why | how to get it back |
+|---|---|---|
+| `archive/` folders, anywhere in the tree | superseded experiments, old notebooks, dropped targets. Referred to by name in these READMEs because the write-ups cite them, but read by no live code — if active code needs a file, that file is not in `archive/`. | not regenerable; kept on the authors' machines |
+| a few exploratory experiment folders | side experiments that are not part of the pipeline or the campaigns above | as above |
+| ESM-2 / ProstT5 per-residue embedding caches (`esm_residue_fp16.npy`, `prostt5_residue_fp16.npy`, `fpbase_esm2_650M_max.npy`, `DMS_data/*.npy`) | 0.5–50 GB each, over GitHub's file limit | re-run `dataset_pipeline/embed*.py`, `GFP_DMS/embed_parallel.py` |
+| `trained_models/`, and `*.pt` generally | regenerable checkpoints and cached predictions | re-run the sweep/training script in the folder that owns them |
+| the Atkinson Hyperlegible faces (`dataset_pipeline/fonts/`) | cut from the Google Fonts variable originals, not ours to redistribute | `python dataset_pipeline/fetch_arcadia_fonts.py` |
+
+Two checkpoints **are** tracked, because every campaign loads them and neither is cheap to
+reproduce: [`fpdesign/models/surrogate_cnn-max-d1_alldata.pt`](fpdesign/models) and
+`fpdesign/models/brightness_cnn-max-d2_40k.pt`.

@@ -36,11 +36,11 @@ proteins), not just the peak maxima.
 ## Install
 
 This package is installed (editable) as part of the project-wide conda env. From the
-**project root** (`esm2_fp_design/`):
+**project root** (`spectrum-to-fp-design/`):
 
 ```bash
 conda env create -f environment.yml   # installs `-e ./fpbase-extractor`
-conda activate esm2-fp-design
+conda activate spectrum-to-fp-design
 ```
 
 The extractor itself is pure standard library, so you can also run it without installing:
@@ -109,10 +109,10 @@ peak / brightness / pKa training sets. That is the only consumer of this folder.
 
 ## Archived material
 
-Exploratory work that is not part of the dataset-building path lives in
-[`archive/`](archive) (untracked): the mutual-information study, the ESM-2 embedding map
-and its caches, the older `(sequence, spectrum)` dataset lineage, and the phenotype
-coverage scripts. See `archive/README.md` for what each group was and how to regenerate it.
+Exploratory work that is not part of the dataset-building path lives in `archive/`, which is
+kept local and untracked: the mutual-information study, the ESM-2 embedding map and its
+caches, the older `(sequence, spectrum)` dataset lineage, and the phenotype coverage
+scripts. Its own `archive/README.md` records what each group was and how to regenerate it.
 
 ## Use as a library
 
@@ -137,7 +137,7 @@ write_outputs(proteins, "out/", formats=["csv", "json", "fasta"])
 
 ## Tests
 
-`pytest` ships with the `esm2-fp-design` env:
+`pytest` ships with the `spectrum-to-fp-design` env:
 
 ```bash
 pytest

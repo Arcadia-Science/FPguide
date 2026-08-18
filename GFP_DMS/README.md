@@ -50,7 +50,6 @@ GFP_DMS/
 ├── embed_dms.py                      ESM-2 650M per-residue embeddings (memmap cache)
 ├── embed_parallel.py                 the same embedding pass sharded across GPUs
 ├── build_subsample.py                stratified 4-scaffold sub20k / sub40k caches + 70/15/15 split
-├── sweep_brightness.py               architecture sweep + full-data training for log-brightness regression
 ├── sweep_classify_parallel.py        multi-GPU bright/dim CLASSIFIER sweep (24 configs) -> sweep_class4/
 ├── nn_distance_accuracy.py           held-out accuracy stratified by the campaigns' in-distribution NN distance
 ├── visualize_sweep.ipynb             sweep leaderboard, predicted-vs-true, post-hoc classifier
@@ -69,16 +68,28 @@ python transform_ortho_dms.py            # -> DMS_data/ortho_gfp_dms_sequences.c
 # 2. ESM-2 650M embeddings (GPU; ~20 seq/s on an L4). avGFP cache already built.
 python embed_dms.py                      # -> DMS_data/esm_residue_fp16.npy (+ _len)
 
-# 3. brightness regression: architecture search, then full-data training of the winners
-python sweep_brightness.py --subsample 10000       # architecture sweep
-python sweep_brightness.py --top-k 3 --max-epochs 30   # train top-3 on all rows (val+test at endpoint)
+# 3. stratified 4-scaffold subsample cache the sweep trains on (5k rows x 4 scaffolds)
+python build_subsample.py                # -> DMS_data/sub20k_* (+ sub40k_*)
+
+# 4. bright/dim classifier sweep: 24 configs, one worker per GPU, ranked by val AUROC
+python sweep_classify_parallel.py --dry-run       # list configs + shard assignment first
+python sweep_classify_parallel.py --gpus 0,1,2,3  # -> trained_models/sweep_class4/results.csv
 ```
+
+The sweep's winner, `cnn-max-d2` trained on the 40k cache, is the brightness head the design
+campaigns load — it is the one checkpoint from this folder tracked in git, as
+`fpdesign/models/brightness_cnn-max-d2_40k.pt`.
 
 ## Not in git (see `.gitignore`)
 
-ESM-2 embedding caches (`DMS_data/*.npy`, tens of GB), `trained_models/` (checkpoints +
-prediction caches), and run logs — all regenerable from the scripts above. The raw tables and the
-processed `*_sequences.csv` datasets **are** tracked.
+`DMS_data/` in full — the two studies' raw tables, the processed `*_sequences.csv`, the subsample
+caches and the ESM-2 embedding arrays (tens of GB) — plus `trained_models/` (checkpoints and
+prediction caches) and run logs. What is tracked is the **code** that rebuilds all of it, and
+[`figures/`](figures).
+
+The two raw tables are not redistributed here; download them from the sources in
+[Scaffolds & sources](#scaffolds--sources) into `DMS_data/` under the filenames in that table, then
+run the transform scripts above.
 
 > Note: `embed_dms.py` currently targets the avGFP CSV/paths; the orthologue embeddings are not yet
 > built. Embedding all four scaffolds' 141,144 sequences takes ~1.9 h on an L4 (~54 GB for the

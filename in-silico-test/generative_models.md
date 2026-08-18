@@ -6,7 +6,7 @@ plausible is each. That proposal is the only generative component in the pipelin
 downstream (surrogate, oracle, selection) is discriminative. This document covers why there are
 two of them, how each turns into a per-residue probability, and how the alignment was built.
 
-Code: [archive/3.1_design_run_MSA/design_knownstruct.py](archive/3.1_design_run_MSA/design_knownstruct.py),
+Code: `archive/3.1_design_run_MSA/design_knownstruct.py`,
 [3.1_design_run_ESM2/design_knownstruct_esm2.py](3.1_design_run_ESM2/design_knownstruct_esm2.py),
 [2_design_task_specification/build_windows.py](2_design_task_specification/build_windows.py),
 [msa/conservation.py](msa/conservation.py), and the alignment build in
@@ -31,7 +31,7 @@ score(candidate) = z(logp_proposal) − 1.0·z(|λ_ex_pred − λ_ex_target|) �
 with the z-scores taken over the k = 10 candidates at the current position and the substitution
 drawn by multinomial sampling at T = 1. The only difference between the arms is where
 `logp_proposal` comes from — one line in the loop
-([design_knownstruct.py:324](archive/3.1_design_run_MSA/design_knownstruct.py#L324) vs
+(`design_knownstruct.py:324` vs
 [design_knownstruct_esm2.py:432](3.1_design_run_ESM2/design_knownstruct_esm2.py#L432)). That makes
 the comparison a controlled swap rather than two pipelines that happen to differ.
 
@@ -87,7 +87,7 @@ tandem-dimer and Ca²⁺-sensor constructs (`tdTomato`, `tdStayGold`, `GCaMP2`, 
 second barrel copy cannot align to the first.
 
 **Software.** MAFFT 7.526 for the alignment itself; Biopython 1.87 (`AlignIO`) to parse it, NumPy
-1.26.4 and pandas 2.3.3 for the weighting and frequency calculations, all in the `esm2-fp-design`
+1.26.4 and pandas 2.3.3 for the weighting and frequency calculations, all in the `spectrum-to-fp-design`
 conda environment. The proposal side uses fair-esm 2.0.0 (`esm2_t33_650M_UR50D`) on PyTorch 2.13,
 with biotite 1.2.0 for the structure→sequence mapping that defines the window.
 

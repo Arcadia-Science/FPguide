@@ -31,8 +31,8 @@ python figures.py             # -> figures/*.png
 `visualization.ipynb` then renders the seven-figure ESM-2-vs-family comparison
 (`figures/esm_vs_msa_*.png`) from those cached distributions; it needs no GPU of its own.
 
-Needs `mafft` (`mamba install -c conda-forge mafft`) in the `esm2-fp-design` env;
-everything else is already there (biopython, biotite, pandas, scipy, matplotlib).
+Everything this folder needs — `mafft` plus biopython, biotite, pandas, scipy and
+matplotlib — is declared in the project [`environment.yml`](../environment.yml).
 
 ## What was aligned
 

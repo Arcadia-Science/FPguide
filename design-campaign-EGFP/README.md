@@ -12,8 +12,8 @@ patent-expired, **non**-large-Stokes-shift targets that bracket the problem — 
 
 > **Consolidated scope.** This campaign was narrowed to the two targets above and the strategies
 > below. Earlier exploratory targets (**mEmerald**, **mCherry**) and the previous post-hoc
-> brightness-filter effort live under [`archive/`](archive/) — see
-> [`archive/README.md`](archive/README.md). `archive/` is **gitignored and read by nothing**; if
+> brightness-filter effort live under `archive/` — see
+> `archive/README.md`. `archive/` is **gitignored and read by nothing**; if
 > active code needs a file, that file does not belong there.
 
 > **Two retirements.** The ESM-2 guided arm was originally run at **T = 10, λ = 20/60/10** in three
@@ -354,9 +354,9 @@ because at 236 aa it is a different length from the 239-aa scaffold and a Hammin
 meaningless. Build one file, or all six:
 
 ```bash
-conda run -n esm2-fp-design python make_shortlist_case.py mOrange_MSA
-conda run -n esm2-fp-design python make_shortlist_case.py --all
-conda run -n esm2-fp-design python make_shortlist_case.py --verify-refs   # references/ vs the runs
+conda run -n spectrum-to-fp-design python make_shortlist_case.py mOrange_MSA
+conda run -n spectrum-to-fp-design python make_shortlist_case.py --all
+conda run -n spectrum-to-fp-design python make_shortlist_case.py --verify-refs   # references/ vs the runs
 # cases: mOrange_gibbs  EBFP_gibbs  mOrange_MSAgibbs  EBFP_MSAgibbs  mOrange_MSA  EBFP_MSA
 ```
 
@@ -512,7 +512,7 @@ sequence), plus `batch_id`, `mut_tier`, `pred_peak_err_nm` and the originating `
 EGFP, mOrange and EBFP references sit at the top with their TRUE measured peaks. Rebuild with:
 
 ```bash
-conda run -n esm2-fp-design python make_batch.py   # -> shortlists/FPdesign-batch1.xlsx
+conda run -n spectrum-to-fp-design python make_batch.py   # -> shortlists/FPdesign-batch1.xlsx
 ```
 
 Picks are pinned by shortlist design name, not by rank, so re-running after a shortlist rebuild

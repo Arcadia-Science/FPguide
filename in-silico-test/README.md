@@ -39,6 +39,7 @@ archive/                       the ORIGINAL task set, its three arms and the cro
 lib/                           vendored modules — copies, don't edit here
 msa/                           vendored MSA code + the family alignment (self-contained unit)
 data/  structures/             inputs and the RCSB cache
+figures/                       this folder's exported PNG/SVG/HTML figures
 sweep_results.ipynb  visualization.ipynb  visualization_task2.ipynb
 ```
 
@@ -49,7 +50,7 @@ live chain and so moved up into it rather than into `archive/`: `validate_struct
 `build_windows.py` into stage 2, and the two design engines into 3.1 and 3.2, whose
 `run_task2_*.py` are thin runners over them. Task 1's *outputs* were not archived — only code was —
 so the archived comparison script and notebooks still run against them; nothing in the live chain
-reads them. Full account, and task 1's own results, in [`archive/README.md`](archive/README.md).
+reads them. Full account, and task 1's own results, in `archive/README.md`.
 
 > **Stage numbers are per era.** `archive/` keeps task 1's own numbering (2, 3.1, 3.2, 3.3), which
 > does not line up with the live stages: live `3.1` is the ESM-2 guided arm, archived `3.1` is task
@@ -115,7 +116,9 @@ for a in esm2_t2_rand3 gibbs_t2_r12; do python score_traj_surrogate.py --arm $a;
 
 Then `sweep_results.ipynb` (sweep + CV figures), `visualization.ipynb` (landscape, split, both
 models) and `visualization_task2.ipynb` (**the design results** — the guided arm against its own
-null, per cycle and per condition, with the paired tests).
+null, per cycle and per condition, with the paired tests). The latter two export to
+[`figures/`](figures) next to them (`FIGDIR` in each setup cell); every folder in this repo keeps
+its own figures, there is no shared figure directory.
 
 The cross-task-set table in [Design results](#design-results-task-set-2--the-live-task-set) came
 from `archive/compare_task_sets.py`, archived with task set 1 since half of what it prints *is*
@@ -177,7 +180,7 @@ and not a typical one: the argmax collapses onto a handful of extreme proteins, 
 used only 17 distinct targets at a median 190 nm. Drawing uniformly holds every eligibility rule
 fixed and moves only the difficulty — 72 tasks over **60 distinct targets** at a median **79 nm** —
 which is what makes the two task sets a controlled pair (see
-[`archive/README.md`](archive/README.md)).
+`archive/README.md`).
 
 Result — **36 pairs per cohort (72 tasks)**:
 
@@ -300,7 +303,7 @@ single-position move is simultaneously structurally plausible, chemically approp
 and observed in the natural family — which is what lets a greedy search travel 40+ nm while keeping
 ~92% identity to its scaffold. The guided arm ([`3.1`](3.1_design_run_ESM2)) holds every
 structural component of this window fixed and replaces only the family term, with ESM-2's
-masked-LM logits — see [`archive/README.md`](archive/README.md#esm-2-proposal-arm-32_design_run_esm2)
+masked-LM logits — see `archive/README.md`
 for the controlled comparison against the family PSSM that established it.
 
 ## Design results (task set 2 — the live task set)
@@ -324,7 +327,7 @@ two thirds of the apparent gain.
 
 The archived task set 1 (each scaffold paired with its *furthest* qualifying target) is the row
 this one is read against; both of its arms are still on disk, so
-[`archive/compare_task_sets.py`](archive/compare_task_sets.py) still prints both rows:
+`archive/compare_task_sets.py` still prints both rows:
 
 | task set | n | start | guided (mean of trials) | unguided null | guidance | error closed: guided / null |
 |---|---|---|---|---|---|---|
@@ -332,7 +335,7 @@ this one is read against; both of its arms are still on disk, so
 | 2 — random target | 72 | 70.2 | **43.9** | 53.4 | **+9.6 nm** (*p* = 5e−10) | 0.31 / 0.14 |
 
 \*task 1's row is its ESM-2 guided arm and its Gibbs null on the 72 tasks they share, not the
-108-task means in [`archive/README.md`](archive/README.md#task-set-1s-results).
+108-task means in `archive/README.md`.
 "Error closed" is the per-task share of the scaffold's own initial error — the axis that survives
 two task sets starting at different distances. `archive/compare_task_sets.py` regenerates this;
 `archive/compare_task_sets.log` is the run it was written from. Task 2's own arm-vs-null
@@ -345,7 +348,7 @@ versus **59%** on task 1. In absolute nm the picture is less flattering and esse
 (26.3 nm of guided movement, 16.8 of it unguided, i.e. 64% free vs task 1's 65%): the two axes
 disagree because averaging nm weights the few far tasks, while the fraction weights every task
 equally. Either way, the "13–14 nm beyond pocket resampling" that task 1 reported
-([`archive/README.md`](archive/README.md#task-set-1s-results)) becomes **~10 nm** here, on tasks
+(`archive/README.md`) becomes **~10 nm** here, on tasks
 that are half as far away to begin with.
 
 **Half of task set 2 starts inside the models' noise, and that half barely moves.** 36 of the 72
@@ -434,7 +437,7 @@ plus task 1's five — `knownstruct_cv_surrogate{,_esm2}` first passes,
 **Archived, but still on disk** — `pairs/` (task 1, + `_full_pool_cache.json`, one row per
 scaffold: its argmax target) and task 1's five design runs above. Only code was archived, never
 results, so `archive/compare_task_sets.py` and the two notebooks in `archive/` still run against
-them; no live stage reads them. See [`archive/README.md`](archive/README.md).
+them; no live stage reads them. See `archive/README.md`.
 
 **Notebooks** — `sweep_results.ipynb` (sweep + CV) · `visualization.ipynb` (landscape, split, both
 models — Sections 1-7, task-independent) · `visualization_task2.ipynb` (the design results) ·

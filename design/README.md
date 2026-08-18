@@ -2,18 +2,18 @@
 
 ESM-2 ([`esm2_t33_650M_UR50D`](https://github.com/facebookresearch/esm), ~650 MB) tooling for
 fluorescent-protein design: build a sequence↔spectrum dataset, split it without family leakage, and
-design sequences toward a target excitation/emission spectrum. Part of the **esm2_fp_design** project —
+design sequences toward a target excitation/emission spectrum. Part of the **spectrum-to-fp-design** project —
 the conda environment and the FPbase data live one level up (see [`../README.md`](../README.md) and
 [`../fpbase-extractor`](../fpbase-extractor)).
 
 ## Environment
 
-Uses the project-wide env `esm2-fp-design` (defined in [`../environment.yml`](../environment.yml)).
+Uses the project-wide env `spectrum-to-fp-design` (defined in [`../environment.yml`](../environment.yml)).
 From the project root:
 
 ```bash
 conda env create -f environment.yml
-conda activate esm2-fp-design
+conda activate spectrum-to-fp-design
 ```
 
 Device is auto-detected (CUDA → MPS → CPU). On Apple Silicon it runs on the Mac GPU via **MPS**; for
@@ -28,7 +28,7 @@ any unsupported op use `PYTORCH_ENABLE_MPS_FALLBACK=1`. ESM-2 weights download o
 | [`guided_design_approach1.ipynb`](guided_design_approach1.ipynb) | **Property-guided design** — a small surrogate `g(seq)→spectrum` (on frozen ESM-2 embeddings) steers ESM-2 masked refinement toward a target spectrum; designs are scored by an **independent oracle**, never by `g`. |
 | [`design.ipynb`](design.ipynb) | General masked-sequence design with ESM-2: naive single-pass fill, iterative/autoregressive decoding, and pseudo-perplexity ranking. |
 | [`training_data/`](training_data) | Saved splits + cached per-residue embeddings (see its README). |
-| [`archive/`](archive) | Frozen references, incl. `fpbase_cluster.ipynb` (group-based clustering/splits, not in use for now) and `surrogate_model_design.ipynb` (raw-curve sweep). |
+| `archive/` (kept local, untracked) | Frozen references, incl. `fpbase_cluster.ipynb` (group-based clustering/splits, not in use for now) and `surrogate_model_design.ipynb` (raw-curve sweep). |
 
 ## Typical order
 

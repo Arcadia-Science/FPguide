@@ -1,6 +1,6 @@
 # FP dataset pipeline
 
-A unified builder and curator for the fluorescent-protein (FP) sequence→property datasets used in `esm2_fp_design`. The actively maintained datasets are **peak** (ex_max, em_max) and **spectra** (full excitation/emission curves); **brightness** and **pKa** were built by the same code path but are now archived (see [Archived: brightness & pKa](#archived-brightness--pka)).
+A unified builder and curator for the fluorescent-protein (FP) sequence→property datasets used in `spectrum-to-fp-design`. The actively maintained datasets are **peak** (ex_max, em_max) and **spectra** (full excitation/emission curves); **brightness** and **pKa** were built by the same code path but are now archived (see [Archived: brightness & pKa](#archived-brightness--pka)).
 
 Everything here reads from `../fpbase-extractor/fpbase_output/`. `build_dataset.py` reads `fpbase_proteins.json` and writes the peak (and, on request, brightness/pKa) dataset to `data/<trait>/curated/`. `build_spectra_dataset.py` additionally cross-references `fpbase_spectra.json` and writes to `data/spectra/curated/`. The train/val/test split and visualization are deliberately **not** part of this stage — they live downstream.
 
@@ -199,6 +199,7 @@ python build_dataset.py --target pka        --outdir data/pka/curated
 
 # coordinated surrogate/oracle train/val/test split for the peak (ex/em) set
 python make_dual_split.py        # -> data/peak/curated/dual_splits.csv
+python visualize_dual_split.py   # -> figures/dual_split_bipartite.png
 
 # compare against the archived peak_design data-processing outputs
 python compare.py
@@ -248,6 +249,9 @@ gitignored; regenerate it rather than committing it.
 
 Section 5 also reads `../fpbase-extractor/fpbase_output/fpbase_spectra.json` to find which curated proteins
 have measured excitation and emission curves.
+
+Exports go to [`figures/`](figures) next to the notebook (`FIGDIR` in its setup cell) — every folder in
+this repo keeps its own figures, there is no shared figure directory.
 
 ### Figure style
 
