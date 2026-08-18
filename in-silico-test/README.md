@@ -44,7 +44,6 @@ design_common.py               every path + the dataset/split/hits loaders — S
 archive/                       the ORIGINAL task set, its three arms and the cross-set
                                comparison — see archive/README.md
 lib/                           vendored modules — copies, don't edit here
-msa/                           vendored MSA code + the family alignment (self-contained unit)
 data/  structures/             inputs and the RCSB cache
 figures/                       this folder's exported PNG/SVG/HTML figures
 sweep_results.ipynb  figures.ipynb
@@ -64,7 +63,7 @@ reads them. Full account, and task 1's own results, in `archive/README.md`.
 > 1's MSA arm. Anything archived is cited with its `archive/` prefix throughout.
 
 Stage scripts live one level down, so each starts with a short bootstrap putting the root, `lib/`
-and `msa/` on `sys.path`. Run them from the root (`python 2_design_task_specification/curate_pairs_task2.py`).
+on `sys.path`. Run them from the root (`python 2_design_task_specification/curate_pairs_task2.py`).
 Each stage folder also keeps its own run logs.
 
 ## Standalone by design
@@ -78,8 +77,6 @@ Every piece of *code* the pipeline runs lives here; nothing is imported from `..
 | `lib/peak_models.py` | model architectures + checkpoint save/load |
 | `lib/prostt5_embed.py` | ProstT5 residue embedding, for oracle scoring |
 | `lib/sweep_peak_oracle_base.py` | the shared architecture-sweep implementation |
-| `msa/conservation.py` | alignment loading + Henikoff sequence weighting |
-| `msa/data/` | the MSA **result**: 763-sequence family alignment + metadata |
 | `structure_hits.csv` | which dataset entries have a ≥97%-identity PDB entry |
 
 **Two deliberate exceptions**, both large read-only caches that are split-independent inputs to
@@ -300,19 +297,20 @@ silently delete the interaction; that test is a heavy-atom distance only — no 
 angular criterion, no water-mediated bridges — and therefore a capability proxy that over- and
 under-calls at the margins by construction.
 
-Each editable alphabet is finally intersected with what the 763-sequence family alignment supports at
-that column, using Henikoff-weighted frequencies to downweight over-represented clades; the survivors
-keep their renormalized frequencies and become the position's proposal distribution (the PSSM the MSA
-arm samples). Empty intersections fall back to the structural constraint, or the wild-type residue —
-a path **never taken here (0 of 2702 editable positions)**. Across the 108 scaffolds: pockets 12–32
-residues (median 24), editable sets 14–34 positions (26), 0–6 H-bond partners (3), per-position
-alphabets 2–20 residues (13). The space is still enormous (~13²⁶ per scaffold), but every
-single-position move is simultaneously structurally plausible, chemically appropriate to its role,
-and observed in the natural family — which is what lets a greedy search travel 40+ nm while keeping
-~92% identity to its scaffold. The guided arm ([`3.1`](3.1_design_run_guided)) holds every
-structural component of this window fixed and replaces only the family term, with ESM-2's
-masked-LM logits — see `archive/README.md`
-for the controlled comparison against the family PSSM that established it.
+Across the 108 scaffolds: pockets 12–32 residues (median 24), editable sets 14–34 positions (26),
+0–6 H-bond partners (3). Every single-position move is structurally plausible and chemically
+appropriate to its role, which is what lets a greedy search travel 40+ nm while keeping ~92%
+identity to its scaffold.
+
+> **The family term is gone.** Each editable alphabet used to be intersected with what a
+> 763-sequence family alignment supported at that column (Henikoff-weighted, so over-represented
+> clades were downweighted), and the survivors' renormalized frequencies became a per-position PSSM
+> — the proposal distribution the archived MSA arm sampled from, which left per-position alphabets
+> of 2–20 residues (median 13). Empty intersections fell back to the structural constraint or the
+> wild-type, a path never taken (0 of 2702 editable positions). The live arms take their candidate
+> ranking from ESM-2's masked-LM logits instead and never consulted the PSSM, so it and the
+> alignment were removed with that arm — see `archive/msa/` and `archive/README.md`. Windows are now
+> structural only.
 
 ## Design results (task set 2 — the live task set)
 

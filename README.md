@@ -9,8 +9,9 @@ properties. The core pipeline has three parts:
   brightness, and pKa training sets, and builds leakage-safe train/val/test splits.
 - **[`in-silico-test/`](in-silico-test)** — designs sequences toward target properties inside a
   structure-defined chromophore pocket and evaluates them against an independent oracle. The
-  per-residue proposal comes from either ESM-2 650M or a family-MSA profile, run as a controlled
-  swap (see [Findings](#findings)). It vendors its own copy of the shared model/pocket machinery
+  per-residue proposal is ESM-2 650M's masked-LM logits, with an unguided pocket-resampling arm as
+  the null. An earlier controlled swap ran the same search from a family-MSA profile instead (see
+  [Findings](#findings)); that arm is archived. It vendors its own copy of the shared model/pocket machinery
   (`peak_models.py`, `pockets.py`) so the experiment folder stays self-contained; the campaign
   layers below import that machinery from **[`fpdesign/`](fpdesign)** instead.
 
@@ -49,6 +50,13 @@ identity to scaffold, family log-likelihood 1.8× worse per position) and puts *
 edits — 27% — outside the family-supported alphabet**, where the PSSM arm cannot leave family
 support by construction (0 of 11,627). It improves 6 fewer tasks, and its trials are less variable
 (24.4 vs 28.1 nm), the one axis on which it is cleanly ahead.
+
+> The two family-support numbers above are **no longer reproducible from this repo.** They were
+> measured against the per-position family alphabets that the design windows used to carry, and
+> both the alphabets and the alignment behind them were removed once the MSA proposal arm was
+> retired — the surviving arms never consulted them. The design CSVs those runs produced are still
+> tracked, so the identity and error figures are checkable; the family columns are not. Restoring
+> them means restoring `in-silico-test/archive/msa/` and rebuilding the windows.
 
 ### ESM-2 is close to uninformative on the GFP fold
 

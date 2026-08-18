@@ -31,10 +31,6 @@ None of that is knowable without fetching, parsing, picking the best chain and a
 without attempting the build. So this script attempts it once for every candidate scaffold and
 caches the verdict; curation then filters on the cache instead of discovering failures later.
 
-It also checks the OTHER precondition build_windows.py can fail on: the scaffold sequence must be
-present in the family alignment and ungap to its own length, since the PSSM is read through that
-alignment row.
-
 Cost: ~360 candidate scaffolds collapse to ~154 unique PDB entries, so this is a one-time cost
 dominated by fetching the uncached ones (the RCSB cache in structures/experimental/ is reused).
 
@@ -54,15 +50,14 @@ import time
 import numpy as np
 
 # --- stage-folder bootstrap: put the experiment root (design_common), lib/ (vendored
-# --- modules) and msa/ (family alignment code) on the import path.
+# --- modules) on the import path.
 import os as _os, sys as _sys
 _ROOT = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
-_sys.path[:0] = [_ROOT, _os.path.join(_ROOT, "lib"), _os.path.join(_ROOT, "msa")]
+_sys.path[:0] = [_ROOT, _os.path.join(_ROOT, "lib")]
 
 import design_common as C
 
 import pockets
-from conservation import load_alignment  # noqa: E402
 
 CUTOFF, HBOND_CUTOFF = 5.0, 3.5          # must match build_windows.py
 MIN_ID, MIN_COV = 0.90, 0.70             # experimental_window's gate defaults, recorded for provenance
@@ -94,12 +89,6 @@ def main():
 
     results = dict(prior)
     if todo:
-        print("loading family alignment (for the PSSM-precondition check) ...")
-        A, meta = load_alignment()
-        aln_seqs = {}
-        for r, s in zip(meta.index, meta.seq):
-            aln_seqs.setdefault(s, int(r))
-
         t0 = time.time()
         for k, si in enumerate(todo):
             nm, pdb, seq = rows[si]["name"], hits[si], seqs[si]
@@ -117,24 +106,12 @@ def main():
             except Exception as e:
                 rec.update(structure_ok=False, reason=f"{type(e).__name__}: {str(e)[:200]}")
 
-            # ---- precondition 2: sequence is in the family alignment, at its own length ------
-            row = aln_seqs.get(seq)
-            if row is None:
-                rec.update(alignment_ok=False, alignment_reason="sequence absent from family alignment")
-            else:
-                n_ungapped = int((A[row] != "-").sum())
-                if n_ungapped != len(seq):
-                    rec.update(alignment_ok=False,
-                               alignment_reason=f"alignment row ungaps to {n_ungapped}, sequence has {len(seq)}")
-                else:
-                    rec.update(alignment_ok=True)
-
-            rec["ok"] = bool(rec.get("structure_ok") and rec.get("alignment_ok"))
+            rec["ok"] = bool(rec.get("structure_ok"))
             results[nm] = rec
 
             if not rec["ok"] or (k + 1) % 25 == 0:
                 tag = "ok " if rec["ok"] else "BAD"
-                why = "" if rec["ok"] else f" -- {rec.get('reason') or rec.get('alignment_reason')}"
+                why = "" if rec["ok"] else f" -- {rec.get('reason')}"
                 print(f"  [{k+1}/{len(todo)}] {tag} {nm} [{pdb}]{why[:150]} | {time.time()-t0:.0f}s", flush=True)
 
             if (k + 1) % 50 == 0:      # checkpoint so a long run is never lost
@@ -147,9 +124,7 @@ def main():
     print(f"\n{len(ok)}/{len(results)} scaffolds usable -> {OUT}")
 
     struct_fail = {nm: r for nm, r in bad.items() if not r.get("structure_ok")}
-    aln_fail = {nm: r for nm, r in bad.items() if r.get("structure_ok") and not r.get("alignment_ok")}
     print(f"  {len(struct_fail)} failed the structure gate (local id >= {MIN_ID:.0%}, coverage >= {MIN_COV:.0%})")
-    print(f"  {len(aln_fail)} failed the family-alignment precondition")
 
     if struct_fail:
         by_pdb = {}
@@ -172,8 +147,7 @@ def main():
 def _meta(results):
     return {
         "description": "Per-scaffold verdict on whether a usable design window can be built: the "
-                       "deposited structure must map cleanly onto the dataset sequence, and the "
-                       "sequence must be present in the family alignment at its own length. Lets "
+                       "deposited structure must map cleanly onto the dataset sequence. Lets "
                        "curate_pairs.py select valid pairs in one pass instead of discovering "
                        "failures during build_windows.py.",
         "gate_min_local_identity": MIN_ID, "gate_min_coverage": MIN_COV,

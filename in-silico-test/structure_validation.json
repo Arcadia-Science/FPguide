@@ -1,6 +1,6 @@
 {
  "meta": {
-  "description": "Per-scaffold verdict on whether a usable design window can be built: the deposited structure must map cleanly onto the dataset sequence, and the sequence must be present in the family alignment at its own length. Lets curate_pairs.py select valid pairs in one pass instead of discovering failures during build_windows.py.",
+  "description": "Per-scaffold verdict on whether a usable design window can be built: the deposited structure must map cleanly onto the dataset sequence. Lets curate_pairs.py select valid pairs in one pass instead of discovering failures during build_windows.py.",
   "gate_min_local_identity": 0.9,
   "gate_min_coverage": 0.7,
   "cutoff_angstrom": 5.0,
@@ -20,7 +20,6 @@
    "coverage": 0.945,
    "n_editable": 20,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "11": {
@@ -33,7 +32,6 @@
    "coverage": 0.945,
    "n_editable": 20,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "5B": {
@@ -42,7 +40,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: 5B[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "AausFP1": {
@@ -55,7 +52,6 @@
    "coverage": 0.961,
    "n_editable": 28,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "aceGFP": {
@@ -68,7 +64,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Achilles": {
@@ -77,7 +72,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: Achilles[3AKO]: best chain A matches dataset seq at only local id 95% / coverage 64% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "AdRed": {
@@ -90,7 +84,6 @@
    "coverage": 0.974,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "AdRed-C148S": {
@@ -103,7 +96,6 @@
    "coverage": 0.974,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "amFP486": {
@@ -116,7 +108,6 @@
    "coverage": 0.948,
    "n_editable": 29,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "amFP515": {
@@ -129,7 +120,6 @@
    "coverage": 0.948,
    "n_editable": 28,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "AQ14": {
@@ -142,7 +132,6 @@
    "coverage": 0.97,
    "n_editable": 24,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "Aquamarine": {
@@ -155,7 +144,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "asCP562": {
@@ -168,7 +156,6 @@
    "coverage": 0.711,
    "n_editable": 36,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "asFP499": {
@@ -181,7 +168,6 @@
    "coverage": 0.987,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "asulCP": {
@@ -194,7 +180,6 @@
    "coverage": 0.72,
    "n_editable": 19,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "avGFP480": {
@@ -207,7 +192,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "AzamiGreen": {
@@ -220,7 +204,6 @@
    "coverage": 0.982,
    "n_editable": 29,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "AzamiRed1.0": {
@@ -233,7 +216,6 @@
    "coverage": 0.982,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "Azurite": {
@@ -246,7 +228,6 @@
    "coverage": 0.979,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "bfloGFPc1": {
@@ -259,7 +240,6 @@
    "coverage": 0.986,
    "n_editable": 23,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "BFP": {
@@ -272,7 +252,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "BFP5": {
@@ -285,7 +264,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "BrUSLEE": {
@@ -298,7 +276,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "ccGFP E6": {
@@ -311,7 +288,6 @@
    "coverage": 0.95,
    "n_editable": 24,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "CFP": {
@@ -324,7 +300,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "CGFP": {
@@ -337,7 +312,6 @@
    "coverage": 0.979,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Citrine": {
@@ -346,7 +320,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: Citrine[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "cjBlue": {
@@ -359,7 +332,6 @@
    "coverage": 0.94,
    "n_editable": 23,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "Clomeleon": {
@@ -368,7 +340,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: Clomeleon[7SUN]: best chain A matches dataset seq at only local id 19% / coverage 37% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "Clover": {
@@ -381,7 +352,6 @@
    "coverage": 0.95,
    "n_editable": 22,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "cpCitrine": {
@@ -394,7 +364,6 @@
    "coverage": 0.95,
    "n_editable": 24,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "CpYGFP": {
@@ -407,7 +376,6 @@
    "coverage": 0.977,
    "n_editable": 21,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "CU17S": {
@@ -420,7 +388,6 @@
    "coverage": 0.986,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "CyPet": {
@@ -433,7 +400,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "D10": {
@@ -446,7 +412,6 @@
    "coverage": 0.937,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "d1EosFP": {
@@ -459,7 +424,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "d2EosFP": {
@@ -472,7 +436,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "deGFP2": {
@@ -481,7 +444,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: deGFP2[9NA8]: best chain D matches dataset seq at only local id 24% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "deGFP3": {
@@ -490,7 +452,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: deGFP3[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "deGFP4": {
@@ -499,7 +460,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: deGFP4[9NA8]: best chain D matches dataset seq at only local id 24% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "dendFP": {
@@ -512,7 +472,6 @@
    "coverage": 0.969,
    "n_editable": 29,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Dendra2": {
@@ -525,7 +484,6 @@
    "coverage": 0.961,
    "n_editable": 28,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Dendra2-M159A": {
@@ -538,7 +496,6 @@
    "coverage": 0.961,
    "n_editable": 28,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "dimer1": {
@@ -551,7 +508,6 @@
    "coverage": 0.956,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "DimVenus": {
@@ -560,7 +516,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: DimVenus[7VCF]: best chain F matches dataset seq at only local id 30% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "Diogenes": {
@@ -573,7 +528,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "dLanYFP": {
@@ -586,7 +540,6 @@
    "coverage": 0.936,
    "n_editable": 20,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "Dreiklang": {
@@ -595,7 +548,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: Dreiklang[7SUN]: best chain A matches dataset seq at only local id 30% / coverage 11% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "d-RFP618": {
@@ -608,7 +560,6 @@
    "coverage": 0.978,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Dronpa": {
@@ -621,7 +572,6 @@
    "coverage": 0.955,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Dronpa-2": {
@@ -634,7 +584,6 @@
    "coverage": 0.955,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Dronpa-3": {
@@ -647,7 +596,6 @@
    "coverage": 0.955,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "dsFP483": {
@@ -660,7 +608,6 @@
    "coverage": 0.961,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "DspR1": {
@@ -673,7 +620,6 @@
    "coverage": 0.894,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "DsRed": {
@@ -686,7 +632,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "DsRed-Express": {
@@ -699,7 +644,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "DsRed-Express2": {
@@ -712,7 +656,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "DsRed-Max": {
@@ -725,7 +668,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "DsRed.T3": {
@@ -738,7 +680,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "DsRed.T4": {
@@ -751,7 +692,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "DstC1": {
@@ -764,7 +704,6 @@
    "coverage": 0.894,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "E2-Red/Green": {
@@ -777,7 +716,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "EBFP": {
@@ -790,7 +728,6 @@
    "coverage": 0.946,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "EBFP1.2": {
@@ -799,7 +736,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: EBFP1.2[8UBG]: best chain A matches dataset seq at only local id 46% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "ECFP": {
@@ -812,7 +748,6 @@
    "coverage": 0.937,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "eforCP": {
@@ -825,7 +760,6 @@
    "coverage": 0.974,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "EGFP": {
@@ -838,7 +772,6 @@
    "coverage": 0.946,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "eGFP203C": {
@@ -851,7 +784,6 @@
    "coverage": 0.979,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Emerald": {
@@ -864,7 +796,6 @@
    "coverage": 0.946,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Enhanced Cyan-Emitting GFP": {
@@ -877,7 +808,6 @@
    "coverage": 0.974,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "EosFP": {
@@ -890,7 +820,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "eqFP578": {
@@ -903,7 +832,6 @@
    "coverage": 0.961,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "eqFP611": {
@@ -916,7 +844,6 @@
    "coverage": 0.961,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "eqFP611 V124T": {
@@ -929,7 +856,6 @@
    "coverage": 0.987,
    "n_editable": 24,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "eqFP650": {
@@ -942,7 +868,6 @@
    "coverage": 0.932,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "eqFP670": {
@@ -955,7 +880,6 @@
    "coverage": 0.932,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "EYFP": {
@@ -964,7 +888,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: EYFP[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "EYFP-Q69K": {
@@ -973,7 +896,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: EYFP-Q69K[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "eYGFP": {
@@ -986,7 +908,6 @@
    "coverage": 0.977,
    "n_editable": 21,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "ffDronpa": {
@@ -999,7 +920,6 @@
    "coverage": 0.955,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "FOLD6": {
@@ -1012,7 +932,6 @@
    "coverage": 0.95,
    "n_editable": 24,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Folding Reporter GFP": {
@@ -1021,7 +940,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: Folding Reporter GFP[9LK2]: best chain A matches dataset seq at only local id 24% / coverage 26% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "FP586": {
@@ -1034,7 +952,6 @@
    "coverage": 0.938,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "frSkylan-S": {
@@ -1047,7 +964,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "FusionRed": {
@@ -1060,7 +976,6 @@
    "coverage": 0.944,
    "n_editable": 14,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "FusionRed-MQV": {
@@ -1073,7 +988,6 @@
    "coverage": 0.944,
    "n_editable": 14,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "G2": {
@@ -1086,7 +1000,6 @@
    "coverage": 0.953,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "G3": {
@@ -1099,7 +1012,6 @@
    "coverage": 0.953,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "GFP(E222G)": {
@@ -1112,7 +1024,6 @@
    "coverage": 0.95,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "GFPmut2": {
@@ -1125,7 +1036,6 @@
    "coverage": 0.966,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "GFPmut3": {
@@ -1134,7 +1044,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: GFPmut3[9SDL]: best chain A matches dataset seq at only local id 36% / coverage 18% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "GFP (S65T)": {
@@ -1143,7 +1052,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: GFP (S65T)[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "GFPxm16": {
@@ -1156,7 +1064,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "GFPxm161": {
@@ -1169,7 +1076,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "GFPxm19": {
@@ -1182,7 +1088,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "HcRed": {
@@ -1195,7 +1100,6 @@
    "coverage": 0.969,
    "n_editable": 27,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "HcRed7": {
@@ -1208,7 +1112,6 @@
    "coverage": 0.982,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_acid.1": {
@@ -1217,7 +1120,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_acid.1[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_acid.3": {
@@ -1226,7 +1128,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_acid.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_basic.2": {
@@ -1235,7 +1136,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_basic.2[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_basic.3": {
@@ -1244,7 +1144,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_basic.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_basic.4": {
@@ -1253,7 +1152,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_basic.4[2G2S]: best chain B matches dataset seq at only local id 88% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_bleach.1": {
@@ -1262,7 +1160,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_bleach.1[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_bleach.3": {
@@ -1271,7 +1168,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_bleach.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_bleach.4": {
@@ -1280,7 +1176,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_bleach.4[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_em-blue-shift.1": {
@@ -1289,7 +1184,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_em-blue-shift.1[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_em-blue-shift.2": {
@@ -1298,7 +1192,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_em-blue-shift.2[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_fast.1": {
@@ -1307,7 +1200,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_fast.1[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_fast.2": {
@@ -1316,7 +1208,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_fast.2[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_fast.4": {
@@ -1325,7 +1216,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_fast.4[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.11": {
@@ -1334,7 +1224,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.11[6XU4]: best chain A matches dataset seq at only local id 85% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.12": {
@@ -1343,7 +1232,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.12[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.13": {
@@ -1352,7 +1240,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.13[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.2": {
@@ -1361,7 +1248,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.2[2G2S]: best chain B matches dataset seq at only local id 91% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.3": {
@@ -1370,7 +1256,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.5": {
@@ -1379,7 +1264,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.5[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_mid.6": {
@@ -1388,7 +1272,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_mid.6[2G2S]: best chain B matches dataset seq at only local id 90% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_sf:acid.4": {
@@ -1401,7 +1284,6 @@
    "coverage": 0.908,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:acid.5": {
@@ -1414,7 +1296,6 @@
    "coverage": 0.908,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:bleach.1": {
@@ -1427,7 +1308,6 @@
    "coverage": 0.908,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:bleach.3": {
@@ -1440,7 +1320,6 @@
    "coverage": 0.908,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:em-blue-shift.2": {
@@ -1449,7 +1328,6 @@
    "seq_len": 249,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_sf:em-blue-shift.2[7EDJ]: best chain I matches dataset seq at only local id 33% / coverage 43% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_sf:mid.10": {
@@ -1462,7 +1340,6 @@
    "coverage": 0.912,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:mid.11": {
@@ -1475,7 +1352,6 @@
    "coverage": 0.912,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:mid.12": {
@@ -1488,7 +1364,6 @@
    "coverage": 0.908,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:mid.5": {
@@ -1501,7 +1376,6 @@
    "coverage": 0.908,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:mid.7": {
@@ -1514,7 +1388,6 @@
    "coverage": 0.912,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:mid.9": {
@@ -1527,7 +1400,6 @@
    "coverage": 0.912,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_sf:thermo.2": {
@@ -1540,7 +1412,6 @@
    "coverage": 0.912,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "htFuncLib_slow.1": {
@@ -1549,7 +1420,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_slow.1[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_slow.2": {
@@ -1558,7 +1428,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_slow.2[2G2S]: best chain B matches dataset seq at only local id 88% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_slow.3": {
@@ -1567,7 +1436,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_slow.3[2G2S]: best chain B matches dataset seq at only local id 89% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_thermo.1": {
@@ -1576,7 +1444,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_thermo.1[6XU4]: best chain A matches dataset seq at only local id 86% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_thermo.2": {
@@ -1585,7 +1452,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_thermo.2[6XU4]: best chain A matches dataset seq at only local id 86% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_thermo.3": {
@@ -1594,7 +1460,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_thermo.3[2G2S]: best chain B matches dataset seq at only local id 91% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "htFuncLib_thermo.9": {
@@ -1603,7 +1468,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: htFuncLib_thermo.9[6XU4]: best chain A matches dataset seq at only local id 85% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "Hyperfolder YFP": {
@@ -1616,7 +1480,6 @@
    "coverage": 0.946,
    "n_editable": 24,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "iq-mEmerald": {
@@ -1629,7 +1492,6 @@
    "coverage": 0.95,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "IrisFP": {
@@ -1642,7 +1504,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "IrisFP-M159A": {
@@ -1655,7 +1516,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "Jred": {
@@ -1668,7 +1528,6 @@
    "coverage": 0.851,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Kaede": {
@@ -1681,7 +1540,6 @@
    "coverage": 0.964,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "Katushka": {
@@ -1694,7 +1552,6 @@
    "coverage": 0.939,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Katushka-9-5": {
@@ -1707,7 +1564,6 @@
    "coverage": 0.932,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "KCY-R1": {
@@ -1720,7 +1576,6 @@
    "coverage": 0.978,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "KCY-R1-158A": {
@@ -1733,7 +1588,6 @@
    "coverage": 0.978,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "KCY-R1-38L": {
@@ -1746,7 +1600,6 @@
    "coverage": 0.978,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "KFP1": {
@@ -1759,7 +1612,6 @@
    "coverage": 0.978,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "KikG": {
@@ -1772,7 +1624,6 @@
    "coverage": 0.987,
    "n_editable": 27,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "KikGR1": {
@@ -1785,7 +1636,6 @@
    "coverage": 0.982,
    "n_editable": 27,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "KillerRed": {
@@ -1798,7 +1648,6 @@
    "coverage": 0.962,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "laGFP": {
@@ -1811,7 +1660,6 @@
    "coverage": 0.982,
    "n_editable": 19,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "LanFP1": {
@@ -1824,7 +1672,6 @@
    "coverage": 0.973,
    "n_editable": 20,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "LanYFP": {
@@ -1837,7 +1684,6 @@
    "coverage": 0.982,
    "n_editable": 20,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "laRFP": {
@@ -1850,7 +1696,6 @@
    "coverage": 0.952,
    "n_editable": 21,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Lime": {
@@ -1863,7 +1708,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "M355NA": {
@@ -1876,7 +1720,6 @@
    "coverage": 0.72,
    "n_editable": 19,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mBaoJin": {
@@ -1889,7 +1732,6 @@
    "coverage": 0.919,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mBlueberry1": {
@@ -1898,7 +1740,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mBlueberry1[3LF4]: best chain B matches dataset seq at only local id 96% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCardinal": {
@@ -1911,7 +1752,6 @@
    "coverage": 0.918,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "mCerulean": {
@@ -1920,7 +1760,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: mCerulean[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCerulean2.D3": {
@@ -1933,7 +1772,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mCerulean2.N": {
@@ -1946,7 +1784,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mCerulean2.N(T65S)": {
@@ -1959,7 +1796,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mCerulean3": {
@@ -1972,7 +1808,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mCerulean.B": {
@@ -1981,7 +1816,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: mCerulean.B[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCerulean.B2": {
@@ -1990,7 +1824,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: mCerulean.B2[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCerulean.B24": {
@@ -2003,7 +1836,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mChartreuse": {
@@ -2016,7 +1848,6 @@
    "coverage": 0.983,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mCherry": {
@@ -2025,7 +1856,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mCherry[22MM]: best chain R matches dataset seq at only local id 28% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCherry2": {
@@ -2034,7 +1864,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mCherry2[6V00]: best chain B matches dataset seq at only local id 31% / coverage 14% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCherry_I202T": {
@@ -2043,7 +1872,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mCherry_I202T[22MM]: best chain R matches dataset seq at only local id 28% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCherry_I202Y": {
@@ -2052,7 +1880,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mCherry_I202Y[22MM]: best chain R matches dataset seq at only local id 28% / coverage 50% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCherry_M10L": {
@@ -2061,7 +1888,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mCherry_M10L[22MM]: best chain R matches dataset seq at only local id 28% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCherry-XL": {
@@ -2070,7 +1896,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mCherry-XL[8K9R]: best chain A matches dataset seq at only local id 23% / coverage 18% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mCitrine": {
@@ -2079,7 +1904,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: mCitrine[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mEmerald": {
@@ -2092,7 +1916,6 @@
    "coverage": 0.95,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos2": {
@@ -2105,7 +1928,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos2-A69T": {
@@ -2118,7 +1940,6 @@
    "coverage": 0.969,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos3.1": {
@@ -2131,7 +1952,6 @@
    "coverage": 0.951,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos4b": {
@@ -2144,7 +1964,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos4b-L93M": {
@@ -2157,7 +1976,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos4Fast1": {
@@ -2170,7 +1988,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEos4Fast2": {
@@ -2183,7 +2000,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEosEM": {
@@ -2196,7 +2012,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEosFP": {
@@ -2209,7 +2024,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEosFP-F173S": {
@@ -2222,7 +2036,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mEosFP-M159A": {
@@ -2235,7 +2048,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mGarnet": {
@@ -2248,7 +2060,6 @@
    "coverage": 0.965,
    "n_editable": 26,
    "n_hbond": 6,
-   "alignment_ok": true,
    "ok": true
   },
   "mGeos-C": {
@@ -2261,7 +2072,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mGeos-E": {
@@ -2274,7 +2084,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mGeos-F": {
@@ -2287,7 +2096,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mGeos-L": {
@@ -2300,7 +2108,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mGeos-M": {
@@ -2313,7 +2120,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mGeos-S": {
@@ -2326,7 +2132,6 @@
    "coverage": 0.951,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mGFPmut3": {
@@ -2335,7 +2140,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: mGFPmut3[9SDL]: best chain A matches dataset seq at only local id 36% / coverage 18% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mGold": {
@@ -2348,7 +2152,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mIrisFP": {
@@ -2361,7 +2164,6 @@
    "coverage": 0.973,
    "n_editable": 25,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mKate": {
@@ -2374,7 +2176,6 @@
    "coverage": 0.965,
    "n_editable": 23,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mKate2": {
@@ -2387,7 +2188,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mKate M41G S158C": {
@@ -2400,7 +2200,6 @@
    "coverage": 0.965,
    "n_editable": 23,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mKate S158A": {
@@ -2413,7 +2212,6 @@
    "coverage": 0.965,
    "n_editable": 23,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mKate S158C": {
@@ -2426,7 +2224,6 @@
    "coverage": 0.965,
    "n_editable": 23,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mKO": {
@@ -2439,7 +2236,6 @@
    "coverage": 0.977,
    "n_editable": 30,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mLumin": {
@@ -2452,7 +2248,6 @@
    "coverage": 0.965,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mNeonGreen": {
@@ -2465,7 +2260,6 @@
    "coverage": 0.911,
    "n_editable": 19,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "mNeptune": {
@@ -2478,7 +2272,6 @@
    "coverage": 0.934,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mNeptune2.5": {
@@ -2491,7 +2284,6 @@
    "coverage": 0.914,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Monomeric hyperfolder YFP": {
@@ -2504,7 +2296,6 @@
    "coverage": 0.946,
    "n_editable": 24,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mOrange2": {
@@ -2517,7 +2308,6 @@
    "coverage": 0.907,
    "n_editable": 24,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "moxCerulean3": {
@@ -2530,7 +2320,6 @@
    "coverage": 0.983,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "moxDendra2": {
@@ -2543,7 +2332,6 @@
    "coverage": 0.961,
    "n_editable": 28,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "moxGFP": {
@@ -2556,7 +2344,6 @@
    "coverage": 0.95,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mPlum": {
@@ -2565,7 +2352,6 @@
    "seq_len": 226,
    "structure_ok": false,
    "reason": "ValueError: mPlum[8TC3]: best chain A matches dataset seq at only local id 28% / coverage 27% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mPlum-E16P": {
@@ -2578,7 +2364,6 @@
    "coverage": 0.947,
    "n_editable": 27,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "mRed7Q1S1BM": {
@@ -2587,7 +2372,6 @@
    "seq_len": 232,
    "structure_ok": false,
    "reason": "ValueError: mRed7Q1S1BM[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mRojoA": {
@@ -2600,7 +2384,6 @@
    "coverage": 0.911,
    "n_editable": 26,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "mRojoB": {
@@ -2609,7 +2392,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: mRojoB[22MM]: best chain R matches dataset seq at only local id 29% / coverage 50% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mRouge": {
@@ -2622,7 +2404,6 @@
    "coverage": 0.966,
    "n_editable": 27,
    "n_hbond": 0,
-   "alignment_ok": true,
    "ok": true
   },
   "mRtms5": {
@@ -2635,7 +2416,6 @@
    "coverage": 0.986,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mRuby": {
@@ -2648,7 +2428,6 @@
    "coverage": 0.952,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "mRuby2": {
@@ -2661,7 +2440,6 @@
    "coverage": 0.916,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mRuby3": {
@@ -2674,7 +2452,6 @@
    "coverage": 0.924,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mRubyFT": {
@@ -2687,7 +2464,6 @@
    "coverage": 0.919,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mScarlet": {
@@ -2696,7 +2472,6 @@
    "seq_len": 232,
    "structure_ok": false,
    "reason": "ValueError: mScarlet[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mScarlet-220A": {
@@ -2705,7 +2480,6 @@
    "seq_len": 232,
    "structure_ok": false,
    "reason": "ValueError: mScarlet-220A[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mScarlet-2A": {
@@ -2718,7 +2492,6 @@
    "coverage": 0.922,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mScarlet3": {
@@ -2731,7 +2504,6 @@
    "coverage": 0.934,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mScarlet3-H": {
@@ -2744,7 +2516,6 @@
    "coverage": 0.934,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mScarlet3-S2": {
@@ -2757,7 +2528,6 @@
    "coverage": 0.934,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mScarlet-I": {
@@ -2766,7 +2536,6 @@
    "seq_len": 232,
    "structure_ok": false,
    "reason": "ValueError: mScarlet-I[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mScarlet-I-220A": {
@@ -2775,7 +2544,6 @@
    "seq_len": 232,
    "structure_ok": false,
    "reason": "ValueError: mScarlet-I-220A[9DZE]: best chain A matches dataset seq at only local id 45% / coverage 5% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mScarlet-I3": {
@@ -2784,7 +2552,6 @@
    "seq_len": 229,
    "structure_ok": false,
    "reason": "ValueError: mScarlet-I3[9VUS]: best chain C matches dataset seq at only local id 50% / coverage 7% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mScarlet-I3-NCwt": {
@@ -2793,7 +2560,6 @@
    "seq_len": 232,
    "structure_ok": false,
    "reason": "ValueError: mScarlet-I3-NCwt[9VUS]: best chain C matches dataset seq at only local id 50% / coverage 7% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "msGFP2": {
@@ -2802,7 +2568,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: msGFP2[9QKS]: best chain C matches dataset seq at only local id 26% / coverage 42% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "mStrawberry": {
@@ -2815,7 +2580,6 @@
    "coverage": 0.941,
    "n_editable": 24,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "mTagBFP2": {
@@ -2828,7 +2592,6 @@
    "coverage": 0.949,
    "n_editable": 23,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "mTFP0.7": {
@@ -2841,7 +2604,6 @@
    "coverage": 0.903,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mTFP1": {
@@ -2854,7 +2616,6 @@
    "coverage": 0.953,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mTFP1-Y67W": {
@@ -2867,7 +2628,6 @@
    "coverage": 0.953,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mTurquoise": {
@@ -2880,7 +2640,6 @@
    "coverage": 0.937,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mTurquoise2": {
@@ -2893,7 +2652,6 @@
    "coverage": 0.987,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mTurquoise2_T203Y": {
@@ -2906,7 +2664,6 @@
    "coverage": 0.987,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "mVenus": {
@@ -2919,7 +2676,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "mVenus-Q69M": {
@@ -2932,7 +2688,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "(n1)oxStayGold": {
@@ -2945,7 +2700,6 @@
    "coverage": 0.929,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "(n1)StayGold": {
@@ -2958,7 +2712,6 @@
    "coverage": 0.929,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Neptune": {
@@ -2971,7 +2724,6 @@
    "coverage": 0.934,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "NijiFP": {
@@ -2984,7 +2736,6 @@
    "coverage": 0.961,
    "n_editable": 28,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "NowGFP": {
@@ -2997,7 +2748,6 @@
    "coverage": 0.958,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "N\u1eef": {
@@ -3006,7 +2756,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: N\u1eef[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "OFPxm": {
@@ -3019,7 +2768,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "oxGFP": {
@@ -3032,7 +2780,6 @@
    "coverage": 0.958,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "oxStayGold": {
@@ -3045,7 +2792,6 @@
    "coverage": 0.986,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "P11": {
@@ -3058,7 +2804,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "P4": {
@@ -3071,7 +2816,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "P4-1": {
@@ -3080,7 +2824,6 @@
    "seq_len": 238,
    "structure_ok": false,
    "reason": "ValueError: P4-1[9NA8]: best chain D matches dataset seq at only local id 23% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "P4-3E": {
@@ -3093,7 +2836,6 @@
    "coverage": 0.966,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "P9": {
@@ -3106,7 +2848,6 @@
    "coverage": 0.954,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Padron": {
@@ -3119,7 +2860,6 @@
    "coverage": 0.96,
    "n_editable": 21,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Padron0.9": {
@@ -3132,7 +2872,6 @@
    "coverage": 0.96,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "PA-GFP": {
@@ -3145,7 +2884,6 @@
    "coverage": 0.983,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "PAmKate": {
@@ -3158,7 +2896,6 @@
    "coverage": 0.957,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "pcDronpa": {
@@ -3171,7 +2908,6 @@
    "coverage": 0.969,
    "n_editable": 27,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "pcDronpa2": {
@@ -3184,7 +2920,6 @@
    "coverage": 0.969,
    "n_editable": 27,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "Phanta": {
@@ -3197,7 +2932,6 @@
    "coverage": 0.96,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "phiYFPv": {
@@ -3210,7 +2944,6 @@
    "coverage": 0.987,
    "n_editable": 24,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "pH-tdGFP": {
@@ -3219,7 +2952,6 @@
    "seq_len": 486,
    "structure_ok": false,
    "reason": "ValueError: pH-tdGFP[8OVY]: best chain A matches dataset seq at only local id 100% / coverage 46% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "ppluGFP2": {
@@ -3232,7 +2964,6 @@
    "coverage": 0.968,
    "n_editable": 22,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "PROSS-eGFP": {
@@ -3241,7 +2972,6 @@
    "seq_len": 248,
    "structure_ok": false,
    "reason": "ValueError: PROSS-eGFP[6XU4]: best chain A matches dataset seq at only local id 85% / coverage 67% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "PSmOrange": {
@@ -3254,7 +2984,6 @@
    "coverage": 0.915,
    "n_editable": 32,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "PSmOrange2": {
@@ -3267,7 +2996,6 @@
    "coverage": 0.919,
    "n_editable": 31,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "RDSmCherry0.1": {
@@ -3276,7 +3004,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: RDSmCherry0.1[22MM]: best chain R matches dataset seq at only local id 30% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "RDSmCherry0.2": {
@@ -3285,7 +3012,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: RDSmCherry0.2[22MM]: best chain R matches dataset seq at only local id 29% / coverage 50% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "RDSmCherry0.5": {
@@ -3294,7 +3020,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: RDSmCherry0.5[22MM]: best chain R matches dataset seq at only local id 29% / coverage 50% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "RDSmCherry1": {
@@ -3303,7 +3028,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: RDSmCherry1[22MM]: best chain R matches dataset seq at only local id 30% / coverage 45% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "REACh1": {
@@ -3312,7 +3036,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: REACh1[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "REACh2": {
@@ -3321,7 +3044,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: REACh2[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "RFP618": {
@@ -3334,7 +3056,6 @@
    "coverage": 0.978,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "RFP630": {
@@ -3347,7 +3068,6 @@
    "coverage": 0.961,
    "n_editable": 26,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "RFP637": {
@@ -3360,7 +3080,6 @@
    "coverage": 0.978,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "rrenGFP": {
@@ -3373,7 +3092,6 @@
    "coverage": 0.987,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "rsCherry": {
@@ -3386,7 +3104,6 @@
    "coverage": 0.928,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "rsCherryRev1.4": {
@@ -3399,7 +3116,6 @@
    "coverage": 0.911,
    "n_editable": 27,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "rsEGFP": {
@@ -3412,7 +3128,6 @@
    "coverage": 0.975,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "rsEGFP2": {
@@ -3425,7 +3140,6 @@
    "coverage": 0.987,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "rsFastLime": {
@@ -3438,7 +3152,6 @@
    "coverage": 0.955,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "rsFolder": {
@@ -3451,7 +3164,6 @@
    "coverage": 0.95,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "rsFolder2": {
@@ -3464,7 +3176,6 @@
    "coverage": 0.95,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "rsFusionRed1": {
@@ -3477,7 +3188,6 @@
    "coverage": 0.944,
    "n_editable": 14,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "rsFusionRed2": {
@@ -3490,7 +3200,6 @@
    "coverage": 0.944,
    "n_editable": 14,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "rsFusionRed3": {
@@ -3503,7 +3212,6 @@
    "coverage": 0.944,
    "n_editable": 14,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "rsKame": {
@@ -3516,7 +3224,6 @@
    "coverage": 0.955,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "rsTagRFP": {
@@ -3529,7 +3236,6 @@
    "coverage": 0.941,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Rtms5": {
@@ -3542,7 +3248,6 @@
    "coverage": 0.986,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "SAASoti": {
@@ -3555,7 +3260,6 @@
    "coverage": 0.968,
    "n_editable": 29,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "SBFP1": {
@@ -3568,7 +3272,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "SBFP2": {
@@ -3581,7 +3284,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "SCFP1": {
@@ -3594,7 +3296,6 @@
    "coverage": 0.937,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "SCFP2": {
@@ -3607,7 +3308,6 @@
    "coverage": 0.937,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "SCFP3A": {
@@ -3620,7 +3320,6 @@
    "coverage": 0.937,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "SCFP3B": {
@@ -3629,7 +3328,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: SCFP3B[7VQQ]: best chain A matches dataset seq at only local id 39% / coverage 13% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "SEYFP": {
@@ -3638,7 +3336,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: SEYFP[7VCF]: best chain F matches dataset seq at only local id 29% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "SGFP2": {
@@ -3647,7 +3344,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: SGFP2[6T90]: best chain D matches dataset seq at only local id 26% / coverage 19% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "SGFP2(206A)": {
@@ -3660,7 +3356,6 @@
    "coverage": 0.983,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "SGFP2(E222Q)": {
@@ -3669,7 +3364,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: SGFP2(E222Q)[6T90]: best chain D matches dataset seq at only local id 26% / coverage 19% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "SGFP2(T65G)": {
@@ -3682,7 +3376,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "ShadowG": {
@@ -3691,7 +3384,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: ShadowG[7SUN]: best chain A matches dataset seq at only local id 31% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "ShadowY": {
@@ -3700,7 +3392,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: ShadowY[6ZUI]: best chain A matches dataset seq at only local id 98% / coverage 58% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "SHardonnay": {
@@ -3709,7 +3400,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: SHardonnay[7SUN]: best chain A matches dataset seq at only local id 28% / coverage 12% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "shCP-E63L/Y64H": {
@@ -3722,7 +3412,6 @@
    "coverage": 0.969,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "ShG24": {
@@ -3735,7 +3424,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "SiriusGFP": {
@@ -3748,7 +3436,6 @@
    "coverage": 0.967,
    "n_editable": 18,
    "n_hbond": 1,
-   "alignment_ok": true,
    "ok": true
   },
   "Skylan-NS": {
@@ -3761,7 +3448,6 @@
    "coverage": 0.951,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Skylan-S": {
@@ -3774,7 +3460,6 @@
    "coverage": 0.951,
    "n_editable": 25,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "sREACh1": {
@@ -3783,7 +3468,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: sREACh1[6ZUI]: best chain A matches dataset seq at only local id 98% / coverage 58% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "StayGold": {
@@ -3796,7 +3480,6 @@
    "coverage": 0.986,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "StayGold-E138D": {
@@ -3809,7 +3492,6 @@
    "coverage": 0.986,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "Sumire": {
@@ -3818,7 +3500,6 @@
    "seq_len": 236,
    "structure_ok": false,
    "reason": "ValueError: Sumire[8OVN]: best chain A matches dataset seq at only local id 99% / coverage 59% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "Superfolder CFP": {
@@ -3831,7 +3512,6 @@
    "coverage": 0.958,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Superfolder GFP": {
@@ -3844,7 +3524,6 @@
    "coverage": 0.958,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Superfolder mTurquoise2": {
@@ -3857,7 +3536,6 @@
    "coverage": 0.987,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Superfolder mTurquoise2 ox": {
@@ -3870,7 +3548,6 @@
    "coverage": 0.987,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "Superfolder YFP": {
@@ -3883,7 +3560,6 @@
    "coverage": 0.958,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "SuperNova2": {
@@ -3896,7 +3572,6 @@
    "coverage": 0.921,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "SuperNova Green": {
@@ -3909,7 +3584,6 @@
    "coverage": 0.924,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "SuperNova Red": {
@@ -3922,7 +3596,6 @@
    "coverage": 0.924,
    "n_editable": 25,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "super-TagRFP": {
@@ -3935,7 +3608,6 @@
    "coverage": 0.922,
    "n_editable": 26,
    "n_hbond": 6,
-   "alignment_ok": true,
    "ok": true
   },
   "SYFP2": {
@@ -3948,7 +3620,6 @@
    "coverage": 0.954,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "TagBFP": {
@@ -3961,7 +3632,6 @@
    "coverage": 0.961,
    "n_editable": 23,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "TagRFP": {
@@ -3974,7 +3644,6 @@
    "coverage": 0.965,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "TagRFP657": {
@@ -3987,7 +3656,6 @@
    "coverage": 0.957,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "TagRFP675": {
@@ -4000,7 +3668,6 @@
    "coverage": 0.961,
    "n_editable": 24,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "TagRFP-T": {
@@ -4013,7 +3680,6 @@
    "coverage": 0.922,
    "n_editable": 26,
    "n_hbond": 6,
-   "alignment_ok": true,
    "ok": true
   },
   "td5oxStayGold": {
@@ -4022,7 +3688,6 @@
    "seq_len": 485,
    "structure_ok": false,
    "reason": "ValueError: td5oxStayGold[8BXT]: best chain A matches dataset seq at only local id 99% / coverage 43% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "td5StayGold": {
@@ -4031,7 +3696,6 @@
    "seq_len": 485,
    "structure_ok": false,
    "reason": "ValueError: td5StayGold[8BXT]: best chain A matches dataset seq at only local id 100% / coverage 43% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "tdKatushka2": {
@@ -4044,7 +3708,6 @@
    "coverage": 0.961,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "tdLanYFP": {
@@ -4053,7 +3716,6 @@
    "seq_len": 473,
    "structure_ok": false,
    "reason": "ValueError: tdLanYFP[5LTQ]: best chain F matches dataset seq at only local id 99% / coverage 47% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "tdoxStayGold": {
@@ -4062,7 +3724,6 @@
    "seq_len": 582,
    "structure_ok": false,
    "reason": "ValueError: tdoxStayGold[8BXT]: best chain A matches dataset seq at only local id 99% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "td-RFP639": {
@@ -4075,7 +3736,6 @@
    "coverage": 0.978,
    "n_editable": 27,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Thermostable Green Protein": {
@@ -4088,7 +3748,6 @@
    "coverage": 0.964,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "TripartiteGFP": {
@@ -4097,7 +3756,6 @@
    "seq_len": 237,
    "structure_ok": false,
    "reason": "ValueError: TripartiteGFP[4W6R]: could not locate chromophore atoms",
-   "alignment_ok": true,
    "ok": false
   },
   "TurboGFP": {
@@ -4110,7 +3768,6 @@
    "coverage": 0.927,
    "n_editable": 22,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "TurboGFP-V197L": {
@@ -4123,7 +3780,6 @@
    "coverage": 0.982,
    "n_editable": 22,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "Turquoise-GL": {
@@ -4136,7 +3792,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "usGFP": {
@@ -4149,7 +3804,6 @@
    "coverage": 0.958,
    "n_editable": 26,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "V127T SAASoti": {
@@ -4162,7 +3816,6 @@
    "coverage": 0.968,
    "n_editable": 29,
    "n_hbond": 5,
-   "alignment_ok": true,
    "ok": true
   },
   "Venus": {
@@ -4171,7 +3824,6 @@
    "seq_len": 239,
    "structure_ok": false,
    "reason": "ValueError: Venus[7VCF]: best chain F matches dataset seq at only local id 30% / coverage 36% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "vsfGFP-0": {
@@ -4180,7 +3832,6 @@
    "seq_len": 344,
    "structure_ok": false,
    "reason": "ValueError: vsfGFP-0[5MFC]: best chain B matches dataset seq at only local id 100% / coverage 66% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "vsfGFP-9": {
@@ -4189,7 +3840,6 @@
    "seq_len": 353,
    "structure_ok": false,
    "reason": "ValueError: vsfGFP-9[9HAA]: best chain A matches dataset seq at only local id 31% / coverage 26% (need >= 90% id, >= 70% cov) -- structure does not cleanly contain this FP",
-   "alignment_ok": true,
    "ok": false
   },
   "W7": {
@@ -4202,7 +3852,6 @@
    "coverage": 0.941,
    "n_editable": 25,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "WasCFP": {
@@ -4215,7 +3864,6 @@
    "coverage": 0.941,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "YGFPdp": {
@@ -4228,7 +3876,6 @@
    "coverage": 0.977,
    "n_editable": 22,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "YuzuFP": {
@@ -4241,7 +3888,6 @@
    "coverage": 0.919,
    "n_editable": 23,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   },
   "zoan2RFP": {
@@ -4254,7 +3900,6 @@
    "coverage": 0.974,
    "n_editable": 26,
    "n_hbond": 3,
-   "alignment_ok": true,
    "ok": true
   },
   "ZsGreen": {
@@ -4267,7 +3912,6 @@
    "coverage": 0.974,
    "n_editable": 26,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "ZsGreen1": {
@@ -4280,7 +3924,6 @@
    "coverage": 0.974,
    "n_editable": 27,
    "n_hbond": 4,
-   "alignment_ok": true,
    "ok": true
   },
   "ZsYellow1": {
@@ -4293,7 +3936,6 @@
    "coverage": 0.965,
    "n_editable": 34,
    "n_hbond": 2,
-   "alignment_ok": true,
    "ok": true
   }
  }

@@ -33,16 +33,18 @@ refit on train+val; task 2 merges those pools up front into ``knownstruct_Spool`
 analysis-time grouping and does not change what runs.
 
 What "same window" means here, precisely. ``design_windows.json`` carries two separable things,
-and only the second is MSA-derived:
+and only the second was MSA-derived:
 
   * STRUCTURAL -- the editable set (chromophore positions 1-2 + the 5 A Tier-B pocket) and the
     per-position alphabet constraints (aromatics at chromophore position 2, H-bond-capable
     residues at positions H-bonding the chromophore). These come from the scaffold's
-    experimental structure and are KEPT verbatim.
-  * FAMILY -- the PSSM: those alphabets intersected with what the 763-sequence family alignment
-    supports at that column, plus the frequencies themselves. This is what ESM-2 REPLACES, so a
-    position's candidate set here is its structural constraint (or all 20 AAs) and the ranking
-    over it is ESM-2's, un-intersected with family support.
+    experimental structure and are what this arm uses.
+  * FAMILY -- a per-scaffold PSSM: those alphabets intersected with what a 763-sequence family
+    alignment supported at that column. This is what ESM-2 REPLACES, so a position's candidate
+    set here is its structural constraint (or all 20 AAs) and the ranking over it is ESM-2's,
+    un-intersected with family support. The MSA arm is archived and nothing here consulted the
+    PSSM, so the family profile and the alignment behind it have been removed from the pipeline
+    (see ``archive/msa/``).
 
 Weights are 1/1/1 on the z-scored guided score, unchanged from both arms:
 
@@ -50,10 +52,10 @@ Weights are 1/1/1 on the z-scored guided score, unchanged from both arms:
 
 with logp_proposal now the ESM-2 masked-LM log-probability rather than the PSSM's.
 
-Both naturalness diagnostics are written per round so the two arms compare on the same axes:
-``ppl`` (ESM-2 pseudo-perplexity over the whole sequence, the metric the MSA arm leaves blank)
-and ``fam_logp`` (the design's log-likelihood under its own scaffold's family PSSM, the metric
-the MSA arm optimizes). Neither enters the search.
+``ppl`` (ESM-2 pseudo-perplexity over the whole sequence) is written per round as a naturalness
+diagnostic and does not enter the search. Runs made before the family profile was removed also
+carry a ``fam_logp`` column -- the design's log-likelihood under its scaffold's family PSSM, the
+metric the archived MSA arm optimized. It is no longer computed.
 
 TRIALS AND VISITING ORDER (kept identical to the MSA arm -- see its module docstring for the
 reasoning). Each task is run ``--trials`` times independently, default 3, so the spread across
@@ -78,8 +80,8 @@ Usage
 
 ``--no-ppl`` leaves the ``ppl`` column blank and is worth using whenever the pseudo-perplexity
 diagnostic is not needed: it masks every residue of every design in turn, so it costs about as
-much as a whole design cycle and dominates the runtime at 3 trials. ``fam_logp`` (free) is still
-written, so the naturalness axis is not lost.
+much as a whole design cycle and dominates the runtime at 3 trials. With it set, the run records
+no naturalness axis at all.
 
 Writes one CSV per task, all trials in it, keyed by the ``trial`` column. Resumable: a task whose
 CSV already covers the requested --trials and --iters is skipped; one that does not (including
@@ -124,7 +126,7 @@ STD_AA = "ACDEFGHIKLMNPQRSTVWY"
 COLS = ["example", "trial", "cohort", "phase", "lam_ex", "lam_em", "round", "n_editable",
         "chromo_pos1_1based", "scaffold_name", "scaffold_pdb", "scaffold_idx",
         "scaffold_ex", "scaffold_em", "target_name", "target_idx", "target_ex", "target_em",
-        "seq_id_scaf_target", "pred_ex", "pred_em", "peak_err", "ppl", "fam_logp",
+        "seq_id_scaf_target", "pred_ex", "pred_em", "peak_err", "ppl",
         "ident_to_scaffold", "designed_seq", "scaffold_seq", "target_seq"]
 
 
@@ -313,18 +315,6 @@ def main():
         nsn = torch.tensor([len(rp) for _, rp in jobs], device=dev, dtype=torch.float).clamp(min=1)
         return torch.exp(-tot / nsn).cpu().tolist()
 
-    def fam_logp_batch(T_list):
-        """DIAGNOSTIC ONLY (the MSA arm's objective, reported here for comparability): the
-        design's log-likelihood over its editable positions under its own scaffold's family
-        PSSM. Never enters the guided score in this arm."""
-        out = []
-        for t in T_list:
-            lp = 0.0
-            for p in t["editable"]:
-                row = t["pssm_logp"][p]
-                lp += float(row.get(t["seq"][p], row["_min"]))
-            out.append(lp)
-        return out
 
     def _zc(t):
         return (t - t.mean()) / (t.std() + 1e-6)
@@ -346,8 +336,7 @@ def main():
         print("all tasks cached; nothing to run")
         return
 
-    # ---- per-task window: editable set + structural alphabets (PSSM kept for the
-    # ---- fam_logp diagnostic only -- it does NOT gate candidates or rank them here) --
+    # ---- per-task window: editable set + structural alphabets ----------------------
     torch.manual_seed(C.SEED); np.random.seed(C.SEED)
     T = []
     n_constrained = 0
@@ -363,12 +352,6 @@ def main():
             pos_allowed[int(p_str)] = aa_mask_from(letters)
         n_constrained += len(pos_allowed)
 
-        # family PSSM -> per-AA log-prob rows, for the fam_logp diagnostic
-        pssm_logp = {}
-        for p_str, ent in w["pssm"].items():
-            row = {aa: float(np.log(max(pr, 1e-12))) for aa, pr in zip(ent["alphabet"], ent["probs"])}
-            row["_min"] = min(row.values())
-            pssm_logp[int(p_str)] = row
 
         # one INSTANCE per (task, trial); the window tensors are read-only so trials share them
         tgt = torch.tensor(peaks[t["ti"]], device=dev)
@@ -376,15 +359,15 @@ def main():
             rng, gen = _rng_pair(dev, trial, si, t["ti"])
             T.append(dict(**t, trial=trial, w=w, scaffold=seqs[si], seq=seqs[si], tgt=tgt,
                           editable=editable, pos_allowed=pos_allowed,
-                          pssm_logp=pssm_logp, c1=c1, p2=p2, hist=[], rng=rng, gen=gen))
+                          c1=c1, p2=p2, hist=[], rng=rng, gen=gen))
     ns = [len(t["editable"]) for t in T]
     print(f"running {len(todo)} tasks x {args.trials} trials = {len(T)} searches | {args.iters} "
           f"iters x (chromo -> pocket) | k={K_TOP} T={TEMP} lam_prior={LAM_PRIOR} "
           f"lam_ex={LAM_EX} lam_em={LAM_EM} | editable min/med/max = "
           f"{min(ns)}/{int(np.median(ns))}/{max(ns)} (Tier-B, same windows as the archived MSA arm) | "
           f"visit order = {args.visit_order} | ppl = {'off' if args.no_ppl else 'on'} | "
-          f"proposal = ESM-2 masked-LM (family PSSM not used for selection; "
-          f"{n_constrained} structurally constrained positions across tasks, rest = 20 AAs)")
+          f"proposal = ESM-2 masked-LM ({n_constrained} structurally constrained positions "
+          f"across tasks, rest = 20 AAs)")
 
     def resolve_positions(chromo_nums, use_pocket, t):
         """Positions to visit in this phase step, in the order they will be visited.
@@ -405,14 +388,13 @@ def main():
         seqlist = [t["seq"] for t in T]
         P = oracle_peaks_batched(seqlist)
         ppls = [float("nan")] * len(T) if args.no_ppl else ppl_batched(seqlist)
-        fam = fam_logp_batch(T)
         for i, t in enumerate(T):
             ex, em = float(P[i, 0]), float(P[i, 1])
             err = 0.5 * (abs(ex - float(t["tgt"][0])) + abs(em - float(t["tgt"][1])))
             ident = sum(x == y for x, y in zip(t["seq"], t["scaffold"])) / len(t["scaffold"])
             t["hist"].append(dict(phase=phase, round=r, nedit=touched.get(id(t), 0),
                                   pred_ex=ex, pred_em=em, peak_err=err, ppl=ppls[i],
-                                  fam_logp=fam[i], ident=ident, seq=t["seq"]))
+                                  ident=ident, seq=t["seq"]))
 
     t0 = time.time()
     evaluate_round("scaffold", 0, {})
@@ -477,7 +459,7 @@ def main():
                                  rows[ti]["name"], ti, f"{EXM[ti]:.0f}", f"{EMM[ti]:.0f}", f"{t['idv']:.3f}",
                                  f"{hh['pred_ex']:.1f}", f"{hh['pred_em']:.1f}", f"{hh['peak_err']:.2f}",
                                  "" if args.no_ppl else f"{hh['ppl']:.2f}",
-                                 f"{hh['fam_logp']:.2f}", f"{hh['ident']:.3f}", hh["seq"], t["scaffold"], seqs[ti]])
+                                 f"{hh['ident']:.3f}", hh["seq"], t["scaffold"], seqs[ti]])
 
     # what the extra trials bought: the per-task spread is the search's own variance, which a
     # single trial cannot separate from a task being easy or hard

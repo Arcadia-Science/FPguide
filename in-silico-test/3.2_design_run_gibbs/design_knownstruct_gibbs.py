@@ -115,7 +115,7 @@ STD_AA = "ACDEFGHIKLMNPQRSTVWY"
 COLS = ["example", "trial", "cohort", "phase", "lam_ex", "lam_em", "round", "n_editable",
         "chromo_pos1_1based", "scaffold_name", "scaffold_pdb", "scaffold_idx",
         "scaffold_ex", "scaffold_em", "target_name", "target_idx", "target_ex", "target_em",
-        "seq_id_scaf_target", "pred_ex", "pred_em", "peak_err", "ppl", "fam_logp",
+        "seq_id_scaf_target", "pred_ex", "pred_em", "peak_err", "ppl",
         "ident_to_scaffold", "designed_seq", "scaffold_seq", "target_seq"]
 
 
@@ -322,18 +322,6 @@ def main():
         nsn = torch.tensor([len(rp) for _, rp in jobs], device=dev, dtype=torch.float).clamp(min=1)
         return torch.exp(-tot / nsn).cpu().tolist()
 
-    def fam_logp_batch(T_list):
-        """DIAGNOSTIC ONLY (the archived MSA arm's objective, reported so every arm shares a naturalness
-        axis): the design's log-likelihood over its editable positions under its own scaffold's
-        family PSSM. Never enters the score in this arm, exactly as in 3.1."""
-        out = []
-        for t in T_list:
-            lp = 0.0
-            for p in t["editable"]:
-                row = t["pssm_logp"][p]
-                lp += float(row.get(t["seq"][p], row["_min"]))
-            out.append(lp)
-        return out
 
     def _zc(t):
         return (t - t.mean()) / (t.std() + 1e-6)
@@ -355,8 +343,7 @@ def main():
         print("all tasks cached; nothing to run")
         return
 
-    # ---- per-task window: editable set + structural alphabets. Identical to 3.1, including
-    # ---- that the PSSM is read for the fam_logp diagnostic only and gates nothing. ---------
+    # ---- per-task window: editable set + structural alphabets. Identical to 3.1. ----------
     torch.manual_seed(C.SEED); np.random.seed(C.SEED)
     T = []
     n_constrained = 0
@@ -372,12 +359,6 @@ def main():
             pos_allowed[int(p_str)] = aa_mask_from(letters)
         n_constrained += len(pos_allowed)
 
-        # family PSSM -> per-AA log-prob rows, for the fam_logp diagnostic
-        pssm_logp = {}
-        for p_str, ent in w["pssm"].items():
-            row = {aa: float(np.log(max(pr, 1e-12))) for aa, pr in zip(ent["alphabet"], ent["probs"])}
-            row["_min"] = min(row.values())
-            pssm_logp[int(p_str)] = row
 
         # one INSTANCE per (task, trial); the window tensors are read-only so trials share them
         tgt = torch.tensor(peaks[t["ti"]], device=dev)
@@ -385,7 +366,7 @@ def main():
             rng, gen = _rng_pair(dev, trial, si, t["ti"])
             T.append(dict(**t, trial=trial, w=w, scaffold=seqs[si], seq=seqs[si], tgt=tgt,
                           editable=editable, pos_allowed=pos_allowed,
-                          pssm_logp=pssm_logp, c1=c1, p2=p2, hist=[], rng=rng, gen=gen))
+                          c1=c1, p2=p2, hist=[], rng=rng, gen=gen))
     ns = [len(t["editable"]) for t in T]
     print(f"running {len(todo)} tasks x {args.trials} trials = {len(T)} searches | {args.iters} "
           f"iters x (chromo -> pocket) | k={K_TOP} T={TEMP} lam_prior={LAM_PRIOR} "
@@ -417,14 +398,13 @@ def main():
         seqlist = [t["seq"] for t in T]
         P = oracle_peaks_batched(seqlist)
         ppls = [float("nan")] * len(T) if args.no_ppl else ppl_batched(seqlist)
-        fam = fam_logp_batch(T)
         for i, t in enumerate(T):
             ex, em = float(P[i, 0]), float(P[i, 1])
             err = 0.5 * (abs(ex - float(t["tgt"][0])) + abs(em - float(t["tgt"][1])))
             ident = sum(x == y for x, y in zip(t["seq"], t["scaffold"])) / len(t["scaffold"])
             t["hist"].append(dict(phase=phase, round=r, nedit=touched.get(id(t), 0),
                                   pred_ex=ex, pred_em=em, peak_err=err, ppl=ppls[i],
-                                  fam_logp=fam[i], ident=ident, seq=t["seq"]))
+                                  ident=ident, seq=t["seq"]))
 
     t0 = time.time()
     evaluate_round("scaffold", 0, {})
@@ -495,7 +475,7 @@ def main():
                                  rows[ti]["name"], ti, f"{EXM[ti]:.0f}", f"{EMM[ti]:.0f}", f"{t['idv']:.3f}",
                                  f"{hh['pred_ex']:.1f}", f"{hh['pred_em']:.1f}", f"{hh['peak_err']:.2f}",
                                  "" if args.no_ppl else f"{hh['ppl']:.2f}",
-                                 f"{hh['fam_logp']:.2f}", f"{hh['ident']:.3f}", hh["seq"], t["scaffold"], seqs[ti]])
+                                 f"{hh['ident']:.3f}", hh["seq"], t["scaffold"], seqs[ti]])
 
     # the trial spread IS the result in this arm: it is the width of the null a guided run has to
     # beat, not a nuisance to average away

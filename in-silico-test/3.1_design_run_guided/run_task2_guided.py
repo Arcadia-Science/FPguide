@@ -36,7 +36,7 @@ import design_common as C
 
 SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "design_knownstruct_guided.py")
 # --no-ppl: pseudo-perplexity costs about a whole design cycle per round and is not used in any
-# comparison here; fam_logp is free and still written, so the naturalness axis is intact.
+# comparison here, so the run skips it.
 DEFAULTS = ["--pairs-dir", str(C.PAIRS_DIR_T2),
             "--cohorts", *C.TASK2_COHORTS,
             "--outdir", str(C.PIPE_OUT_ESM2_T2_R3),

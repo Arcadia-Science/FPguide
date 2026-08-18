@@ -9,7 +9,7 @@ two of them, how each turns into a per-residue probability, and how the alignmen
 Code: `archive/3.1_design_run_MSA/design_knownstruct.py`,
 [3.1_design_run_guided/design_knownstruct_guided.py](3.1_design_run_guided/design_knownstruct_guided.py),
 [2_design_task_specification/build_windows.py](2_design_task_specification/build_windows.py),
-[msa/conservation.py](msa/conservation.py), and the alignment build in
+`archive/msa/conservation.py`, and the alignment build in
 [../msa_conservation/](../msa_conservation/).
 
 ## 1. Why a generative model is needed, and why exactly one thing is swapped
@@ -44,15 +44,16 @@ what "same window" means. `design_windows.json` carries two separable things:
 | **family** | those alphabets intersected with what the alignment supports at that column, plus the frequencies themselves | **replaced** |
 
 So in the ESM-2 arm a position's candidate set is its structural constraint, or all 20 amino acids
-where it has none, and the ranking over that set is ESM-2's. The family PSSM is still loaded there,
-but only to compute the `fam_logp` diagnostic — it gates nothing and ranks nothing.
+where it has none, and the ranking over that set is ESM-2's. At the time of these runs the family
+PSSM was still loaded there, but only to compute the `fam_logp` diagnostic — it gated nothing and
+ranked nothing, which is why it was dropped from the pipeline when the MSA arm was archived.
 
 ## 2. Model A — the family MSA profile (PSSM)
 
 ### 2.1 How the alignment was made
 
 Built once in [`../msa_conservation/`](../msa_conservation/) and vendored into
-[msa/data/fp_all.aln.fasta](msa/data/fp_all.aln.fasta) (byte-identical copy, so the windows here
+`archive/msa/data/fp_all.aln.fasta` (byte-identical copy, so the windows here
 are reproducible from this folder alone).
 
 **Input.** `build_msa_input.py` takes the union of the three curated trait sets — peak (758) plus
@@ -99,7 +100,7 @@ Aequorea-lineage, most of them avGFP point mutants. Raw column frequencies would
 distribution that is really a census of what people have already published.
 
 Every frequency used here is therefore computed under **Henikoff & Henikoff position-based
-weights** ([msa/conservation.py:121](msa/conservation.py#L121)): a sequence's weight is the mean
+weights** (`archive/msa/conservation.py:121`): a sequence's weight is the mean
 over its own non-gap columns of `1/(r·n)`, where `r` is the number of distinct residue types in the
 column and `n` the count of this sequence's residue there. Averaging over each sequence's *own*
 occupied columns rather than all columns keeps partial sequences from being penalized for being
@@ -197,8 +198,8 @@ Two consequences follow from the conditioning that do not apply to the PSSM arm:
   which candidates get scored. The random per-trial visit order is doing more work here.
 - **Cost.** One forward pass per (design, position, step), batched at 64 across tasks — 25 min vs
   21 min for 324 searches. The pseudo-perplexity diagnostic (mask every residue in turn) costs
-  about a whole design cycle per round and is off by default (`--no-ppl`); `fam_logp` is still
-  written, so the naturalness axis survives.
+  about a whole design cycle per round and is off by default (`--no-ppl`); at the time of these runs
+  `fam_logp` was still written, so the naturalness axis survived. It no longer is.
 
 ESM-2 also encodes the **surrogate's** input representation (layer-33 residue embeddings under a
 `cnn-max-d1` head) in both arms. In the ESM-2 arm the proposal and the surrogate therefore share a
@@ -267,7 +268,11 @@ What the trials do not wash out is the trade:
 - ESM-2 edits **less conservatively** — 90.3% vs 92.2% identity to scaffold, family log-likelihood
   1.8× worse per position. The PSSM arm cannot leave family support by construction (verified: 0
   of 11,627 edits outside it); ESM-2 puts **3,863 of 14,463 edits (27%) outside** the
-  family-supported alphabet.
+  family-supported alphabet. *(Both family-support counts, and the `fam_logp` likelihood behind the
+  1.8×, were measured against the per-position family alphabets the design windows used to carry.
+  Those alphabets and the alignment behind them were removed with the MSA arm, so these four
+  numbers can no longer be recomputed here — see the note in the root README. The identity figures
+  are still checkable from the tracked design CSVs.)*
 - **6 fewer tasks improve at all** (97 vs 103) — the wider proposal costs some reliability.
 - ESM-2's trials are **less variable** (24.4 vs 28.1 nm), the one axis on which it is cleanly
   ahead: a sequence-conditioned proposal is more repeatable than a static profile sampled at T = 1.

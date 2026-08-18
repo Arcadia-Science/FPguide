@@ -29,7 +29,7 @@ Task 1's OUTPUTS stay where they were written (``pairs/``, the PIPE_OUT_* paths 
 Nothing in the live chain reads them. See ``archive/README.md``.
 
 Stage scripts sit one level down, so each begins with a small bootstrap putting this root plus
-``lib/`` and ``msa/`` on ``sys.path``. Artifacts and shared inputs stay at the root, since they
+``lib/`` on ``sys.path``. Artifacts and shared inputs stay at the root, since they
 are consumed across stages and by the notebooks here.
 
 The folder is SELF-CONTAINED IN CODE: every module it runs lives here, so nothing is imported from
@@ -41,9 +41,6 @@ copies:
   lib/peak_models.py    model architectures + checkpoint save/load
   lib/prostt5_embed.py  ProstT5 embedding for oracle scoring
   lib/sweep_peak_oracle_base.py   the shared architecture-sweep implementation
-  msa/conservation.py   family-MSA alignment loading + Henikoff weighting
-  msa/data/             the MSA RESULT itself (fp_all.aln.fasta + fp_all_meta.csv), i.e. the
-                        763-sequence whole-family alignment the PSSMs are computed from
   structure_hits.csv    which dataset entries have a >=97%-identity experimental structure --
                         a property of the protein itself, independent of any train/val/test split
 
@@ -105,7 +102,6 @@ CUR = HERE / "data"                                   # curated dataset (symlink
 SPLIT_CSV = HERE / "data" / "dual_splits.csv"         # OURS: make_dual_split.py
 STRUCT_DIR = HERE / "structures" / "experimental"     # RCSB PDBx cache, self-populating
 HITS_CSV = HERE / "structure_hits.csv"                # structure-known scaffolds (split-independent)
-MSA_DIR = HERE / "msa"                                # conservation.py + data/fp_all.aln.fasta
 WINDOWS_JSON = HERE / "design_windows.json"           # OURS: build_windows.py (built from scratch)
 PAIRS_DIR_T2 = HERE / "pairs_task2"                   # OURS: 2_design_task_specification (random target per scaffold)
 PAIRS_DIR = HERE / "pairs"                            # ARCHIVED task 1 (furthest target); outputs kept
