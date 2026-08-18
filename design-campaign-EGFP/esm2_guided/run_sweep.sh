@@ -52,7 +52,7 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-PY="${PY:-/home/ubuntu/miniconda3/envs/esm2-fp-design/bin/python}"
+PY="${PY:-python}"
 TRIALS="${TRIALS:-3}"
 ITERS="${ITERS:-3}"
 PAIRS="${PAIRS:-EBFP,mOrange}"

@@ -15,7 +15,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PY="${PY:-/home/ubuntu/miniconda3/envs/esm2-fp-design/bin/python}"
+PY="${PY:-python}"
 mkdir -p designs logs
 
 TS="$(date +%Y%m%d_%H%M%S)"
