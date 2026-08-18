@@ -139,7 +139,7 @@ See each subfolder's `README.md` for details.
 **Figures.** Every folder keeps its own `figures/`, written by that folder's notebook — there is
 no shared figure directory. [`dataset_pipeline/figures/`](dataset_pipeline/figures)
 (`visualize_curation.ipynb`), [`in-silico-test/figures/`](in-silico-test/figures)
-(`visualization.ipynb`, `visualization_task2.ipynb`),
+(`figures.ipynb`),
 [`GFP_DMS/figures/`](GFP_DMS/figures) (`visualization.ipynb`, `visualize_sweep.ipynb`,
 `visualize_thresholds.ipynb`), [`msa_conservation/figures/`](msa_conservation/figures)
 (`figures.py`, `visualization.ipynb`) and

@@ -6,7 +6,7 @@ pipeline stage imports it. Stages are separate folders, run in order:
   0_data_split/                  make_dual_split.py         -> data/dual_splits.csv
   1_surrogate_oracle_training/   sweep + 3-fold CV + refit  -> trained_models/
   2_design_task_specification/   validate + curate + build  -> pairs_task2/, design_windows.json
-  3.1_design_run_ESM2/           design_knownstruct_esm2.py -> peak_designs/  (guided, ESM-2)
+  3.1_design_run_guided/           design_knownstruct_guided.py -> peak_designs/  (guided, ESM-2)
   3.2_design_run_gibbs/          design_knownstruct_gibbs.py-> peak_designs/  (unguided null)
 
 That chain runs TASK SET 2: each scaffold paired with a RANDOM qualifying target, over two merged

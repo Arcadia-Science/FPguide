@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Unguided control -- ESM-2 Gibbs sampling in the same design window, no surrogate.
 
-This is ``3.1_design_run_ESM2/design_knownstruct_esm2.py`` with **lam_ex = lam_em = 0**. Same
+This is ``3.1_design_run_guided/design_knownstruct_guided.py`` with **lam_ex = lam_em = 0**. Same
 tasks, same Tier-B windows, same ESM-2 650M masked-LM proposal, same k = 10 / T = 1.0 / 2 cycles,
 same per-trial random visiting order, same seeding scheme. The only change is that the two
 guidance terms are switched off, which leaves::

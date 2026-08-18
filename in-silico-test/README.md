@@ -1,23 +1,30 @@
-# in-silico-test — does a differently-structured split change what we conclude?
+# in-silico-test — peak-conditioned guided design
 
-A self-contained replication of the original peak-conditioned guided-design experiment
-(`archive/esm2_design/`) under a **different
-train/val/test structure**, to test whether model selection and design outcomes are artifacts of
-how the data was split.
+The project's in-silico design experiment. A surrogate and an **independent** oracle are trained on
+the curated peak dataset; the search edits a structure-defined chromophore pocket toward a target
+`(ex_max, em_max)` under the surrogate's guidance; every design is then scored by the oracle, which
+the search never consults. An unguided pocket-resampling arm runs the same search with the target
+switched off, so the surrogate's contribution can be separated from what resampling alone achieves.
 
-The main pipeline uses a *coordinated* dual split with reciprocal invariants
-(`S_test ⊆ O_train`, `O_test ⊆ S_train`) so surrogate and oracle can each be evaluated on data the
-other trained on. This folder inverts the priority and **nests** instead:
+## The train/val/test split
+
+Surrogate and oracle are split **nested**, oracle first, so the surrogate can never have seen
+anything the oracle is evaluated on:
 
 | | split | sizes (N=758) |
 |---|---|---|
 | **oracle** | 80/10/10 of the *entire* dataset | train 606 · val 76 · test 76 |
 | **surrogate** | 70/15/15 carved *only from oracle-train* | train 424 · val 91 · test 91 · excluded 152 |
 
-The nesting guarantees the surrogate never sees anything in the oracle's held-out val/test — a
-stricter isolation than the main pipeline — at the cost of ~20% of the surrogate's training data
-(the 152 rows sitting in oracle val/test are unusable). Whether that trade changes any conclusion
-is the point of the experiment.
+Nesting buys strict isolation: the oracle's held-out val and test rows are disjoint from everything
+the surrogate trained on, so an oracle score on a design is not a verdict from a model that shared
+the surrogate's training signal. It costs ~20% of the surrogate's training data — the 152 rows that
+land in oracle val/test are unusable for the surrogate, which is the price of the guarantee.
+
+> An earlier scheme split the two models *coordinated* rather than nested, with reciprocal
+> invariants (`S_test ⊆ O_train`, `O_test ⊆ S_train`) so each could be evaluated on data the other
+> trained on. `dataset_pipeline/make_dual_split.py` still writes it, but nothing reads it: every
+> number in this folder comes from the nested split above, built by `0_data_split/make_dual_split.py`.
 
 ## Layout
 
@@ -30,8 +37,8 @@ design_common.py               every path + the dataset/split/hits loaders — S
 1_surrogate_oracle_training/   sweep, 3-fold CV, final refit         -> trained_models/
 2_design_task_specification/   validate_structures, curate_pairs_task2,
                                build_windows              -> pairs_task2/, design_windows.json
-3.1_design_run_ESM2/           design_knownstruct_esm2.py            -> peak_designs/  (guided)
-                               run_task2_esm2.py                     — the stage entry point
+3.1_design_run_guided/         design_knownstruct_guided.py          -> peak_designs/  (guided)
+                               run_task2_guided.py                   — the stage entry point
 3.2_design_run_gibbs/          design_knownstruct_gibbs.py           -> peak_designs/  (unguided null)
                                run_task2_gibbs.py                    — the stage entry point
 archive/                       the ORIGINAL task set, its three arms and the cross-set
@@ -40,7 +47,7 @@ lib/                           vendored modules — copies, don't edit here
 msa/                           vendored MSA code + the family alignment (self-contained unit)
 data/  structures/             inputs and the RCSB cache
 figures/                       this folder's exported PNG/SVG/HTML figures
-sweep_results.ipynb  visualization.ipynb  visualization_task2.ipynb
+sweep_results.ipynb  figures.ipynb
 ```
 
 **That chain runs task set 2**, in which each scaffold is paired with a *random* qualifying
@@ -79,8 +86,8 @@ Every piece of *code* the pipeline runs lives here; nothing is imported from `..
 every experiment in the repo — duplicating them per folder would be waste, so both are symlinks:
 
 - `data/` → `dataset_pipeline/data/peak/curated/`: the shared curated dataset plus ~2GB of ESM-2 /
-  ProstT5 residue-embedding caches. `data/dual_splits.csv` (this experiment's own nested split)
-  *is* a real local file.
+  ProstT5 residue-embedding caches. `data/dual_splits.csv` (the nested split above) *is* a real
+  local file, written here rather than symlinked.
 - `structures/` → the repo-level [`../structures/`](../structures): the RCSB PDBx cache, ~175MB.
   Self-populating — `pockets.py` fetches a miss from RCSB, which now lands in the shared cache.
   Every path inside this folder is unchanged, so `structures/experimental/` still resolves.
@@ -97,7 +104,7 @@ Run in order. Each step's output is committed to disk, and every long step is re
 
 ```bash
 S0=0_data_split; S1=1_surrogate_oracle_training
-S2=2_design_task_specification; S31=3.1_design_run_ESM2; S32=3.2_design_run_gibbs
+S2=2_design_task_specification; S31=3.1_design_run_guided; S32=3.2_design_run_gibbs
 
 python $S0/make_dual_split.py                     # -> data/dual_splits.csv
 python $S1/sweep_peak_oracle.py --role both --seeds 0   # 48 configs x 2 roles -> trained_models/
@@ -108,17 +115,18 @@ python $S1/train_final_surrogate.py               # refit the CV winner on train
 python $S2/validate_structures.py                 # -> structure_validation.json  (~12 min, one-time)
 python $S2/curate_pairs_task2.py                  # -> pairs_task2/*.csv  (~10 min scan, then cached)
 python $S2/build_windows.py                       # -> design_windows.json
-python $S31/run_task2_esm2.py                     # guided       (72 x 3,  ~16 min)
+python $S31/run_task2_guided.py                     # guided       (72 x 3,  ~16 min)
 python $S32/run_task2_gibbs.py                    # unguided null (72 x 12, ~7 min)
 
 for a in esm2_t2_rand3 gibbs_t2_r12; do python score_traj_surrogate.py --arm $a; done
 ```
 
-Then `sweep_results.ipynb` (sweep + CV figures), `visualization.ipynb` (landscape, split, both
-models) and `visualization_task2.ipynb` (**the design results** — the guided arm against its own
-null, per cycle and per condition, with the paired tests). The latter two export to
-[`figures/`](figures) next to them (`FIGDIR` in each setup cell); every folder in this repo keeps
-its own figures, there is no shared figure directory.
+Then `sweep_results.ipynb` (the sweep + CV leaderboards) and `figures.ipynb` — the write-up
+figures end to end: the landscape (§1), emission by lineage (§2), the nested split (§3), both
+architecture sweeps (§4-5), both models' held-out predictions (§6-7), and **the design results**
+(§8) — the guided arm against its unguided control, per cycle and per condition, with the paired
+tests. `figures.ipynb` exports to [`figures/`](figures) next to it (`FIGDIR` in its setup cell);
+every folder in this repo keeps its own figures, there is no shared figure directory.
 
 The cross-task-set table in [Design results](#design-results-task-set-2--the-live-task-set) came
 from `archive/compare_task_sets.py`, archived with task set 1 since half of what it prints *is*
@@ -301,14 +309,14 @@ residues (median 24), editable sets 14–34 positions (26), 0–6 H-bond partner
 alphabets 2–20 residues (13). The space is still enormous (~13²⁶ per scaffold), but every
 single-position move is simultaneously structurally plausible, chemically appropriate to its role,
 and observed in the natural family — which is what lets a greedy search travel 40+ nm while keeping
-~92% identity to its scaffold. The guided arm ([`3.1`](3.1_design_run_ESM2)) holds every
+~92% identity to its scaffold. The guided arm ([`3.1`](3.1_design_run_guided)) holds every
 structural component of this window fixed and replaces only the family term, with ESM-2's
 masked-LM logits — see `archive/README.md`
 for the controlled comparison against the family PSSM that established it.
 
 ## Design results (task set 2 — the live task set)
 
-Two arms, run by [`3.1`](3.1_design_run_ESM2) and its null [`3.2`](3.2_design_run_gibbs) on the same
+Two arms, run by [`3.1`](3.1_design_run_guided) and its null [`3.2`](3.2_design_run_gibbs) on the same
 72 tasks:
 
 - **guided** — at each editable position the candidates are ESM-2 650M masked-LM proposals inside
@@ -339,7 +347,7 @@ this one is read against; both of its arms are still on disk, so
 "Error closed" is the per-task share of the scaffold's own initial error — the axis that survives
 two task sets starting at different distances. `archive/compare_task_sets.py` regenerates this;
 `archive/compare_task_sets.log` is the run it was written from. Task 2's own arm-vs-null
-comparison — the part that does not depend on task 1 — is `visualization_task2.ipynb`.
+comparison — the part that does not depend on task 1 — is `figures.ipynb` §8.
 
 **The guidance survives the change, and on the fraction axis it reads slightly stronger.** Guided
 beats its own null on **62/72** random-target tasks (*p* = 5e−10), and closes 0.31 of the scaffold
@@ -394,16 +402,18 @@ reached, arrived at from the null instead of from the conditions.
 
 Runtime: 16 min for 3.1 (216 searches), 7 min for 3.2 (864). Outputs land in
 `knownstruct_task2_esm2_rand3/` and `knownstruct_task2_gibbs_r12/`, and
-`visualization_task2.ipynb` asks the two design questions — the per-cycle distance distributions
-with paired tests, and how far every design landed from its target (the same two the archived
-`archive/visualization_task1_design.ipynb` asks of task set 1). Its second figure is built differently from Section 9's: rather than plotting the peaks
-themselves, it draws the absolute offset from the target for the three deployable methods (the
-surrogate's top pick, its top-3 mean, the unguided control) as one block per method, each ranked
-from its best pair to its worst, so the three distributions are compared as shapes. That is what
-shows guidance to be worth 11.6 nm a pair overall but only 5.2 nm on the hardest third.
+`figures.ipynb` §8 asks the per-cycle question — the distance distributions with paired tests, as
+the archived `archive/visualization_task1_design.ipynb` asks of task set 1.
 
-It also adds a third figure with no counterpart in the archived task-1 pair, and this one changes
-how the other two should be read. **The unguided control does not improve on its scaffold by moving
+Two further analyses were run and are **not** in the live notebook; both are in
+`archive/visualization_task2.ipynb`, with their figures in `archive/retired_figures/`. Their
+findings stand and are reported here because nothing else supersedes them. The first draws the
+absolute offset from the target for the three deployable methods (the surrogate's top pick, its
+top-3 mean, the unguided control) as one block per method, each ranked from its best pair to its
+worst, so the three distributions are compared as shapes: guidance is worth 11.6 nm a pair overall
+but only 5.2 nm on the hardest third.
+
+The second changes how everything above should be read. **The unguided control does not improve on its scaffold by moving
 toward the target — it collapses onto the middle of the FP distribution** (spread 23/25 nm about its
 mean against the scaffolds' 58/59; 37.3 nm from the pool centre against 70.4), which is a better
 guess than a peripheral scaffold for a target drawn at random. Scored against a predictor that
@@ -439,9 +449,11 @@ scaffold: its argmax target) and task 1's five design runs above. Only code was 
 results, so `archive/compare_task_sets.py` and the two notebooks in `archive/` still run against
 them; no live stage reads them. See `archive/README.md`.
 
-**Notebooks** — `sweep_results.ipynb` (sweep + CV) · `visualization.ipynb` (landscape, split, both
-models — Sections 1-7, task-independent) · `visualization_task2.ipynb` (the design results) ·
-`archive/visualize_knownstruct.ipynb` and `archive/visualization_task1_design.ipynb` (task set 1)
+**Notebooks** — `sweep_results.ipynb` (sweep + CV) · `figures.ipynb` (every write-up figure:
+landscape and lineages §1-2, the split §3, both sweeps §4-5, both models' test predictions §6-7,
+the design results §8) · in `archive/`: `visualization.ipynb` and `visualization_task2.ipynb` (the
+two notebooks `figures.ipynb` was merged from), `visualize_knownstruct.ipynb` and
+`visualization_task1_design.ipynb` (task set 1)
 
 ## Notes and gotchas
 

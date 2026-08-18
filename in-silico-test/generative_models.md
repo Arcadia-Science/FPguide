@@ -7,7 +7,7 @@ downstream (surrogate, oracle, selection) is discriminative. This document cover
 two of them, how each turns into a per-residue probability, and how the alignment was built.
 
 Code: `archive/3.1_design_run_MSA/design_knownstruct.py`,
-[3.1_design_run_ESM2/design_knownstruct_esm2.py](3.1_design_run_ESM2/design_knownstruct_esm2.py),
+[3.1_design_run_guided/design_knownstruct_guided.py](3.1_design_run_guided/design_knownstruct_guided.py),
 [2_design_task_specification/build_windows.py](2_design_task_specification/build_windows.py),
 [msa/conservation.py](msa/conservation.py), and the alignment build in
 [../msa_conservation/](../msa_conservation/).
@@ -32,7 +32,7 @@ with the z-scores taken over the k = 10 candidates at the current position and t
 drawn by multinomial sampling at T = 1. The only difference between the arms is where
 `logp_proposal` comes from — one line in the loop
 (`design_knownstruct.py:324` vs
-[design_knownstruct_esm2.py:432](3.1_design_run_ESM2/design_knownstruct_esm2.py#L432)). That makes
+[design_knownstruct_guided.py:432](3.1_design_run_guided/design_knownstruct_guided.py#L432)). That makes
 the comparison a controlled swap rather than two pipelines that happen to differ.
 
 The design window is shared but is not entirely model-neutral, so it is worth being precise about
@@ -178,7 +178,7 @@ campaign.
 ## 3. Model B — ESM-2 650M masked-LM
 
 `esm2_t33_650M_UR50D`, final layer 33, 1280-dim. The proposal is the **masked marginal** at the
-edited position ([design_knownstruct_esm2.py:270-284](3.1_design_run_ESM2/design_knownstruct_esm2.py#L270-L284)):
+edited position ([design_knownstruct_guided.py:270-284](3.1_design_run_guided/design_knownstruct_guided.py#L270-L284)):
 
 1. Tokenize the design's **current** sequence (scaffold plus every edit made so far this cycle).
 2. Replace the token at the edited position with `<mask>` (`+1` for the BOS token).

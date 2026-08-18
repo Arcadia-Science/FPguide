@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 """Known-structure cohort design -- the ESM-2-proposal guided search. THE DESIGN ENGINE.
 
-This is the search itself; ``run_task2_esm2.py`` beside it is the named stage entry point, a thin
+This is the search itself; ``run_task2_guided.py`` beside it is the named stage entry point, a thin
 runner that passes the same defaults explicitly plus ``--no-ppl``. Nothing in the search is
 task-specific -- the defaults below are simply stage 3.1's live task-2 configuration
 (``pairs_task2/``, the two merged cohorts, ``C.PIPE_OUT_ESM2_T2_R3``). The same file, run as
 ::
 
-    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --pairs-dir pairs \\
+    python 3.1_design_run_guided/design_knownstruct_guided.py --pairs-dir pairs \\
         --cohorts knownstruct_Strain knownstruct_Sval knownstruct_Stest \\
         --outdir peak_designs/structure/knownstruct_esm2_rand3 --no-ppl
 
@@ -69,12 +69,12 @@ proposal distribution at every later position, not just which candidates get sco
 
 Usage
 -----
-    python 3.1_design_run_ESM2/run_task2_esm2.py                            # task 2 -- the live arm
-    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --no-ppl          # bare: the same, minus the runner
-    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --cohorts knownstruct_Stest
-    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --iters 3
-    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --trials 1 --visit-order sequence
-    python 3.1_design_run_ESM2/design_knownstruct_esm2.py --smoke 2        # wiring/timing probe
+    python 3.1_design_run_guided/run_task2_guided.py                            # task 2 -- the live arm
+    python 3.1_design_run_guided/design_knownstruct_guided.py --no-ppl          # bare: the same, minus the runner
+    python 3.1_design_run_guided/design_knownstruct_guided.py --cohorts knownstruct_Stest
+    python 3.1_design_run_guided/design_knownstruct_guided.py --iters 3
+    python 3.1_design_run_guided/design_knownstruct_guided.py --trials 1 --visit-order sequence
+    python 3.1_design_run_guided/design_knownstruct_guided.py --smoke 2        # wiring/timing probe
 
 ``--no-ppl`` leaves the ``ppl`` column blank and is worth using whenever the pseudo-perplexity
 diagnostic is not needed: it masks every residue of every design in turn, so it costs about as

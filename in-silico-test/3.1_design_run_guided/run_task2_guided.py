@@ -14,16 +14,16 @@ refit surrogate's training pool) and ``knownstruct_Stest`` (36, never trained on
 runs 72 tasks x 3 trials against task 1's 108 x 3. Comparisons should be made on the conditions,
 which are directly matched, not on the task counts.
 
-This is a RUNNER, not a second implementation: it calls ``design_knownstruct_esm2.py`` beside it
+This is a RUNNER, not a second implementation: it calls ``design_knownstruct_guided.py`` beside it
 -- the same engine the archived task-1 arm ran -- with the task-2 manifests and output root, so
 the two task sets cannot drift apart in anything but their pairs. Extra arguments are passed
 through and override the defaults below.
 
 Usage
 -----
-    python 3.1_design_run_ESM2/run_task2_esm2.py
-    python 3.1_design_run_ESM2/run_task2_esm2.py --smoke 2 --trials 1   # wiring probe
-    python 3.1_design_run_ESM2/run_task2_esm2.py --trials 6            # more trials
+    python 3.1_design_run_guided/run_task2_guided.py
+    python 3.1_design_run_guided/run_task2_guided.py --smoke 2 --trials 1   # wiring probe
+    python 3.1_design_run_guided/run_task2_guided.py --trials 6            # more trials
 """
 import os
 import subprocess
@@ -34,7 +34,7 @@ sys.path[:0] = [_ROOT]
 
 import design_common as C
 
-SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "design_knownstruct_esm2.py")
+SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "design_knownstruct_guided.py")
 # --no-ppl: pseudo-perplexity costs about a whole design cycle per round and is not used in any
 # comparison here; fam_logp is free and still written, so the naturalness axis is intact.
 DEFAULTS = ["--pairs-dir", str(C.PAIRS_DIR_T2),
