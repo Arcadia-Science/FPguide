@@ -13,6 +13,7 @@ Reads `dual_splits.csv` (columns: index, name, surrogate_role, oracle_role).
 """
 import argparse
 import csv
+import os
 from collections import Counter
 
 import matplotlib.pyplot as plt
@@ -60,7 +61,7 @@ def main():
     )
     ap.add_argument(
         "--out",
-        default="data/peak/curated/dual_split_bipartite.png",
+        default="figures/dual_split_bipartite.png",
         help="Output image path (default: %(default)s).",
     )
     args = ap.parse_args()
@@ -122,6 +123,7 @@ def main():
     ax.set_ylim(-0.7, 3.15)
     ax.axis("off")
     plt.tight_layout()
+    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     fig.savefig(args.out, dpi=300, bbox_inches="tight")
     print(f"saved -> {args.out}")
     plt.show()
