@@ -106,9 +106,8 @@ is "13–14 nm beyond pocket resampling"; and ESM-2's looser editing and worse f
 properties of the *proposal itself*, not consequences of steering it (unguided ESM-2 already sits at
 0.902 identity, far from MSA's 0.921).
 
-Full write-up: [`in-silico-test/generative_models.md`](in-silico-test/generative_models.md).
-Caveat when carrying this over: the `design-campaign-EGFP` MSA and ESM-2 strategies retuned λ and
-temperature at the same time as the proposal, so "only the proposal differs" is true of the
+Carrying this over needs one caveat: the `design-campaign-EGFP` MSA and ESM-2 strategies retuned λ
+and temperature at the same time as the proposal, so "only the proposal differs" is true of the
 benchmark and **not** of the campaign.
 
 ## Environment (one combined conda env)

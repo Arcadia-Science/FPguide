@@ -23,10 +23,11 @@ WATCH THE STAGE NUMBERS. ``archive/`` keeps task 1's own numbering (2, 3.1, 3.2,
 NOT line up with the live stages above -- e.g. live 3.1 is the ESM-2 guided arm, while archived
 3.1 is task 1's MSA arm. Archived paths are always written with the ``archive/`` prefix.
 
-Task 1's OUTPUTS stay where they were written (``pairs/``, the PIPE_OUT_* paths below,
-``design_windows.json``'s task-1 scaffolds): only code was archived, never results, so
-``archive/compare_task_sets.py`` and the two notebooks in ``archive/`` still run against them.
-Nothing in the live chain reads them. See ``archive/README.md``.
+Task 1's manifests and design runs live WITH its code, under ``archive/`` -- ``archive/pairs/``
+and ``archive/peak_designs/`` (the PIPE_OUT_* paths below). The one task-1 artifact still at the
+live root is ``design_windows.json``, a union over both task sets. ``archive/compare_task_sets.py``
+and the two notebooks in ``archive/`` read the archived runs; nothing in the live chain does.
+See ``archive/README.md``.
 
 Stage scripts sit one level down, so each begins with a small bootstrap putting this root plus
 ``lib/`` on ``sys.path``. Artifacts and shared inputs stay at the root, since they
@@ -104,7 +105,7 @@ STRUCT_DIR = HERE / "structures" / "experimental"     # RCSB PDBx cache, self-po
 HITS_CSV = HERE / "structure_hits.csv"                # structure-known scaffolds (split-independent)
 WINDOWS_JSON = HERE / "design_windows.json"           # OURS: build_windows.py (built from scratch)
 PAIRS_DIR_T2 = HERE / "pairs_task2"                   # OURS: 2_design_task_specification (random target per scaffold)
-PAIRS_DIR = HERE / "pairs"                            # ARCHIVED task 1 (furthest target); outputs kept
+PAIRS_DIR = HERE / "archive" / "pairs"                # ARCHIVED task 1 (furthest target)
 
 # TASK SET 2 (stages 2 / 3.1 / 3.2) -- THE LIVE ARMS. Each scaffold paired with a RANDOM
 # qualifying target instead of its furthest one, over two merged cohorts (S-pool, S-test).
@@ -112,26 +113,26 @@ PIPE_OUT_ESM2_T2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_task2_e
 PIPE_OUT_GIBBS_T2_R12 = HERE / "peak_designs" / "structure" / "knownstruct_task2_gibbs_r12"
 
 # ---- ARCHIVED task set 1 (each scaffold paired with its most spectrally distant target). The
-# code that produced these runs is under archive/; the runs themselves stay here, and archive/'s
-# compare_task_sets.py and notebooks read them as task 2's baseline.
-PIPE_OUT = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate"
+# runs live under archive/ with the code that produced them, and archive/'s compare_task_sets.py
+# and notebooks read them as task 2's baseline.
+PIPE_OUT = HERE / "archive" / "peak_designs" / "structure" / "knownstruct_cv_surrogate"
 # same tasks + same Tier-B windows, ESM-2 masked-LM proposal instead of the family PSSM
-PIPE_OUT_ESM2 = HERE / "peak_designs" / "structure" / "knownstruct_cv_surrogate_esm2"
+PIPE_OUT_ESM2 = HERE / "archive" / "peak_designs" / "structure" / "knownstruct_cv_surrogate_esm2"
 
 # The two dirs above hold the FIRST pass of each arm: one trial per task, editable positions
 # visited in fixed N->C sequence order. Both arms were then rerun with a random visiting order
 # (a fresh permutation per trial per cycle, as design-campaign-EGFP does) and 3 independent
 # trials per task, which is the current default of 3.1/3.2 -- those land here. Separate dirs so
 # the first pass stays reproducible and comparable; `--outdir` overrides either.
-PIPE_OUT_R3 = HERE / "peak_designs" / "structure" / "knownstruct_msa_rand3"
-PIPE_OUT_ESM2_R3 = HERE / "peak_designs" / "structure" / "knownstruct_esm2_rand3"
+PIPE_OUT_R3 = HERE / "archive" / "peak_designs" / "structure" / "knownstruct_msa_rand3"
+PIPE_OUT_ESM2_R3 = HERE / "archive" / "peak_designs" / "structure" / "knownstruct_esm2_rand3"
 
 # UNGUIDED CONTROL (archived 3.3): the ESM-2 arm with lam_ex = lam_em = 0, i.e. Gibbs sampling from the
 # masked-LM inside the same Tier-B window, with the surrogate removed from the loop entirely.
 # It answers "how much of 3.1/3.2's movement is the guidance, and how much is resampling the
 # pocket at all?". Run on S-train + S-test only (36 + 36), 12 trials, so the null distribution
 # of a task's outcome is estimated well enough to compare against a 3-trial guided run.
-PIPE_OUT_GIBBS_R12 = HERE / "peak_designs" / "structure" / "knownstruct_gibbs_r12"
+PIPE_OUT_GIBBS_R12 = HERE / "archive" / "peak_designs" / "structure" / "knownstruct_gibbs_r12"
 
 # Same scripts, same models, same windows as task 2 -- only the pair manifests differ, which is
 # what lets the two task sets be read against each other directly.

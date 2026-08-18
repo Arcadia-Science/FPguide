@@ -41,13 +41,13 @@ design_common.py               every path + the dataset/split/hits loaders — S
                                run_task2_guided.py                   — the stage entry point
 3.2_design_run_gibbs/          design_knownstruct_gibbs.py           -> peak_designs/  (unguided null)
                                run_task2_gibbs.py                    — the stage entry point
-archive/                       the ORIGINAL task set, its three arms and the cross-set
-                               comparison — see archive/README.md
+archive/                       the ORIGINAL task set — its three arms, their pair manifests
+                               and design runs, and the cross-set comparison. Like every
+                               archive/ in this repo, kept local, not in git
 lib/                           vendored modules — copies, don't edit here
 data/  structures/             inputs and the RCSB cache
 figures/                       this folder's exported PNG/SVG/HTML figures
 sweep_results.ipynb  figures.ipynb
-generative_models.md           the proposal distributions, in depth — companion doc
 ```
 
 **That chain runs task set 2**, in which each scaffold is paired with a *random* qualifying
@@ -438,21 +438,17 @@ Start here when tracing what reads what.
 `pairs_task2/` (+ `_candidate_pool_cache.json`, **every** qualifying pair — 27,866 of them — which
 is what makes a random re-draw possible) ·
 `design_windows.json` (a union over both task sets: 137 scaffolds) ·
-`peak_designs/structure/` (seven design runs: the live `knownstruct_task2_{esm2_rand3,gibbs_r12}`,
-plus task 1's five — `knownstruct_cv_surrogate{,_esm2}` first passes,
-`knownstruct_{msa,esm2}_rand3` 3-trial reruns, `knownstruct_gibbs_r12` unguided null — each with a
-`surrogate_traj.csv` post-hoc cache)
+`peak_designs/structure/` (the two live design runs, `knownstruct_task2_{esm2_rand3,gibbs_r12}`,
+each with a `surrogate_traj.csv` post-hoc cache)
 
-**Archived, but still on disk** — `pairs/` (task 1, + `_full_pool_cache.json`, one row per
-scaffold: its argmax target) and task 1's five design runs above. Only code was archived, never
-results, so `archive/compare_task_sets.py` and the two notebooks in `archive/` still run against
-them; no live stage reads them. See `archive/README.md`.
-
-**Docs** — [`generative_models.md`](generative_models.md) is the companion to
-[The design window](#the-design-window-what-may-be-edited-and-why): what the *proposal* distribution is,
-why the pipeline needs a generative component at all, and how each candidate ranking becomes a per-residue
-probability. It covers both proposals — the live ESM-2 masked-LM one and the family-MSA PSSM the archived
-arm used — since the two are only meaningful against each other; the MSA half now cites `archive/`.
+**Under `archive/` — kept local, not in git**, like every `archive/` in this repo. Task 1's
+manifests (`archive/pairs/`, + `_full_pool_cache.json`, one row per scaffold: its argmax target)
+and its five design runs (`archive/peak_designs/structure/`: `knownstruct_cv_surrogate{,_esm2}`
+first passes, `knownstruct_{msa,esm2}_rand3` 3-trial reruns, `knownstruct_gibbs_r12` unguided
+null, each with its own `surrogate_traj.csv`) sit with the code that produced them, so
+`archive/compare_task_sets.py` and the two notebooks there still run against them in a working
+clone. The task-1 numbers they produce are reported in this README and in `archive/README.md`.
+The one task-1 artifact left at this root is `design_windows.json`, a union over both task sets.
 
 **Notebooks** — `sweep_results.ipynb` (sweep + CV) · `figures.ipynb` (every write-up figure:
 landscape and lineages §1-2, the split §3, both sweeps §4-5, both models' test predictions §6-7,
@@ -471,8 +467,8 @@ two notebooks `figures.ipynb` was merged from), `visualize_knownstruct.ipynb` an
   under `peak_designs/` first, or the old runs are silently kept.
 - **`3.1`/`3.2` are runners, and the engines beside them default to task set 2.** Running an engine
   bare writes to the task-2 output root; reproducing an archived task-1 arm means passing
-  `--pairs-dir pairs`, its cohorts and its `--outdir` explicitly (each engine's docstring spells
-  the invocation out, as does `archive/README.md`).
+  `--pairs-dir archive/pairs`, its cohorts and its `--outdir` explicitly (each engine's docstring
+  spells the invocation out, as does `archive/README.md`).
 - **The two task sets are not paired and must not be pooled.** They share only 43 of 72 scaffolds
   and 3 of 72 pairs, and they start at very different distances (132.9 vs 70.2 nm), so any
   task-1-vs-task-2 statement belongs on the fraction-of-error-closed axis or on each arm's gap to

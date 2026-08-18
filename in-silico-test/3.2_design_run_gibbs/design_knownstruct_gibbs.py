@@ -160,7 +160,7 @@ def main():
     ap.add_argument("--cohorts", nargs="*", default=C.TASK2_COHORTS)
     ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR_T2),
                     help=f"manifest directory, i.e. which task set to run (default "
-                         f"{C.PAIRS_DIR_T2.name}, stage 2's random-target set; {C.PAIRS_DIR.name} "
+                         f"{C.PAIRS_DIR_T2.name}, stage 2's random-target set; archive/pairs "
                          f"is the archived furthest-target set)")
     ap.add_argument("--smoke", type=int, default=0, help="run only the first N tasks (wiring/timing probe)")
     ap.add_argument("--iters", type=int, default=N_ITERS, help=f"design cycles per task (default {N_ITERS})")

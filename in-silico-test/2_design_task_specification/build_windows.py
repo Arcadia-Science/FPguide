@@ -45,7 +45,7 @@ Usage
 -----
     python 2_design_task_specification/build_windows.py            # task 2's cohorts (the default)
     python 2_design_task_specification/build_windows.py --rebuild
-    python 2_design_task_specification/build_windows.py --pairs-dir pairs \
+    python 2_design_task_specification/build_windows.py --pairs-dir archive/pairs \
         --cohorts knownstruct_Strain knownstruct_Sval knownstruct_Stest   # archived task 1
 """
 import argparse
@@ -76,7 +76,7 @@ def main():
     ap.add_argument("--rebuild", action="store_true", help="recompute every window from zero")
     ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR_T2),
                     help=f"manifest directory -- the task set to build for (default "
-                         f"{C.PAIRS_DIR_T2.name}; {C.PAIRS_DIR.name} is the archived task 1)")
+                         f"{C.PAIRS_DIR_T2.name}; archive/pairs is the archived task 1)")
     ap.add_argument("--cohorts", nargs="*", default=C.TASK2_COHORTS,
                     help="cohorts to read from --pairs-dir")
     args = ap.parse_args()

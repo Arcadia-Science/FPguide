@@ -7,9 +7,9 @@ task-specific -- the defaults below are simply stage 3.1's live task-2 configura
 (``pairs_task2/``, the two merged cohorts, ``C.PIPE_OUT_ESM2_T2_R3``). The same file, run as
 ::
 
-    python 3.1_design_run_guided/design_knownstruct_guided.py --pairs-dir pairs \\
+    python 3.1_design_run_guided/design_knownstruct_guided.py --pairs-dir archive/pairs \\
         --cohorts knownstruct_Strain knownstruct_Sval knownstruct_Stest \\
-        --outdir peak_designs/structure/knownstruct_esm2_rand3 --no-ppl
+        --outdir archive/peak_designs/structure/knownstruct_esm2_rand3 --no-ppl
 
 reproduces the ARCHIVED task-1 ESM-2 arm -- it is the same code that produced it, moved here
 when task set 1 was archived. (``archive/`` keeps task 1's own stage numbering, which does not
@@ -168,7 +168,7 @@ def main():
     ap.add_argument("--cohorts", nargs="*", default=C.TASK2_COHORTS)
     ap.add_argument("--pairs-dir", default=str(C.PAIRS_DIR_T2),
                     help=f"manifest directory, i.e. which task set to run (default "
-                         f"{C.PAIRS_DIR_T2.name}, stage 2's random-target set; {C.PAIRS_DIR.name} "
+                         f"{C.PAIRS_DIR_T2.name}, stage 2's random-target set; archive/pairs "
                          f"is the archived furthest-target set)")
     ap.add_argument("--smoke", type=int, default=0, help="run only the first N tasks (wiring/timing probe)")
     ap.add_argument("--iters", type=int, default=N_ITERS, help=f"design cycles per task (default {N_ITERS})")

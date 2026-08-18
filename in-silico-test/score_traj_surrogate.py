@@ -53,8 +53,9 @@ CACHE_NAME = "surrogate_traj.csv"
 ESM_BS = 32
 
 
-# The live arms are the task-2 pair; the rest are the archived task-1 runs, kept because their
-# design CSVs are still on disk and archive/'s script + notebooks read them (archive/README.md).
+# The live arms are the task-2 pair; the rest are the archived task-1 runs, whose design CSVs
+# moved to archive/peak_designs/ with the code -- archive/'s script + notebooks still read them
+# through the constants below (archive/README.md).
 ARMS = {# task set 2 (random target per scaffold): 3.1 guided, 3.2 unguided null
         "esm2_t2_rand3": C.PIPE_OUT_ESM2_T2_R3, "gibbs_t2_r12": C.PIPE_OUT_GIBBS_T2_R12,
         # --- archived task set 1 ---
