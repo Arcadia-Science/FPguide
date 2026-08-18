@@ -1,9 +1,10 @@
 """Shared FP peak-wavelength surrogate/oracle models + ESM-2 per-residue embedding utilities.
 
-The *peak_design* analog of ``../design/fp_models.py``. Instead of predicting the full
-1002-dim excitation/emission spectrum, every model here regresses just the **two peak
-wavelengths** ``(ex_max, em_max)`` (nm) taken over the full spectrum — i.e. we condition
-design on the peaks rather than the whole curve.
+The peak-wavelength counterpart of the retired full-spectrum ``fp_models.py`` (that experiment
+is no longer in the repo). Instead of predicting the full 1002-dim excitation/emission
+spectrum, every model here regresses just the **two peak wavelengths** ``(ex_max, em_max)``
+(nm) taken over the full spectrum — i.e. we condition design on the peaks rather than the
+whole curve.
 
 Backbones: a **CNN** (1-D convolutions over residues) and a **Transformer encoder**, each with a
 ``mean | min | max | std | concat | concatstd`` masked-pooling readout, a learned ``attn`` pool, or a

@@ -146,24 +146,29 @@ no shared figure directory. [`dataset_pipeline/figures/`](dataset_pipeline/figur
 [`design-campaign-EGFP/figures_benchmark/`](design-campaign-EGFP/figures_benchmark)
 (`visualization.ipynb`).
 
-The earlier `(sequence, spectrum)` lineage — `design/build_fpbase_dataset.py` feeding
-`fpbase-extractor/processed_data/ESM-spectrum/` — has been archived to
-`fpbase-extractor/archive/esm_spectrum/`. The full lineage (including the earlier full-spectrum
-sibling of the peak-conditioned design experiment) is:
+Three earlier experiments led here. All are retired, untracked, and kept only on the authors'
+machines; they are named because the write-ups cite them, not because you can open them:
 
-- **[`design/`](design)** — the full-spectrum-conditioned predecessor of the peak-conditioned
-  design experiment: same ESM-2 surrogate-guided design idea, but conditioned on the whole
-  1002-dim ex/em curve instead of just the peaks. Superseded, kept for reference (not actively
-  developed).
+- **`archive/design/`** — the full-spectrum-conditioned predecessor: the same ESM-2
+  surrogate-guided design idea, but conditioned on the whole 1002-dim ex/em curve instead of the two
+  peaks. Retired for two reasons — its `(sequence, spectrum)` input dataset is gone, and its
+  independent re-curation of the curve-bearing proteins is the approach
+  [`dataset_pipeline/build_spectra_dataset.py`](dataset_pipeline/build_spectra_dataset.py)
+  deliberately replaced (re-curating from curve-bearing states alone let analyte sensors and a FRET
+  biosensor back in; filtering the curated peak set inherits that judgment instead). Its
+  `fp_models.py` is the ancestor of [`fpdesign/peak_models.py`](fpdesign/peak_models.py).
+
+  **The full-spectrum *dataset* is not retired** — only this experiment. `build_spectra_dataset.py`
+  and its 382-row output in `dataset_pipeline/data/spectra/curated/` are current and tracked. What
+  the published repo no longer contains is a design experiment that consumes whole curves; the
+  design work here is peak-conditioned throughout.
 - **`archive/esm2_design/`** — the original peak-conditioned design experiment (campaign and
-  visualization notebooks, design outputs, CV/sweep caches, checkpoints, figures). Archived and
-  untracked. The `esm2_design/` folder itself is gone: its shared `peak_models.py` / `pockets.py`
-  moved into [`fpdesign/`](fpdesign) and its PDBx cache into [`structures/`](structures).
-  Superseded by [`in-silico-test/`](in-silico-test).
+  visualization notebooks, design outputs, CV/sweep caches, checkpoints, figures). Its shared
+  `peak_models.py` / `pockets.py` moved into [`fpdesign/`](fpdesign) and its PDBx cache into
+  [`structures/`](structures). Superseded by [`in-silico-test/`](in-silico-test).
 - **`archive/scalar_design/`** — the scalar-trait (brightness, pKa) counterpart of the
-  peak-conditioned sweeps. Exploratory and orphaned (it imports from a sibling `peak_design/`
-  path left over from an earlier layout, so it doesn't currently run); archived
-  and untracked, kept for reference only.
+  peak-conditioned sweeps. Exploratory and orphaned: it imports from a sibling `peak_design/` path
+  left over from an earlier layout, so it does not currently run.
 
 ## Design campaigns
 

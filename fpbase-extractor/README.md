@@ -107,12 +107,16 @@ longer kept in `fpbase_output/`. Rerun with `--spectra` if you need them.
 [`dataset_pipeline/build_dataset.py`](../dataset_pipeline), which curates it into the
 peak / brightness / pKa training sets. That is the only consumer of this folder.
 
-## Archived material
+## Retired material
 
-Exploratory work that is not part of the dataset-building path lives in `archive/`, which is
-kept local and untracked: the mutual-information study, the ESM-2 embedding map and its
-caches, the older `(sequence, spectrum)` dataset lineage, and the phenotype coverage
-scripts. Its own `archive/README.md` records what each group was and how to regenerate it.
+Several things that once sat beside this folder are no longer part of the repo: the
+mutual-information study, the ESM-2 embedding map and its caches, the older
+`(sequence, spectrum)` dataset lineage (a `processed_data/ESM-spectrum/` export consumed by the
+retired full-spectrum design experiment), and the phenotype coverage scripts. None of it is on
+the dataset-building path, and none of it is retained here — don't go looking for a local
+`archive/` folder. The current full-spectrum dataset is
+[`../dataset_pipeline/build_spectra_dataset.py`](../dataset_pipeline/build_spectra_dataset.py),
+which reads `fpbase_output/fpbase_spectra.json` from this folder directly.
 
 ## Use as a library
 
