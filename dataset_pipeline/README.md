@@ -206,15 +206,24 @@ python make_dual_split.py        # -> data/peak/curated/dual_splits.csv
 Embedding is the one heavy step and is its own script:
 
 ```bash
-# embed each trait's curated sequences with ESM-2, cached per trait (needs GPU/MPS + ESM-2 weights)
-python embed.py                  # all three; skips traits already cached
-python embed.py --dry-run        # report N / Lmax / cache size without loading ESM-2
-python embed.py --trait pka --force
+# embed the curated peak sequences with ESM-2 (needs GPU/MPS + ESM-2 weights)
+python embed.py --trait peak              # skips the cache if it already exists
+python embed.py --trait peak --dry-run    # report N / Lmax / cache size without loading ESM-2
+python embed.py --trait peak --force      # rebuild
 ```
 
-`embed.py` writes `esm_residue_fp16.npy` + `esm_residue_len.npy` into each `data/<trait>/curated/`, embedding
+**Only `--trait peak` is live.** `embed.py` still carries `brightness` and `pka` in its `TRAITS` table, and
+they are still what the bare `python embed.py` iterates — but those datasets moved to `archive/`, so running
+it without `--trait` (or with `--trait brightness` / `--trait pka`) raises `FileNotFoundError` on the missing
+`data/<trait>/curated/<trait>_assignments.csv`, `--dry-run` included. Rebuild the trait's curated set first if
+you actually want its embeddings; see [Archived: brightness & pKa](#archived-brightness--pka). Unlike
+`build_dataset.py --all`, the default here was deliberately left un-narrowed, so a stale invocation fails
+loudly rather than quietly embedding only peak.
+
+`embed.py` writes `esm_residue_fp16.npy` + `esm_residue_len.npy` into `data/<trait>/curated/`, embedding
 every trait **independently** (a shared sequence is embedded once per trait). That wastes a little compute but
-keeps each dataset self-contained. These are exactly the caches the learning-curve notebooks load.
+keeps each dataset self-contained. The peak cache is what `in-silico-test/` and the campaigns load — via
+`in-silico-test/data/` (a symlink to `data/peak/curated/`) and `EGFP-full-spectra/campaign_common.py`.
 
 ## Visualizing the curation
 
@@ -269,11 +278,14 @@ This writes `fonts/` next to the script — nothing is installed into the system
 notebook loads it with `apc.mpl.setup(font_dirpath="fonts")`, falling back to matplotlib's defaults (with a
 printed note) if it is missing. The fonts are OFL-licensed and gitignored; regenerate rather than commit them.
 
-> **`fetch_arcadia_fonts.py` serves the whole repo, not just this folder.** Every figure notebook in the
-> project loads `dataset_pipeline/fonts/` — `GFP_DMS/`, `msa_conservation/`, `design-campaign-EGFP/` and
-> both `in-silico-test/` notebooks hardcode `../dataset_pipeline/fonts`. It lives here for historical
-> reasons; run it once from this folder and every notebook in the repo picks the faces up. Don't move or
-> retire it without repointing those notebooks.
+> **`fetch_arcadia_fonts.py` serves the whole repo, not just this folder.** Five notebooks elsewhere in
+> the project resolve `../dataset_pipeline/fonts`: `GFP_DMS/visualization.ipynb`,
+> `msa_conservation/visualization.ipynb`, `design-campaign-EGFP/visualization.ipynb`,
+> `EGFP-full-spectra/visualize_campaign.ipynb` and `in-silico-test/figures.ipynb` (which reaches it through
+> its `DP` constant rather than a literal path). `in-silico-test/sweep_results.ipynb` is the one figure
+> notebook that does *not* — it calls `apc.mpl.setup()` bare and takes matplotlib's default faces. This
+> script lives here for historical reasons; run it once from this folder and all five pick the faces up.
+> Don't move or retire it without repointing them.
 
 Emission wavelength is shaded continuously on the Arcadia **magma** gradient, one of the guide's sequential
 gradients for dots, with the palest end trimmed so the reddest proteins stay distinct from the page. A single

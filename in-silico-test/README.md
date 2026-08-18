@@ -47,6 +47,7 @@ lib/                           vendored modules — copies, don't edit here
 data/  structures/             inputs and the RCSB cache
 figures/                       this folder's exported PNG/SVG/HTML figures
 sweep_results.ipynb  figures.ipynb
+generative_models.md           the proposal distributions, in depth — companion doc
 ```
 
 **That chain runs task set 2**, in which each scaffold is paired with a *random* qualifying
@@ -446,6 +447,12 @@ plus task 1's five — `knownstruct_cv_surrogate{,_esm2}` first passes,
 scaffold: its argmax target) and task 1's five design runs above. Only code was archived, never
 results, so `archive/compare_task_sets.py` and the two notebooks in `archive/` still run against
 them; no live stage reads them. See `archive/README.md`.
+
+**Docs** — [`generative_models.md`](generative_models.md) is the companion to
+[The design window](#the-design-window-what-may-be-edited-and-why): what the *proposal* distribution is,
+why the pipeline needs a generative component at all, and how each candidate ranking becomes a per-residue
+probability. It covers both proposals — the live ESM-2 masked-LM one and the family-MSA PSSM the archived
+arm used — since the two are only meaningful against each other; the MSA half now cites `archive/`.
 
 **Notebooks** — `sweep_results.ipynb` (sweep + CV) · `figures.ipynb` (every write-up figure:
 landscape and lineages §1-2, the split §3, both sweeps §4-5, both models' test predictions §6-7,
