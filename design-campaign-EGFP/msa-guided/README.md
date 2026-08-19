@@ -19,8 +19,8 @@ not a bug in how it is called — the controls are scored by the same code path.
 
 A near-flat proposal filtered to top-`k` is close to an arbitrary 10-residue alphabet, and the
 audit of every design the four ESM-based EGFP strategies have produced
-(`../../msa_conservation/results/design_audit_*.csv`, 51,731 position-edits) shows what that
-costs:
+(`../../msa_conservation/archive/design_audit_*.csv` — local-only archive, 51,731
+position-edits over the four superseded ESM-2 runs) shows what that costs:
 
 | | share of all edits |
 |---|---|

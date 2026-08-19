@@ -12,7 +12,7 @@ EGFP and 10.1% on avGFP, against 66-80% on ubiquitin, lysozyme and adenylate kin
 (``msa_conservation/results/esm_calibration.csv``). A near-flat proposal filtered to top-k is
 close to an arbitrary 10-residue alphabet, and the audit of the existing campaigns shows the
 cost: 22.6% of all 51,731 position-edits placed a residue no aligned FP uses at that column, and
-12.9% buried a formal charge at RSA < 0.05 (``msa_conservation/results/design_audit_*.csv``).
+12.9% buried a formal charge at RSA < 0.05 (``msa_conservation/archive/design_audit_*.csv``).
 
 The 763-sequence family alignment is decisive exactly where ESM-2 is not, so this strategy uses
 it as the generative model directly.
