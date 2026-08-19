@@ -88,14 +88,21 @@ the most load-bearing part of the grid.
 
 ### λ_bright = 0 equivalence — verified, not assumed
 
-`check_lam_bright0.py` runs the same driver at λ_bright = 0 twice — classifier loaded vs
-`brightness_ckpt=None` — and compares `designed_seq` row for row:
+`check_lam_bright0.py` ran the same driver at λ_bright = 0 twice — classifier loaded vs
+`brightness_ckpt=None` — and compared `designed_seq` row for row:
 
 ```
 rows compared        : 12
 designed_seq IDENTICAL: True
 VERDICT: PASS
 ```
+
+The script has since been **retired to `../archive/check_lam_bright0.py`** (gitignored, read by
+nothing), so the table above is the record rather than something a fresh clone can re-measure. It
+was a one-off verification and no analysis ever imported it. It would still run from there if it is
+ever revived — it loads this folder's `design_campaign.py` by path and writes its scratch designs
+beside itself — and is worth re-running after any change to `fpdesign.campaign._select_guided`,
+the only thing that could break the equivalence.
 
 It used to also diff this effort's `CampaignConfig` (with `brightness_ckpt=None`) against
 `../guided-design-constraint/`'s field by field; that ran clean (no unexpected diffs) before the
@@ -272,7 +279,6 @@ TRIALS=12 LAM_EDIT="0 0.5" bash run_sweep.sh      # resumable: only the missing 
 ```bash
 cd design-campaign-EGFP/esm2_guided
 python check_scale.py                    # pre-flight: is any cell degenerate?
-python check_lam_bright0.py              # pre-flight: is lam_bright=0 really strategies 2/3?
 setsid bash run_sweep.sh < /dev/null > /dev/null 2>&1 &
 tail -f "$(cat .last_log)"
 ```

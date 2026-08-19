@@ -43,8 +43,11 @@ Strategy 6 exists because without it you cannot tell whether the MSA guide's adv
 the family profile or from the λ retuning that came with it. Strategies 2 and 4 are **slices of one
 sweep** rather than separate runs: `λ_bright = 0` contributes exactly nothing to the guided score,
 so the peaks-only cells reproduce strategy 2 bit-for-bit while still logging `pred_bright` — which
-is what lets one uniform ID-and-bright filter judge every strategy. Verified, not assumed:
-[`esm2_guided/check_lam_bright0.py`](esm2_guided/check_lam_bright0.py).
+is what lets one uniform ID-and-bright filter judge every strategy. Verified, not assumed — 12 of
+12 designs came out identical with the classifier loaded and zero-weighted against absent
+altogether. The check that measured it has been retired to `archive/check_lam_bright0.py`; its
+result is recorded under "λ_bright = 0 equivalence" in
+[`esm2_guided/README.md`](esm2_guided/README.md).
 
 > **No oracle / in-sample predictions.** The surrogate that *guides* the search is the same model
 > that *predicts* the resulting `(ex, em)`, and it was trained on all FP data (these popular FPs
@@ -74,7 +77,6 @@ design-campaign-EGFP/
 │  ├─ design_campaign.py               #   driver (per-cell outdir, pseudo-perplexity skipped)
 │  ├─ run_sweep.sh                     #   the 5×5×5 grid, both targets
 │  ├─ analyze.py                       #   per-slice table, λ heatmap, head-to-head vs strategy 5
-│  ├─ check_lam_bright0.py             #   proves λ_bright=0 == the peaks-only strategy
 │  ├─ metrics_<target>.csv             #   per-cell metrics, written by analyze.py
 │  └─ designs/lam-ex{P}_lam-em{P}_lam-bright{B}_lam-edit{E}/design_EGFP-<target>.csv
 │                                      #   125 cells = 5 (strategy 2) + 100 (strategy 4)
@@ -99,12 +101,13 @@ design-campaign-EGFP/
 ├─ benchmark_report.py                 # equal-budget comparison across all five strategies
 ├─ visualization.ipynb                 # the 5 five-strategy figures, both targets
 ├─ embed_cache.py, xlsx_io.py          # shared helpers (sequence-keyed embeddings, xlsx writer)
-├─ figures/                            # FROZEN PNGs from the archived notebook — not regenerable
-├─ figures_benchmark/                  # visualization.ipynb's own PNG+SVG output (regenerable)
+├─ figures_benchmark/                  # visualization.ipynb's own PNG+SVG output (the only figure dir)
 ├─ shortlists/                         # wet-lab shortlists: one xlsx per (strategy × target)
 │  └─ FPdesign-batch1.xlsx             #   batch 1: 8 MSA-guide candidates + 2 MSA-gibbs controls
 └─ archive/                            # GITIGNORED, read by nothing: dropped targets, the retired
                                        # T=10 arm, superseded shortlists, visualize_campaign.ipynb
+                                       # and figures/, the frozen PNGs it produced, and the
+                                       # check_lam_bright0.py pre-flight check
 ```
 
 Shared models live in the repo's `fpdesign/models/`:
@@ -306,7 +309,7 @@ axis. Every design elsewhere is neutral grey — and every categorical axis is l
 levels, the steering rule
 per column under a rule naming the proposal, so the campaign's 2 × 2 reads off the axis. It uses the
 shortlists' own filters, imported from `make_shortlist_case.py`, and drops only their diversity
-rule, whose cost it prints. It writes `figures_benchmark/` — **not** the frozen `figures/` — and
+rule, whose cost it prints. It writes `figures_benchmark/`, this folder's only figure directory, and
 costs ≈ 70 s of GPU for the 2,250 target-free sequences whose `pred_bright` the runs never recorded,
 plus the ID embeddings if `.embed_cache/` is cold.
 
@@ -318,12 +321,14 @@ recorded anywhere**, and it is the expensive part of every consumer here. `embed
 those vectors by sequence in `.embed_cache/` (gitignored, ~36 MB, safe to delete) so each sequence
 is embedded once ever.
 
-> **`figures/` is frozen.** The 13 PNGs there were produced by `visualize_campaign.ipynb`, which
-> has been retired to `archive/` — it was written against the T=10 folder layout and six
-> shortlists, four of which no longer exist. The figures are kept because the write-up references
-> them; they are **not** regenerable from the current tree, and `nbconvert` will not reproduce
-> them. Anything that needs to be recomputed lives in the two scripts and the notebook above, whose
-> own figures go to `figures_benchmark/` so this directory stays as it was.
+> **The frozen `figures/` was archived.** Its 13 PNGs were produced by `visualize_campaign.ipynb`,
+> which was retired to `archive/` — it was written against the T=10 folder layout and six
+> shortlists, four of which no longer exist. They are **not** regenerable from the current tree and
+> `nbconvert` will not reproduce them, so they followed the notebook that made them into
+> [`archive/figures/`](archive) — gitignored, kept on the authors' machines, and no longer published
+> even though the write-up references them. Everything that can still be recomputed lives in the two
+> scripts and the notebook above, whose own figures go to `figures_benchmark/`; that is now this
+> folder's only figure directory.
 
 ## Wet-lab shortlist
 
