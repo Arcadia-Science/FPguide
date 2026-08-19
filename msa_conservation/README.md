@@ -25,7 +25,7 @@ python compare_design_windows.py   # -> results/design_window_*.csv, window_fami
 python esm_vs_family.py       # -> results/esm_vs_family_egfp.csv, esm_calibration.csv (needs GPU)
 python esm_profiles.py        # -> results/esm_profiles.npz, esm_sweep_profiles.npz,
                               #    esm_family_sweep.csv   (needs GPU, ~9 min)
-python figures.py             # -> figures/*.png
+python plot_conservation.py   # -> figures/*.png
 ```
 
 `visualization.ipynb` then renders the seven-figure ESM-2-vs-family comparison
@@ -402,6 +402,78 @@ The practical reading is the same as above, now with the whole barrel behind it:
 family prior is not redundant with the ESM-2 term, and the cheapest fix is to *widen* the proposal
 support to the union of ESM-2's top-10 with `window_family_alphabet.csv`, rather than to replace
 either.
+
+## What the figures establish, taken together
+
+`plot_conservation.py` writes seven panels from `results/column_conservation.csv`, all restricted to
+the 208 columns at occupancy ≥ 0.9. They are not seven separate observations — they are one argument
+in three movements, and the third is what motivated
+[`design-campaign-EGFP/msa-guided/`](../design-campaign-EGFP/msa-guided/).
+
+**1 — the constraint is chemical, not identity-based.** `identity_vs_chemistry.png` plots every core
+column as `C_id` vs `C_chem` against the diagonal. Points *on* it — G67, R96, F27, E222 — are
+invariant either way and tell a designer only "don't touch". The interesting mass sits *above* it and
+is almost entirely aliphatic: L18 (0.63 → 0.98), I161 (0.61 → 0.95), V12 (0.59 → 0.88), positions
+where half the family disagrees about which residue goes there and essentially none of it disagrees
+about what kind. `class_conservation_summary.png` turns that into counts and shows the ~2× gap holds
+at every threshold (≥95%: 9 vs 16 · ≥90%: 14 vs 28 · ≥80%: 26 vs 46 · ≥70%: 34 vs 71), carried by
+the aliphatics (mean `C_id` 0.45 → `C_chem` 0.58) while glycine and aromatics are conserved by
+identity outright. `conservation_tracks.png` is the positional reference view, laying the same gap
+along avGFP numbering against RSA, chromophore distance and the β-strands.
+
+This is the clause that makes the family *usable* as a prior rather than merely descriptive. A
+position conserved by identity yields one residue; a position conserved by chemistry alone yields an
+alphabet of 4–12 residues this fold has actually tolerated in 763 real proteins — which is the shape
+a proposal distribution needs.
+
+**2 — the constraint comes from the fold, not the chromophore.** `chemistry_vs_burial.png` puts six
+properties against RSA and everything moves coherently: charge constraint ρ = −0.640, polarity mean
++0.587, hydropathy mean −0.574, H-bond capacity +0.475, `C_chem` −0.403, volume −0.242. Buried means
+greasy, apolar and — most strongly — electrostatically pinned. `pocket_vs_scaffold.png` runs the same
+test against distance to the chromophore and is deliberately a null: ρ = −0.003, p = 0.96, with
+median `C_chem` 0.417 in the ≤5 Å pocket against 0.464 in the 5–10 Å shell and 0.476 in the outer
+barrel. The colour-tuning pocket is, if anything, the least constrained zone in the protein.
+`pocket_composition.png` shows what that looks like residue by residue — a few solid single-class
+bars in a field of mosaics.
+
+**3 — therefore the family is orthogonal to the design window.** The window selects positions by
+proximity to the chromophore; the family constrains positions by burial; the two are uncorrelated, so
+the window's editable set is close to a random draw with respect to how hard the family constrains
+it. `design_window_vs_conservation.png` is the consequence: the EGFP window sorted by family
+constraint, coloured by what the window's own rules do with each position. L61 ties for the tallest
+bar in the figure — `C_chem` = 1.000, two residues (`LI`) covering 90% of family mass, alongside the
+catalytic R97 — and it is left completely unrestricted, while H149 (0.18) and T204 (0.37) carry
+Tier-B H-bond restrictions at positions the family barely constrains. The lower panel gives the
+actionable form: I168 needs 11 residues to cover 90% of family mass, L61 needs 2, and the window
+treats them identically. (This panel is in **EGFP** numbering while the other six are in **avGFP**;
+the offset past position 65 is +1 — see "One real gap: avGFP L60 / EGFP L61" above.)
+
+### The one-sentence version
+
+The FP family constrains **side-chain chemistry rather than residue identity**; that constraint is
+imposed by the **fold**, not by the chromophore; and it is therefore **orthogonal to the geometric
+criterion the design window was built from**. The window was specified on one axis and left the other
+unspecified — a job implicitly delegated to ESM-2, which has no opinion on this family.
+
+### Why the null result is the load-bearing panel
+
+`pocket_vs_scaffold.png` reports no effect, and that is precisely its value. Had `C_chem` tracked
+chromophore distance, the alignment would have been largely redundant with the 5 Å criterion — an
+expensive route to information the window already encodes. ρ = −0.003 against ρ = −0.40 for burial is
+what makes the family an *independent* source of constraint, and therefore what makes a
+family-profile proposal worth building at all. The same question is asked a second time in
+`visualization.ipynb`, against ESM-2 instead of against geometry: does this signal add to what we
+already have? Both times the answer is yes, for unrelated reasons.
+
+### What the figures do not establish
+
+Beyond the modelling caveats at the end of this README:
+
+- **Conservation is not function.** A zero-frequency residue means "763 observed sequences at
+  N_eff = 272 never do this", not "this cannot fold". The hard support constraint the campaigns
+  apply is stricter than the evidence strictly licenses — a deliberate choice, but a choice.
+- **Nothing here is causal.** These panels show what the family avoids. Whether designs that ignored
+  it are actually worse proteins is a question only the campaigns, and ultimately the bench, answer.
 
 ## Robustness
 
