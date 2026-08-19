@@ -149,7 +149,7 @@ no shared figure directory. [`dataset_pipeline/figures/`](dataset_pipeline/figur
 (`figures.ipynb`),
 [`GFP_DMS/figures/`](GFP_DMS/figures) (`visualization.ipynb`, `visualize_sweep.ipynb`,
 `visualize_thresholds.ipynb`), [`msa_conservation/figures/`](msa_conservation/figures)
-(`figures.py`, `visualization.ipynb`) and
+(`plot_conservation.py`, `visualization.ipynb`) and
 [`design-campaign-EGFP/figures_benchmark/`](design-campaign-EGFP/figures_benchmark)
 (`visualization.ipynb`).
 
