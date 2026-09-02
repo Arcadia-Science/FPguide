@@ -77,6 +77,7 @@ python sweep_classify_parallel.py --dry-run       # list configs + shard assignm
 python sweep_classify_parallel.py --gpus 0,1,2,3  # -> trained_models/sweep_class4/results.csv
 
 # 5. the in-distribution reference cloud the design campaigns gate on, then the figures
+#    (or skip the rebuild:  gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D DMS_data/)
 python build_maxpool_cache.py            # -> DMS_data/sub40k_maxpool.npz (~10 min, I/O-bound)
 python nn_distance_accuracy.py           # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb

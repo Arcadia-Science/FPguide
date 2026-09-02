@@ -122,7 +122,12 @@ def main():
     # ---- campaign ID statistic: self-excluded NN distance in z-scored max-pool space ----
     if not os.path.exists(MAXPOOL):
         raise SystemExit(f"{__file__}: missing {MAXPOOL}\n\n"
-                         "The in-distribution reference cloud is not on disk. It is gitignored (207 MB) and is the\nlast step of a chain that starts from two published DMS studies -- see the Reproduce block\nin GFP_DMS/README.md. Once its inputs exist:\n\n    python GFP_DMS/build_maxpool_cache.py\n")
+                         "The in-distribution reference cloud is not on disk (gitignored, 197 MiB). Fetch the\n"
+                         "published copy:\n\n"
+                         "    gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D GFP_DMS/DMS_data/\n\n"
+                         "Or rebuild it from the two source DMS studies -- see the Reproduce block in\n"
+                         "GFP_DMS/README.md -- ending in:\n\n"
+                         "    python GFP_DMS/build_maxpool_cache.py\n")
     z = np.load(MAXPOOL, allow_pickle=True)
     mp = z["mp"]
     # (src, src_row) identifies the source variant exactly. The scaffold label alone does not: it is

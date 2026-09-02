@@ -258,13 +258,19 @@ on.
 
 > **Prerequisite, not in git.** All three import `make_shortlist_case.py`, which loads the
 > 40,000-sequence in-distribution reference cloud
-> (`GFP_DMS/DMS_data/sub40k_maxpool.npz`, 207 MB, gitignored) at import time, and the ESM-2 650M
-> weights for embedding designs. The cloud is the last step of a chain that begins with
-> re-downloading two published DMS studies and runs ~85 GB of per-residue embedding: see the
-> **Reproduce** block in [`GFP_DMS/README.md`](../GFP_DMS/README.md), ending in
-> `python GFP_DMS/build_maxpool_cache.py`. Without it all three exit with that instruction rather
-> than a traceback. The design CSVs, shortlists and `figures_benchmark/` in this folder are
-> committed, so the *results* are readable without rebuilding anything.
+> (`GFP_DMS/DMS_data/sub40k_maxpool.npz`, 197 MiB, gitignored) at import time, and the ESM-2 650M
+> weights for embedding designs. Fetch the published cloud:
+>
+> ```bash
+> gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D GFP_DMS/DMS_data/
+> ```
+>
+> Rebuilding it instead means re-downloading two published DMS studies and running ~85 GB of
+> per-residue embedding — see the **Reproduce** block in
+> [`GFP_DMS/README.md`](../GFP_DMS/README.md), ending in
+> `python GFP_DMS/build_maxpool_cache.py`. Without the cloud all three exit with those two options
+> rather than a traceback. The design CSVs, shortlists and `figures_benchmark/` in this folder are
+> committed, so the *results* are readable without fetching or rebuilding anything.
 
 ```bash
 python benchmark_report.py                      # equal-budget table, all five strategies

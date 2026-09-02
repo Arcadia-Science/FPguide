@@ -144,7 +144,12 @@ def reverse_translate(aa, add_stop=True):
 _CLOUD = REPO / "GFP_DMS" / "DMS_data" / "sub40k_maxpool.npz"
 if not _CLOUD.exists():
     raise SystemExit(f"{__file__}: missing {_CLOUD}\n\n"
-                     "The in-distribution reference cloud is not on disk. It is gitignored (207 MB) and is the\nlast step of a chain that starts from two published DMS studies -- see the Reproduce block\nin GFP_DMS/README.md. Once its inputs exist:\n\n    python GFP_DMS/build_maxpool_cache.py\n")
+                     "The in-distribution reference cloud is not on disk (gitignored, 197 MiB). Fetch the\n"
+                     "published copy:\n\n"
+                     "    gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D GFP_DMS/DMS_data/\n\n"
+                     "Or rebuild it from the two source DMS studies -- see the Reproduce block in\n"
+                     "GFP_DMS/README.md -- ending in:\n\n"
+                     "    python GFP_DMS/build_maxpool_cache.py\n")
 z = np.load(_CLOUD, allow_pickle=True)
 mp = z["mp"]; mu, sd = mp.mean(0), mp.std(0) + 1e-6; Z = (mp - mu) / sd
 nn = NearestNeighbors(n_neighbors=1).fit(Z)
