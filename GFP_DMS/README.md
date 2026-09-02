@@ -61,23 +61,56 @@ GFP_DMS/
 
 ## Reproduce
 
+There are two ways in, and they differ by ~50 GB and two hours of GPU time. **Lane A** re-runs this
+folder's analysis against the published reference cloud; **lane B** rebuilds everything from the two
+source studies. Pick A unless you are specifically reproducing the classifier training.
+
+**Lane A — re-run the analysis (~200 MB download, no GPU).**
+
+```bash
+# the reference cloud + the row-aligned sequence table it is verified against
+gh release download reference-cloud-v1 -p 'sub40k_*' -D DMS_data/
+python build_maxpool_cache.py --verify   # confirm row i of the cloud is row i of the CSV
+python nn_distance_accuracy.py           # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
+jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
+```
+
+The brightness head those two steps load is tracked in git
+([`fpdesign/models/brightness_cnn-max-d2_40k.pt`](../fpdesign/models/brightness_cnn-max-d2_40k.pt)),
+so lane A needs nothing from lane B.
+
+**Lane B — rebuild from the two studies.** Download the raw tables first (see
+[Scaffolds & sources](#scaffolds--sources)); budget ~1.9 h on an L4 and ~54 GB for the orthologue
+embedding cache alone.
+
 ```bash
 # 1. build the processed sequence CSVs (fast, CPU)
 python transform_avgfp_dms.py            # -> DMS_data/avgfp_dms_sequences.csv
 python transform_ortho_dms.py            # -> DMS_data/ortho_gfp_dms_sequences.csv
 
-# 2. ESM-2 650M embeddings (GPU; ~20 seq/s on an L4). avGFP cache already built.
+# 2. ESM-2 650M embeddings (GPU; ~20 seq/s on an L4). BOTH are required by step 3 --
+#    embed_dms.py covers avGFP only, and the other three scaffolds come from embed_parallel.py.
 python embed_dms.py                      # -> DMS_data/esm_residue_fp16.npy (+ _len)
+python embed_parallel.py --input DMS_data/ortho_gfp_dms_sequences.csv --gpus 0,1,2,3
+                                         # -> DMS_data/ortho_gfp_dms_esm_residue_fp16.npy (+ _len)
 
-# 3. stratified 4-scaffold subsample cache the sweep trains on (5k rows x 4 scaffolds)
-python build_subsample.py                # -> DMS_data/sub20k_* (+ sub40k_*)
+# 3. the stratified 4-scaffold subsample caches. The default is sub20k (5k rows x 4 scaffolds);
+#    sub40k -- 10k x 4, what the DEPLOYED classifier and the reference cloud both use -- is a
+#    second, explicit invocation. Both draw at seed 0, but a 5k and a 10k draw from the same pool
+#    are independent samples: sub20k is NOT a subset of sub40k.
+python build_subsample.py                                  # -> DMS_data/sub20k_*
+python build_subsample.py --per 10000 --stem sub40k        # -> DMS_data/sub40k_*
 
-# 4. bright/dim classifier sweep: 24 configs, one worker per GPU, ranked by val AUROC
-python sweep_classify_parallel.py --dry-run       # list configs + shard assignment first
-python sweep_classify_parallel.py --gpus 0,1,2,3  # -> trained_models/sweep_class4/results.csv
+# 4. bright/dim classifier sweep: 24 configs, one worker per GPU, ranked by val AUROC.
+#    First on sub20k (the exploratory sweep), then the winning family refit on sub40k -- the
+#    `--out` directory nn_distance_accuracy.py and visualize_sweep.ipynb both default to.
+python sweep_classify_parallel.py --dry-run                # list configs + shard assignment first
+python sweep_classify_parallel.py --gpus 0,1,2,3           # -> trained_models/sweep_class4/results.csv
+python sweep_classify_parallel.py --gpus 0 --configs cnn-max-d2 \
+       --data-stem sub40k --out trained_models/cnn_max_d2_40k
+                                         # -> trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt
 
 # 5. the in-distribution reference cloud the design campaigns gate on, then the figures
-#    (or skip the rebuild:  gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D DMS_data/)
 python build_maxpool_cache.py            # -> DMS_data/sub40k_maxpool.npz (~10 min, I/O-bound)
 python nn_distance_accuracy.py           # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
@@ -103,6 +136,7 @@ The two raw tables are not redistributed here; download them from the sources in
 [Scaffolds & sources](#scaffolds--sources) into `DMS_data/` under the filenames in that table, then
 run the transform scripts above.
 
-> Note: `embed_dms.py` currently targets the avGFP CSV/paths; the orthologue embeddings are not yet
-> built. Embedding all four scaffolds' 141,144 sequences takes ~1.9 h on an L4 (~54 GB for the
-> orthologue cache alone).
+> Note: `embed_dms.py` targets the avGFP CSV/paths only — the orthologue embeddings come from
+> `embed_parallel.py`, which is why lane B step 2 runs both. Embedding all four scaffolds' 141,144
+> sequences takes ~1.9 h on an L4 (~54 GB for the orthologue cache alone). `build_subsample.py`
+> hard-exits with the missing path if the orthologue cache is not there yet.

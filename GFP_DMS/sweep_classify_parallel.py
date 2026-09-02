@@ -309,7 +309,7 @@ def run_launcher(a):
         while any(p.poll() is None for p, _ in procs):
             time.sleep(20)
             alive = sum(p.poll() is None for p, _ in procs)
-            done = len([f for f in os.listdir(OUT) if f.endswith(".pt")])
+            done = len([f for f in os.listdir(out_dir) if f.endswith(".pt")])
             print(f"  ... {alive}/{K} workers alive, {done}/{len(cfgs)*len(a.seeds)} checkpoints, "
                   f"elapsed {(time.time()-t0)/60:.1f}m", flush=True)
     except KeyboardInterrupt:
