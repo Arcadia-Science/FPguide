@@ -17,6 +17,7 @@ invariant chemical anchors: **Gly67**, **Arg96⁺** and **Glu222⁻**.
 
 ```bash
 python build_msa_input.py     # curated union -> data/fp_all.fasta          (763 seqs)
+                              #   ^ needs the archived brightness + pKa sets; see below
 ./run_msa.sh                  # MAFFT FFT-NS-i -> data/fp_all.aln.fasta     (~4 min)
 python conservation.py        # -> results/column_conservation.csv, summary.json
 python validate.py            # -> results/validation.json   (4 robustness tests)
@@ -27,6 +28,34 @@ python esm_profiles.py        # -> results/esm_profiles.npz, esm_sweep_profiles.
                               #    esm_family_sweep.csv   (needs GPU, ~9 min)
 python plot_conservation.py   # -> figures/*.png
 ```
+
+### Step 1 needs two archived datasets — you probably don't need to run it
+
+The 763-sequence input is the **union of all three** curated trait sets (peak 758, plus the 2 and 3
+that brightness and pKa add). But brightness and pKa were archived after this alignment was built
+([`dataset_pipeline/README.md`](../dataset_pipeline/README.md#archived-brightness--pka)), so on a
+fresh clone only `data/peak/curated/` exists and step 1 cannot rebuild the union as-is. It fails
+loudly and prints these three options rather than quietly emitting 758 sequences:
+
+1. **Skip step 1.** `data/fp_all.fasta`, `data/fp_all_meta.csv` and `data/fp_all.aln.fasta` are all
+   tracked in git, so steps 2 onward run from a bare clone. This is the normal path.
+2. **Rebuild the two archived sets**, which is cheap (seconds, CPU) and bit-reproducible from the
+   tracked FPbase export — the rebuilt union reproduces the committed `fp_all.fasta` and
+   `fp_all_meta.csv` byte-for-byte:
+   ```bash
+   cd ../dataset_pipeline
+   python build_dataset.py --target brightness   # -> data/brightness/curated/  (533 seqs)
+   python build_dataset.py --target pka          # -> data/pka/curated/         (368 seqs)
+   cd ../msa_conservation && python build_msa_input.py
+   ```
+3. **Build the peak-only variant**, `python build_msa_input.py --peak-only` — 758 sequences, no
+   prerequisite. This is **not** the published input: it drops the 5 sequences only brightness/pKa
+   readmit (`CAR-GECO1`, `mKeima`, `pHluorin4`, `pHmScarlet`, `PSLSSmKate`), so every conservation
+   count will differ from the numbers quoted below. It writes `data/fp_peak_only.*` — deliberately
+   different filenames, since everything downstream reads `fp_all*` by name and pairs alignment
+   rows to metadata rows by `msa_id`, so a 758-row file under those names would silently invalidate
+   the published results. `run_msa.sh` aligns `fp_all.fasta`; the script prints the `mafft` line for
+   the peak-only file.
 
 `visualization.ipynb` then renders the seven-figure ESM-2-vs-family comparison
 (`figures/esm_vs_msa_*.png`) from those cached distributions; it needs no GPU of its own.
@@ -502,7 +531,8 @@ Beyond the modelling caveats at the end of this README:
 
 | file | contents |
 |---|---|
-| `data/fp_all.fasta`, `data/fp_all_meta.csv` | 763-sequence input and metadata |
+| `data/fp_all.fasta`, `data/fp_all_meta.csv` | 763-sequence input and metadata (the published union; tracked) |
+| `data/fp_peak_only.*` | optional 758-sequence peak-only input from `build_msa_input.py --peak-only`; not published, not tracked |
 | `data/fp_all.aln.fasta` | the MSA (763 × 1861) |
 | `results/column_conservation.csv` | per-column table: occupancy, `C_id`, `C_chem`, per-class and per-residue weighted frequencies, six property means and ρ scores, avGFP position, RSA, chromophore distance, SSE |
 | `results/sequence_qc.csv` | per-sequence `core_frac` (flags the fusion constructs) |
