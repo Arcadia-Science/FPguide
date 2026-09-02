@@ -14,39 +14,46 @@
 # `fpdesign/` is NOT installed — the folders that use it (dataset_pipeline/, GFP_DMS/,
 # design-campaign-EGFP/) put the repo root on sys.path at the top of each script.
 #
-# Specs are left unpinned, but the results in this repo were produced with:
-#   python 3.10.20 · torch 2.13.0 · numpy 1.26.4 · transformers 5.14.0
-#   scikit-learn 1.7.2 · scipy 1.15.2 · pandas 2.3.3 · matplotlib 3.10.9
-#   seaborn 0.13.2 · plotly 6.9.0 · arcadia-pycolor 0.8.0 · mafft 7.526
+# Every spec below is pinned to the version the results in this repo were produced with, read off
+# the working environment rather than transcribed. This file is the portable option -- it resolves
+# on any platform, and is what to use on macOS.
+#
+# For an exact restore of the tested stack there are two lock files, and you need BOTH (they are
+# linux-64 / python 3.10.20 only, and `conda list --explicit` does not capture pip packages):
+#     conda create --name spectrum-to-fp-design --file environment.linux-64.lock
+#     conda activate spectrum-to-fp-design
+#     pip install -r requirements.linux-64.txt && pip install -e ./fpbase-extractor
+#
+# To relax a pin here, change `=` to `>=` for that one spec rather than dropping the version.
 name: spectrum-to-fp-design
 channels:
   - conda-forge
 dependencies:
-  - python=3.10
+  - python=3.10.20
   - pip
   # notebooks / tooling
-  - jupyter
-  - nbconvert           # `jupyter nbconvert --execute` re-runs the figure notebooks
-  - matplotlib
-  - seaborn             # categorical strips/violins in the campaign + design notebooks
+  - jupyter=1.1.1
+  - nbconvert=7.17.1    # `jupyter nbconvert --execute` re-runs the figure notebooks
+  - matplotlib=3.10.9
+  - seaborn=0.13.2      # categorical strips/violins in the campaign + design notebooks
   # scientific stack
-  - numpy<2             # fair-esm needs numpy; <2 avoids torch ABI mismatch
-  - pandas              # fpbase-extractor analysis notebooks
-  - scipy               # dendrograms / clustering
-  - scikit-learn        # PCA / mutual-information notebooks
-  - biopython           # PairwiseAligner (sequence identity)
-  - openpyxl            # design-campaign-EGFP/xlsx_io.py writes the order spreadsheets
-  - fonttools           # dataset_pipeline/fetch_arcadia_fonts.py cuts the Atkinson faces
-  - pytest              # fpbase-extractor tests
+  - numpy=1.26.4        # fair-esm needs numpy; <2 avoids torch ABI mismatch
+  - pandas=2.3.3        # fpbase-extractor analysis notebooks
+  - scipy=1.15.2        # dendrograms / clustering
+  - scikit-learn=1.7.2  # PCA / mutual-information notebooks
+  - biopython=1.87      # PairwiseAligner (sequence identity)
+  - openpyxl=3.1.5      # design-campaign-EGFP/xlsx_io.py writes the order spreadsheets
+  - fonttools=4.63.0    # dataset_pipeline/fetch_arcadia_fonts.py cuts the Atkinson faces
+  - pytest=9.1.1        # fpbase-extractor tests
   # external tools
-  - mafft               # msa_conservation/run_msa.sh builds the family alignment
+  - mafft=7.526         # msa_conservation/run_msa.sh builds the family alignment
   - pip:
-      - fair-esm>=2.0.0
-      - torch>=2.0          # CUDA build on Linux; the arm64 macOS wheel includes MPS
-      - transformers        # ProstT5 encoder (Rostlab/ProstT5) for the structure-aware oracle
-      - sentencepiece       # ProstT5 T5Tokenizer backend
-      - protobuf            # sentencepiece model loading
-      - biotite            # multiple sequence alignment + plotting
-      - plotly             # standalone HTML ruggedness scenes (write_html; no kaleido needed)
-      - arcadia-pycolor   # Arcadia plot styling (apc)
+      - fair-esm==2.0.0
+      - torch==2.13.0         # CUDA build on Linux; the arm64 macOS wheel includes MPS
+      - transformers==5.14.0  # ProstT5 encoder (Rostlab/ProstT5) for the structure-aware oracle
+      - sentencepiece==0.2.2  # ProstT5 T5Tokenizer backend
+      - protobuf==7.35.1      # sentencepiece model loading
+      - biotite==1.2.0        # multiple sequence alignment + plotting
+      - plotly==6.9.0         # standalone HTML ruggedness scenes (write_html; no kaleido needed)
+      - arcadia-pycolor==0.8.0  # Arcadia plot styling (apc)
       - -e ./fpbase-extractor   # installs the `fpbase-extract` CLI + fpbase_extractor package
