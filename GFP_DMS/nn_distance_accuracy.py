@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.join(HERE, ".."))
 from fpdesign import peak_models as pm  # noqa: E402
 import sweep_classify_parallel as sw  # noqa: E402
 
-MAXPOOL = os.path.join(HERE, "DMS_data", "esm_maxpool_4scaffold_10k.npz")   # row-aligned with sub40k
+MAXPOOL = os.path.join(HERE, "DMS_data", "sub40k_maxpool.npz")   # IS sub40k, so row-aligned
 SCAFFOLDS = ["avGFP", "amacGFP", "cgreGFP", "ppluGFP"]
 
 
@@ -120,9 +120,15 @@ def main():
     print(f"cache {a.stem}: {len(meta)} rows | train {len(D['tr'])} val {len(D['va'])} test {len(D['te'])}")
 
     # ---- campaign ID statistic: self-excluded NN distance in z-scored max-pool space ----
+    if not os.path.exists(MAXPOOL):
+        raise SystemExit(f"{__file__}: missing {MAXPOOL}\n\n"
+                         "The in-distribution reference cloud is not on disk. It is gitignored (207 MB) and is the\nlast step of a chain that starts from two published DMS studies -- see the Reproduce block\nin GFP_DMS/README.md. Once its inputs exist:\n\n    python GFP_DMS/build_maxpool_cache.py\n")
     z = np.load(MAXPOOL, allow_pickle=True)
     mp = z["mp"]
-    assert (z["scaf"] == meta["scaffold"].values).all(), "max-pool cache is not row-aligned with the CSV"
+    # (src, src_row) identifies the source variant exactly. The scaffold label alone does not: it is
+    # constant across each 10k block, so it passes under any within-scaffold permutation.
+    assert (z["src"] == meta["src"].values).all() and (z["src_row"] == meta["src_row"].values).all(), \
+        "max-pool cache is not row-aligned with the CSV -- rerun build_maxpool_cache.py"
     Z = (mp - mp.mean(0)) / (mp.std(0) + 1e-6)
     dist = self_nn_distance(Z, dev)
     p99 = float(np.percentile(dist, 99))                      # the campaigns' in-distribution cutoff

@@ -138,7 +138,14 @@ def reverse_translate(aa, add_stop=True):
     return "".join(ECOLI_CODON[a] for a in aa) + (ECOLI_CODON["*"] if add_stop else "")
 
 # ---- ID (OOD) machinery: NN-distance to the 40k (10k/scaffold) GFP-DMS cloud <= its 99th pct ----
-z = np.load(REPO / "GFP_DMS" / "DMS_data" / "esm_maxpool_4scaffold_10k.npz", allow_pickle=True)
+# The cloud is sub40k -- the very rows the deployed brightness classifier was fitted and selected on
+# -- so "in distribution" and "inside the training distribution" are one statement. Built by
+# GFP_DMS/build_maxpool_cache.py.
+_CLOUD = REPO / "GFP_DMS" / "DMS_data" / "sub40k_maxpool.npz"
+if not _CLOUD.exists():
+    raise SystemExit(f"{__file__}: missing {_CLOUD}\n\n"
+                     "The in-distribution reference cloud is not on disk. It is gitignored (207 MB) and is the\nlast step of a chain that starts from two published DMS studies -- see the Reproduce block\nin GFP_DMS/README.md. Once its inputs exist:\n\n    python GFP_DMS/build_maxpool_cache.py\n")
+z = np.load(_CLOUD, allow_pickle=True)
 mp = z["mp"]; mu, sd = mp.mean(0), mp.std(0) + 1e-6; Z = (mp - mu) / sd
 nn = NearestNeighbors(n_neighbors=1).fit(Z)
 p99 = float(np.percentile(NearestNeighbors(n_neighbors=2).fit(Z).kneighbors(Z)[0][:, 1], 99))

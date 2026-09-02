@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-08-14T21:19:01.266384</dc:date>
+    <dc:date>2026-09-01T23:49:03.497891</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -77,12 +77,12 @@ z
     <g id="ytick_1">
      <g id="line2d_6">
       <defs>
-       <path id="m2d5969dc17" d="M 0 0 
+       <path id="m42e8145ab8" d="M 0 0 
 L -5 0 
 " style="stroke: #000000; stroke-width: 0.75"/>
       </defs>
       <g>
-       <use xlink:href="#m2d5969dc17" x="67.5" y="234" style="stroke: #000000; stroke-width: 0.75"/>
+       <use xlink:href="#m42e8145ab8" x="67.5" y="234" style="stroke: #000000; stroke-width: 0.75"/>
       </g>
      </g>
      <g id="text_6">
@@ -92,7 +92,7 @@ L -5 0
     <g id="ytick_2">
      <g id="line2d_7">
       <g>
-       <use xlink:href="#m2d5969dc17" x="67.5" y="190.8" style="stroke: #000000; stroke-width: 0.75"/>
+       <use xlink:href="#m42e8145ab8" x="67.5" y="190.8" style="stroke: #000000; stroke-width: 0.75"/>
       </g>
      </g>
      <g id="text_7">
@@ -102,7 +102,7 @@ L -5 0
     <g id="ytick_3">
      <g id="line2d_8">
       <g>
-       <use xlink:href="#m2d5969dc17" x="67.5" y="147.6" style="stroke: #000000; stroke-width: 0.75"/>
+       <use xlink:href="#m42e8145ab8" x="67.5" y="147.6" style="stroke: #000000; stroke-width: 0.75"/>
       </g>
      </g>
      <g id="text_8">
@@ -112,7 +112,7 @@ L -5 0
     <g id="ytick_4">
      <g id="line2d_9">
       <g>
-       <use xlink:href="#m2d5969dc17" x="67.5" y="104.4" style="stroke: #000000; stroke-width: 0.75"/>
+       <use xlink:href="#m42e8145ab8" x="67.5" y="104.4" style="stroke: #000000; stroke-width: 0.75"/>
       </g>
      </g>
      <g id="text_9">
@@ -122,7 +122,7 @@ L -5 0
     <g id="ytick_5">
      <g id="line2d_10">
       <g>
-       <use xlink:href="#m2d5969dc17" x="67.5" y="61.2" style="stroke: #000000; stroke-width: 0.75"/>
+       <use xlink:href="#m42e8145ab8" x="67.5" y="61.2" style="stroke: #000000; stroke-width: 0.75"/>
       </g>
      </g>
      <g id="text_10">
@@ -132,7 +132,7 @@ L -5 0
     <g id="ytick_6">
      <g id="line2d_11">
       <g>
-       <use xlink:href="#m2d5969dc17" x="67.5" y="18" style="stroke: #000000; stroke-width: 0.75"/>
+       <use xlink:href="#m42e8145ab8" x="67.5" y="18" style="stroke: #000000; stroke-width: 0.75"/>
       </g>
      </g>
      <g id="text_11">
@@ -149,7 +149,7 @@ L 146.3436 234
 L 146.3436 234 
 L 99.4284 234 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #d0cdcc"/>
+" clip-path="url(#p9393115d97)" style="fill: #d0cdcc"/>
    </g>
    <g id="patch_4">
     <path d="M 151.5564 234 
@@ -157,7 +157,7 @@ L 198.4716 234
 L 198.4716 234 
 L 151.5564 234 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #8f8885"/>
+" clip-path="url(#p9393115d97)" style="fill: #8f8885"/>
    </g>
    <g id="patch_5">
     <path d="M 262.3284 234 
@@ -165,7 +165,7 @@ L 309.2436 234
 L 309.2436 233.232 
 L 262.3284 233.232 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #d0cdcc"/>
+" clip-path="url(#p9393115d97)" style="fill: #d0cdcc"/>
    </g>
    <g id="patch_6">
     <path d="M 314.4564 234 
@@ -173,31 +173,31 @@ L 361.3716 234
 L 361.3716 234 
 L 314.4564 234 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #8f8885"/>
+" clip-path="url(#p9393115d97)" style="fill: #8f8885"/>
    </g>
    <g id="patch_7">
     <path d="M 425.2284 234 
 L 472.1436 234 
-L 472.1436 165.69 
-L 425.2284 165.69 
+L 472.1436 166.14 
+L 425.2284 166.14 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #d0cdcc"/>
+" clip-path="url(#p9393115d97)" style="fill: #d0cdcc"/>
    </g>
    <g id="patch_8">
     <path d="M 477.3564 234 
 L 524.2716 234 
-L 524.2716 226.53 
-L 477.3564 226.53 
+L 524.2716 226.62 
+L 477.3564 226.62 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #8f8885"/>
+" clip-path="url(#p9393115d97)" style="fill: #8f8885"/>
    </g>
    <g id="patch_9">
     <path d="M 588.1284 234 
 L 635.0436 234 
-L 635.0436 214.8 
-L 588.1284 214.8 
+L 635.0436 215.184 
+L 588.1284 215.184 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #d0cdcc"/>
+" clip-path="url(#p9393115d97)" style="fill: #d0cdcc"/>
    </g>
    <g id="patch_10">
     <path d="M 640.2564 234 
@@ -205,15 +205,15 @@ L 687.1716 234
 L 687.1716 234 
 L 640.2564 234 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #8f8885"/>
+" clip-path="url(#p9393115d97)" style="fill: #8f8885"/>
    </g>
    <g id="patch_11">
     <path d="M 751.0284 234 
 L 797.9436 234 
-L 797.9436 60.816 
-L 751.0284 60.816 
+L 797.9436 61.104 
+L 751.0284 61.104 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #d0cdcc"/>
+" clip-path="url(#p9393115d97)" style="fill: #d0cdcc"/>
    </g>
    <g id="patch_12">
     <path d="M 803.1564 234 
@@ -221,7 +221,7 @@ L 850.0716 234
 L 850.0716 134.16 
 L 803.1564 134.16 
 z
-" clip-path="url(#pc60e7b71c9)" style="fill: #8f8885"/>
+" clip-path="url(#p9393115d97)" style="fill: #8f8885"/>
    </g>
    <g id="line2d_12">
     <path d="M 80.532 266.4 
@@ -262,19 +262,19 @@ L 882 234
     <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="337.914" y="228.491562" transform="rotate(-0 337.914 228.491562)">0</text>
    </g>
    <g id="text_19">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="448.686" y="160.181562" transform="rotate(-0 448.686 160.181562)">31.6</text>
+    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="448.686" y="160.631562" transform="rotate(-0 448.686 160.631562)">31.4</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="500.814" y="221.021562" transform="rotate(-0 500.814 221.021562)">3.5</text>
+    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="500.814" y="221.111562" transform="rotate(-0 500.814 221.111562)">3.4</text>
    </g>
    <g id="text_21">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="611.586" y="209.291562" transform="rotate(-0 611.586 209.291562)">8.9</text>
+    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="611.586" y="209.675562" transform="rotate(-0 611.586 209.675562)">8.7</text>
    </g>
    <g id="text_22">
     <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="663.714" y="228.491562" transform="rotate(-0 663.714 228.491562)">0</text>
    </g>
    <g id="text_23">
-    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="774.486" y="55.307562" transform="rotate(-0 774.486 55.307562)">80.2</text>
+    <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="774.486" y="55.595562" transform="rotate(-0 774.486 55.595562)">80.0</text>
    </g>
    <g id="text_24">
     <text style="font-size: 14px; font-family: 'Atkinson Hyperlegible Mono'; text-anchor: middle; fill: #484b50" x="826.614" y="128.651562" transform="rotate(-0 826.614 128.651562)">46.2</text>
@@ -302,7 +302,7 @@ L 108 69.975
   </g>
  </g>
  <defs>
-  <clipPath id="pc60e7b71c9">
+  <clipPath id="p9393115d97">
    <rect x="67.5" y="18" width="814.5" height="216"/>
   </clipPath>
  </defs>

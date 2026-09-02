@@ -254,7 +254,17 @@ lam_em, pred_ex, pred_em, peak_err, ppl, ident_to_scaffold, designed_seq, scaffo
 
 Two scripts and one notebook, all read-only, all importing their filters from
 `make_shortlist_case.py` so the numbers are identical by construction to what the shortlists select
-on:
+on.
+
+> **Prerequisite, not in git.** All three import `make_shortlist_case.py`, which loads the
+> 40,000-sequence in-distribution reference cloud
+> (`GFP_DMS/DMS_data/sub40k_maxpool.npz`, 207 MB, gitignored) at import time, and the ESM-2 650M
+> weights for embedding designs. The cloud is the last step of a chain that begins with
+> re-downloading two published DMS studies and runs ~85 GB of per-residue embedding: see the
+> **Reproduce** block in [`GFP_DMS/README.md`](../GFP_DMS/README.md), ending in
+> `python GFP_DMS/build_maxpool_cache.py`. Without it all three exit with that instruction rather
+> than a traceback. The design CSVs, shortlists and `figures_benchmark/` in this folder are
+> committed, so the *results* are readable without rebuilding anything.
 
 ```bash
 python benchmark_report.py                      # equal-budget table, all five strategies
@@ -315,7 +325,10 @@ plus the ID embeddings if `.embed_cache/` is cold.
 
 **Where the ID test comes from.** A design is "in-distribution" if the NN distance from its ESM-2
 max-pool embedding to the **40,000-sequence GFP-DMS reference** (10k each of avGFP, amacGFP,
-cgreGFP, ppluGFP) is ≤ that reference's 99th percentile (`p99 ≈ 30.2`). The design CSVs record
+cgreGFP, ppluGFP) is ≤ that reference's 99th percentile (`p99 ≈ 30.15`). That reference is
+`sub40k` itself — the very variants the brightness classifier was fitted and selected on — built by
+`GFP_DMS/build_maxpool_cache.py`, so "in-distribution" and "inside the training distribution" are
+the same statement. The design CSVs record
 `pred_ex` / `pred_em` / `pred_bright`, so nothing recomputes those — but the **embedding is not
 recorded anywhere**, and it is the expensive part of every consumer here. `embed_cache.py` keys
 those vectors by sequence in `.embed_cache/` (gitignored, ~36 MB, safe to delete) so each sequence
@@ -346,7 +359,7 @@ Each file starts with the two references (**EGFP** scaffold + the target, with t
 ex/em, read from `references/`) followed by the **top-10 diverse** designs (greedy, ≥ 5 residues
 apart, ranked by surrogate peak error). Every case pools **all 3 iteration rounds of every trial**
 before selecting. The **MSA-guide** files then restrict the pool to designs that are both
-**in-distribution** (NN-distance to the 40k reference ≤ p99 ≈ 30.2) **and confidently predicted
+**in-distribution** (NN-distance to the 40k reference ≤ p99 ≈ 30.15) **and confidently predicted
 bright**; the other strategies take the plain closest-10. "Confidently" means classifier
 **logit > 0.5** (`BRIGHT_T` in `make_shortlist_case.py`), not the model's own `> 0` decision
 boundary: designs were clearing 0 by hundredths of a logit, which is a 0.51-probability call and not

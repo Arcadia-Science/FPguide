@@ -270,7 +270,7 @@ lam_peaks,lam_bright_v,lam_edit_v,level_3,0
 0.5,1.0,0.5,designs,12
 0.5,1.0,0.5,best_err,10.7
 0.5,1.0,0.5,mean_err,37.2
-0.5,1.0,0.5,id_pct,16.7
+0.5,1.0,0.5,id_pct,8.3
 0.5,1.0,0.5,bright_pct,0.0
 0.5,1.0,0.5,n_ok,0
 0.5,1.0,0.5,best_err_ok,
@@ -375,7 +375,7 @@ lam_peaks,lam_bright_v,lam_edit_v,level_3,0
 0.5,4.0,1.0,designs,9
 0.5,4.0,1.0,best_err,35.8
 0.5,4.0,1.0,mean_err,43.1
-0.5,4.0,1.0,id_pct,44.4
+0.5,4.0,1.0,id_pct,33.3
 0.5,4.0,1.0,bright_pct,55.6
 0.5,4.0,1.0,n_ok,3
 0.5,4.0,1.0,best_err_ok,36.9
@@ -519,14 +519,11 @@ lam_peaks,lam_bright_v,lam_edit_v,level_3,0
 1.0,2.0,0.5,designs,12
 1.0,2.0,0.5,best_err,1.1
 1.0,2.0,0.5,mean_err,30.4
-1.0,2.0,0.5,id_pct,25.0
+1.0,2.0,0.5,id_pct,16.7
 1.0,2.0,0.5,bright_pct,8.3
-1.0,2.0,0.5,n_ok,1
-1.0,2.0,0.5,best_err_ok,37.5
-1.0,2.0,0.5,mean_nmut_ok,14.0
-1.0,2.0,0.5,top10_mean_ex,422.9
-1.0,2.0,0.5,top10_mean_em,472.1
-1.0,2.0,0.5,top10_mean_nmut,14.0
+1.0,2.0,0.5,n_ok,0
+1.0,2.0,0.5,best_err_ok,
+1.0,2.0,0.5,mean_nmut_ok,
 1.0,2.0,1.0,group,
 1.0,2.0,1.0,designs,11
 1.0,2.0,1.0,best_err,1.7

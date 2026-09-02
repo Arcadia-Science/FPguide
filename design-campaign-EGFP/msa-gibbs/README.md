@@ -56,7 +56,7 @@ The whole run costs 11 s on one GPU, against roughly an hour for ESM gibbs at th
 never calls the surrogate on candidate residues, and a profile lookup replaces the ESM-2 forward
 pass that dominated the original. Both rows below are 288 unique round≥1 designs, scored by the same
 brightness classifier and the same in-distribution test (NN distance to the 40k GFP-DMS cloud ≤ its
-99th percentile, `p99 ≈ 30.2`).
+99th percentile, `p99 ≈ 30.15`).
 
 | | ESM-2 gibbs | **MSA gibbs** |
 |---|---|---|

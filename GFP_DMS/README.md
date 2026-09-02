@@ -51,10 +51,11 @@ GFP_DMS/
 ├── embed_parallel.py                 the same embedding pass sharded across GPUs
 ├── build_subsample.py                stratified 4-scaffold sub20k / sub40k caches + 70/15/15 split
 ├── sweep_classify_parallel.py        multi-GPU bright/dim CLASSIFIER sweep (24 configs) -> sweep_class4/
+├── build_maxpool_cache.py            the 40k in-distribution reference cloud the campaigns gate on
 ├── nn_distance_accuracy.py           held-out accuracy stratified by the campaigns' in-distribution NN distance
 ├── visualize_sweep.ipynb             sweep leaderboard, predicted-vs-true, post-hoc classifier
 ├── visualize_thresholds.ipynb        brightness distributions & threshold analysis
-├── visualization.ipynb               write-up figures: the classifier sweep + design-campaign metrics
+├── visualization.ipynb               write-up figures: the bright/dim label, the sweep, and the campaign's ROC
 └── figures/                          exported plots
 ```
 
@@ -74,7 +75,17 @@ python build_subsample.py                # -> DMS_data/sub20k_* (+ sub40k_*)
 # 4. bright/dim classifier sweep: 24 configs, one worker per GPU, ranked by val AUROC
 python sweep_classify_parallel.py --dry-run       # list configs + shard assignment first
 python sweep_classify_parallel.py --gpus 0,1,2,3  # -> trained_models/sweep_class4/results.csv
+
+# 5. the in-distribution reference cloud the design campaigns gate on, then the figures
+python build_maxpool_cache.py            # -> DMS_data/sub40k_maxpool.npz (~10 min, I/O-bound)
+python nn_distance_accuracy.py           # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
+jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
 ```
+
+The reference cloud is `sub40k` itself, so row *i* of the cloud is row *i* of
+`sub40k_sequences.csv`. Everything that pairs a variant's prediction with its own embedding —
+`nn_distance_accuracy.py` and `visualization.ipynb`'s held-out pass — depends on that, and both
+assert it on `(src, src_row)` rather than trusting it.
 
 The sweep's winner, `cnn-max-d2` trained on the 40k cache, is the brightness head the design
 campaigns load — it is the one checkpoint from this folder tracked in git, as

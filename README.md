@@ -228,6 +228,7 @@ it knows it is absent by design rather than missing:
 | `archive/` folders, anywhere in the tree | superseded experiments, old notebooks, dropped targets. Referred to by name in these READMEs because the write-ups cite them, but read by no live code — if active code needs a file, that file is not in `archive/`. | not regenerable; kept on the authors' machines |
 | a few exploratory experiment folders | side experiments that are not part of the pipeline or the campaigns above | as above |
 | ESM-2 / ProstT5 per-residue embedding caches (`esm_residue_fp16.npy`, `prostt5_residue_fp16.npy`, `fpbase_esm2_650M_max.npy`, `DMS_data/*.npy`) | 0.5–50 GB each, over GitHub's file limit | re-run `dataset_pipeline/embed*.py`, `GFP_DMS/embed_parallel.py` |
+| `GFP_DMS/DMS_data/sub40k_maxpool.npz` | the 40k in-distribution reference cloud, ~207 MB | re-run `python GFP_DMS/build_maxpool_cache.py` |
 | `trained_models/`, and `*.pt` generally | regenerable checkpoints and cached predictions | re-run the sweep/training script in the folder that owns them |
 | the Atkinson Hyperlegible faces (`dataset_pipeline/fonts/`) | cut from the Google Fonts variable originals, not ours to redistribute | `python dataset_pipeline/fetch_arcadia_fonts.py` |
 
