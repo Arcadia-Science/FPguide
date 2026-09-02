@@ -37,8 +37,8 @@ from pathlib import Path
 import numpy as np, pandas as pd, torch
 from sklearn.neighbors import NearestNeighbors
 
-REPO = Path("/home/ubuntu/spectrum-to-fp-design")
-CAMP = REPO / "design-campaign-EGFP"
+CAMP = Path(__file__).resolve().parent        # .../design-campaign-EGFP
+REPO = CAMP.parent                           # .../spectrum-to-fp-design
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(CAMP))
 from fpdesign import peak_models as pm

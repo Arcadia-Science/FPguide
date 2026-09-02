@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 import pandas as pd
 
-CAMP = Path("/home/ubuntu/spectrum-to-fp-design/design-campaign-EGFP")
+CAMP = Path(__file__).resolve().parent        # .../design-campaign-EGFP
 sys.path.insert(0, str(CAMP))
 from xlsx_io import write_xlsx
 
