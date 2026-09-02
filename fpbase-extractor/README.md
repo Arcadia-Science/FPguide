@@ -98,14 +98,18 @@ With `--spectra` (only for proteins that have measured curves):
   `spectrum_type` (excitation/emission), `max`, and `data` array of
   `[wavelength, intensity]` pairs.
 
-The spectra exports are ~20 MB and nothing downstream reads them, so they are no
-longer kept in `fpbase_output/`. Rerun with `--spectra` if you need them.
+Of the two, only **`fpbase_spectra.json` is kept** in `fpbase_output/` (6.0 MB, tracked):
+[`dataset_pipeline/build_spectra_dataset.py`](../dataset_pipeline/build_spectra_dataset.py) reads it
+directly for the measured curves. `fpbase_spectra_long.csv` is the tidy plotting view of those same
+curves, which nothing downstream reads, so it is not kept — rerun with `--spectra` to regenerate it.
 
 ## Downstream
 
 `fpbase_output/fpbase_proteins.json` is the input to
 [`dataset_pipeline/build_dataset.py`](../dataset_pipeline), which curates it into the
-peak / brightness / pKa training sets. That is the only consumer of this folder.
+peak / brightness / pKa training sets. `build_spectra_dataset.py` in the same folder reads
+`fpbase_proteins.json` *and* `fpbase_spectra.json` for the full-curve dataset. Those two scripts are
+the only consumers of this folder.
 
 ## Retired material
 

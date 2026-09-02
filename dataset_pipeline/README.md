@@ -223,7 +223,9 @@ loudly rather than quietly embedding only peak.
 `embed.py` writes `esm_residue_fp16.npy` + `esm_residue_len.npy` into `data/<trait>/curated/`, embedding
 every trait **independently** (a shared sequence is embedded once per trait). That wastes a little compute but
 keeps each dataset self-contained. The peak cache is what `in-silico-test/` and the campaigns load — via
-`in-silico-test/data/` (a symlink to `data/peak/curated/`) and `EGFP-full-spectra/campaign_common.py`.
+the per-file symlinks in `in-silico-test/data/` and the `CUR` constant in
+[`fpdesign/campaign.py`](../fpdesign/campaign.py) (`design-campaign-EGFP/make_pairs.py` and
+`fpdesign/build_design_windows.py` resolve the same path).
 
 ## Visualizing the curation
 
@@ -278,13 +280,13 @@ This writes `fonts/` next to the script — nothing is installed into the system
 notebook loads it with `apc.mpl.setup(font_dirpath="fonts")`, falling back to matplotlib's defaults (with a
 printed note) if it is missing. The fonts are OFL-licensed and gitignored; regenerate rather than commit them.
 
-> **`fetch_arcadia_fonts.py` serves the whole repo, not just this folder.** Five notebooks elsewhere in
+> **`fetch_arcadia_fonts.py` serves the whole repo, not just this folder.** Four notebooks elsewhere in
 > the project resolve `../dataset_pipeline/fonts`: `GFP_DMS/visualization.ipynb`,
-> `msa_conservation/visualization.ipynb`, `design-campaign-EGFP/visualization.ipynb`,
-> `EGFP-full-spectra/visualize_campaign.ipynb` and `in-silico-test/figures.ipynb` (which reaches it through
+> `msa_conservation/visualization.ipynb`, `design-campaign-EGFP/visualization.ipynb` and
+> `in-silico-test/figures.ipynb` (which reaches it through
 > its `DP` constant rather than a literal path). `in-silico-test/sweep_results.ipynb` is the one figure
 > notebook that does *not* — it calls `apc.mpl.setup()` bare and takes matplotlib's default faces. This
-> script lives here for historical reasons; run it once from this folder and all five pick the faces up.
+> script lives here for historical reasons; run it once from this folder and all four pick the faces up.
 > Don't move or retire it without repointing them.
 
 Emission wavelength is shaded continuously on the Arcadia **magma** gradient, one of the guide's sequential
