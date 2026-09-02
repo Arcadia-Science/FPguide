@@ -76,16 +76,20 @@ Every piece of *code* the pipeline runs lives here; nothing is imported from `..
 |---|---|
 | `lib/pockets.py` | window geometry (5 Å pocket + H-bond partners) from an RCSB structure |
 | `lib/peak_models.py` | model architectures + checkpoint save/load |
-| `lib/prostt5_embed.py` | ProstT5 residue embedding, for oracle scoring |
+| `lib/prostt5_embed.py` | ProstT5 residue embedding, for oracle scoring (verbatim copy of `fpdesign/prostt5_embed.py`, which `dataset_pipeline/embed_prostt5.py` builds the cache with) |
 | `lib/sweep_peak_oracle_base.py` | the shared architecture-sweep implementation |
 | `structure_hits.csv` | which dataset entries have a ≥97%-identity PDB entry |
 
 **Two deliberate exceptions**, both large read-only caches that are split-independent inputs to
 every experiment in the repo — duplicating them per folder would be waste, so both are symlinks:
 
-- `data/` → `dataset_pipeline/data/peak/curated/`: the shared curated dataset plus ~2GB of ESM-2 /
-  ProstT5 residue-embedding caches. `data/dual_splits.csv` (the nested split above) *is* a real
-  local file, written here rather than symlinked.
+- `data/` is a real directory holding **per-file** symlinks into
+  `dataset_pipeline/data/peak/curated/`, written **relative** (`../../dataset_pipeline/...`) so a
+  clone resolves them inside its own tree at whatever path it sits at — the shared curated dataset (`peaks.npy`,
+  `peaks_assignments.csv`, `sequences.fasta`, `curate_meta.json`) plus ~2GB of ESM-2 / ProstT5
+  residue-embedding caches. It is not a directory symlink, which is why `data/dual_splits.csv` (the
+  nested split above) can sit beside them as a real local file, written here rather than symlinked.
+  Nothing here can overwrite `dataset_pipeline`'s own coordinated `dual_splits.csv`.
 - `structures/` → the repo-level [`../structures/`](../structures): the RCSB PDBx cache, ~175MB.
   Self-populating — `pockets.py` fetches a miss from RCSB, which now lands in the shared cache.
   Every path inside this folder is unchanged, so `structures/experimental/` still resolves.
@@ -103,6 +107,11 @@ Run in order. Each step's output is committed to disk, and every long step is re
 ```bash
 S0=0_data_split; S1=1_surrogate_oracle_training
 S2=2_design_task_specification; S31=3.1_design_run_guided; S32=3.2_design_run_gibbs
+
+# the two residue-embedding caches this folder reads through data/ (skipped if already present).
+# Run from dataset_pipeline/; both land in data/peak/curated/, which data/ symlinks into.
+(cd ../dataset_pipeline && python embed.py --trait peak)          # ESM-2  -> esm_residue_fp16.npy
+(cd ../dataset_pipeline && python embed_prostt5.py)               # ProstT5 -> prostt5_residue_fp16.npy
 
 python $S0/make_dual_split.py                     # -> data/dual_splits.csv
 python $S1/sweep_peak_oracle.py --role both --seeds 0   # 48 configs x 2 roles -> trained_models/
