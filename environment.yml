@@ -47,6 +47,10 @@ dependencies:
   - pytest=9.1.1        # fpbase-extractor tests
   # external tools
   - mafft=7.526         # msa_conservation/run_msa.sh builds the family alignment
+  - gh=2.82.1           # `gh release download` is the only way to fetch the published reference
+                        #   clouds (GFP_DMS/README.md lane A). This repo is private, so its release
+                        #   assets need an authenticated request -- a plain HTTPS URL cannot work.
+                        #   Run `gh auth login` once before the lane A download.
   - pip:
       - fair-esm==2.0.0
       - torch==2.13.0         # CUDA build on Linux; the arm64 macOS wheel includes MPS

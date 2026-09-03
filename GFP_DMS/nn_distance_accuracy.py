@@ -120,10 +120,11 @@ def main():
     a = ap.parse_args()
 
     dev = sw.device()
-    D, meta, split = load_split_cache(a.stem)
-    print(f"cache {a.stem}: {len(meta)} rows | train {len(D['tr'])} val {len(D['va'])} test {len(D['te'])}")
 
-    # ---- campaign ID statistic: self-excluded NN distance in z-scored max-pool space ----
+    # ---- input checks, before anything expensive opens a file --------------------------------
+    # Both of these used to be discovered by whichever np.load happened to run first, which meant
+    # the explanatory message below sat *after* the call that had already raised a bare
+    # FileNotFoundError. Check what is missing up front, and say so.
     if not os.path.exists(MAXPOOL):
         raise SystemExit(f"{__file__}: missing {MAXPOOL}\n\n"
                          "The in-distribution reference cloud is not on disk (gitignored, 197 MiB). Fetch the\n"
@@ -132,6 +133,25 @@ def main():
                          "Or rebuild it from the two source DMS studies -- see the Reproduce block in\n"
                          "GFP_DMS/README.md -- ending in:\n\n"
                          "    python GFP_DMS/build_maxpool_cache.py\n")
+    emb_path = sw.data_paths(a.stem)[0]
+    if not os.path.exists(emb_path):
+        raise SystemExit(
+            f"{__file__}: missing {emb_path}\n\n"
+            f"This is the {a.stem} PER-RESIDUE ESM-2 cache (24 GiB for sub40k). It is a lane B\n"
+            "product: it is gitignored, it is not in the published release, and this script needs it\n"
+            "only to run the classifier forward over all 40,000 rows. Everything else it does --\n"
+            "the NN distances, the splits, the labels -- comes from artifacts lane A already has.\n\n"
+            "The results of that forward pass are tracked in git, so you do not have to redo it:\n\n"
+            "    GFP_DMS/figures/nn_distance_accuracy_per_row.csv   (40,000 rows: prob, y, split, ...)\n"
+            "    GFP_DMS/figures/nn_distance_accuracy.csv           (the per-bin table)\n\n"
+            "To rebuild the cache anyway, see the lane B block in GFP_DMS/README.md:\n\n"
+            "    python GFP_DMS/embed_parallel.py ...   then   python GFP_DMS/build_subsample.py "
+            "--per 10000 --stem sub40k\n")
+
+    D, meta, split = load_split_cache(a.stem)
+    print(f"cache {a.stem}: {len(meta)} rows | train {len(D['tr'])} val {len(D['va'])} test {len(D['te'])}")
+
+    # ---- campaign ID statistic: self-excluded NN distance in z-scored max-pool space ----
     z = np.load(MAXPOOL, allow_pickle=True)
     mp = z["mp"]
     # (src, src_row) identifies the source variant exactly. The scaffold label alone does not: it is

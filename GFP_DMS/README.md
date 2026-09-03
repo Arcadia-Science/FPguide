@@ -74,6 +74,34 @@ python build_maxpool_cache.py --verify   # confirm row i of the cloud is row i o
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
 ```
 
+`gh` is a real dependency of this lane, and it is pinned in `environment.yml` alongside `mafft`.
+It is not a convenience wrapper around a URL you could `curl` instead: **this repository is
+private, so its release assets require an authenticated request** and no plain HTTPS URL can
+work. Run `gh auth login` once before the download.
+
+Verify the transfer (`build_maxpool_cache.py --verify` checks row alignment, not bytes):
+
+```
+96854e2125a9150bd9ec1dada06ce345ea9c79fd9c748327ce3ede903cb14484  sub20k_maxpool.npy
+05d96861c7d8db35758e62fceffb3ae4f4d4b2079e9e6bac426df2ba8eab815d  sub20k_sequences.csv
+dc19bbb0a1b0f79bded6b7ed6dce185f6d6c0bcda54cdc86ebb13083e1024bbe  sub40k_maxpool.npz
+8260f8b9aad8a48399189be796c65bcaa39a6de01ac66349a906a62ece1b56fe  sub40k_sequences.csv
+```
+
+```bash
+cd DMS_data && sha256sum -c <<'EOF'
+96854e2125a9150bd9ec1dada06ce345ea9c79fd9c748327ce3ede903cb14484  sub20k_maxpool.npy
+05d96861c7d8db35758e62fceffb3ae4f4d4b2079e9e6bac426df2ba8eab815d  sub20k_sequences.csv
+dc19bbb0a1b0f79bded6b7ed6dce185f6d6c0bcda54cdc86ebb13083e1024bbe  sub40k_maxpool.npz
+8260f8b9aad8a48399189be796c65bcaa39a6de01ac66349a906a62ece1b56fe  sub40k_sequences.csv
+EOF
+```
+
+The two clouds play different roles, which is what their sizes encode: **sub20k chose the
+architecture** (the 24-configuration sweep and its kNN baseline ran on it) and **sub40k trained
+the deployed classifier** and *is* the in-distribution reference cloud the design campaigns gate
+on. They are independent draws, not nested — see step 3 of lane B.
+
 The brightness head is tracked in git
 ([`fpdesign/models/brightness_cnn-max-d2_40k.pt`](../fpdesign/models/brightness_cnn-max-d2_40k.pt)),
 and so are the three small analysis caches that would otherwise each require a pass over the

@@ -1,6 +1,6 @@
 {
   "stem": "sub40k",
-  "ckpt": "trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt",
+  "ckpt": "../fpdesign/models/brightness_cnn-max-d2_40k.pt",
   "threshold": 0.3266126291160785,
   "id_cutoff_p99": 30.151317615509047,
   "heldout_acc": 0.9455,
