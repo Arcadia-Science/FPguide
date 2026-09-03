@@ -1,5 +1,8 @@
 # spectrum-to-fp-design
 
+Code and data for the Arcadia Science publication
+[doi:10.57844/arcadia-66aw-aa84](https://doi.org/10.57844/arcadia-66aw-aa84).
+
 ESM-2–guided design of **fluorescent proteins (FPs)** conditioned on their photophysical
 properties. The core pipeline has three parts:
 
