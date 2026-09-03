@@ -17,10 +17,14 @@ DMS_data/*.npz
 DMS_data/.embed_progress
 DMS_data/.embed_progress.*
 
-# ...except the small analysis caches lane A needs. These are the outputs of passes over the
-# multi-GB embedding caches, not the caches themselves: keeping the ~1 MB of results in git is
-# what lets the write-up notebook run without the 85 GB of ESM-2 embeddings behind them.
+# ...except the artifacts lane A needs. The first two are the outputs of passes over the multi-GB
+# embedding caches, not the caches themselves; the processed sequence tables are here because
+# Section 1 of visualization.ipynb recomputes the bright/dim cut from the continuous brightness
+# distribution, which no published summary can stand in for. ~41 MB in total, and what lets the
+# write-up notebook run with none of the 85 GB of ESM-2 embeddings behind it.
 !DMS_data/heldout_scored.npz
+!DMS_data/avgfp_dms_sequences.csv
+!DMS_data/ortho_gfp_dms_sequences.csv
 
 # ---- Trained models & cached predictions (rebuild with sweep_classify_parallel.py) ----------
 # Directory contents are ignored, with two exceptions re-included below. Note the `dir/*` form

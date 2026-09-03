@@ -36,14 +36,14 @@ because the source is a median; the orthologue table uses `logBrightness` from a
 lowest-density valley between the non-functional/dead pile (censored at the assay floor) and the
 functional mode near wild type. A single fixed cutoff is wrong because the floor and functional
 mode sit at scaffold-specific brightness values (e.g. avGFP's dead floor is at log10 ≈ 1.3 vs.
-≈ 2.7–2.8 for the orthologue assay). `visualize_thresholds.ipynb` shows the distributions, the
-chosen cut, two alternatives (2-component GMM crossover, mode midpoint), and threshold sensitivity.
+≈ 2.7–2.8 for the orthologue assay). Section 1 of `visualization.ipynb` shows the distributions,
+the chosen cut, and two alternatives (2-component GMM crossover, mode midpoint).
 
 ## Layout
 
 ```
 GFP_DMS/
-├── DMS_data/                         raw tables + processed CSVs (+ ESM-2 caches, git-ignored)
+├── DMS_data/                         processed CSVs + small caches tracked; raw tables and ESM-2 caches git-ignored
 ├── brightness_threshold.py           per-scaffold KDE-antimode bright/dim threshold
 ├── transform_avgfp_dms.py            raw avGFP TSV      -> avgfp_dms_sequences.csv
 ├── transform_ortho_dms.py            raw orthologue CSV -> ortho_gfp_dms_sequences.csv
@@ -53,8 +53,6 @@ GFP_DMS/
 ├── sweep_classify_parallel.py        multi-GPU bright/dim CLASSIFIER sweep (24 configs) -> sweep_class4/
 ├── build_maxpool_cache.py            the 40k in-distribution reference cloud the campaigns gate on
 ├── nn_distance_accuracy.py           held-out accuracy stratified by the campaigns' in-distribution NN distance
-├── visualize_sweep.ipynb             sweep leaderboard, predicted-vs-true, post-hoc classifier
-├── visualize_thresholds.ipynb        brightness distributions & threshold analysis
 ├── visualization.ipynb               write-up figures: the bright/dim label, the sweep, and the campaign's ROC
 └── figures/                          exported plots
 ```
@@ -65,7 +63,7 @@ There are two ways in, and they differ by ~50 GB and two hours of GPU time. **La
 folder's analysis against the published reference cloud; **lane B** rebuilds everything from the two
 source studies. Pick A unless you are specifically reproducing the classifier training.
 
-**Lane A — re-run the analysis (~325 MB download, no GPU).**
+**Lane A — re-run the analysis (~325 MB download, no GPU). Runs the notebook end to end.**
 
 ```bash
 # both reference clouds + the row-aligned sequence tables they are verified against
@@ -104,28 +102,32 @@ on. They are independent draws, not nested — see step 3 of lane B.
 
 The brightness head is tracked in git
 ([`fpdesign/models/brightness_cnn-max-d2_40k.pt`](../fpdesign/models/brightness_cnn-max-d2_40k.pt)),
-and so are the three small analysis caches that would otherwise each require a pass over the
-multi-GB embedding caches — about 1 MB in total, and the reason the notebook runs without them:
+and so is everything else the notebook reads that would otherwise require a pass over the
+multi-GB embedding caches — ~41 MB in total, and the reason it runs without them:
 
-| tracked cache | what it replaces |
-|---|---|
-| `trained_models/sweep_class4/results.csv` | the 24-configuration sweep leaderboard |
-| `trained_models/sweep_class4/val_logits_top5.npz` | rescoring the top-5 configs over the 12 GB sub20k cache |
-| `DMS_data/heldout_scored.npz` | scoring 97,499 never-fitted variants over the 31 GB + 54 GB caches |
+| tracked artifact | size | what it replaces |
+|---|---|---|
+| `DMS_data/avgfp_dms_sequences.csv` | 14 MB | re-deriving the avGFP table from the raw study download |
+| `DMS_data/ortho_gfp_dms_sequences.csv` | 25 MB | the same for the three orthologue scaffolds |
+| `DMS_data/heldout_scored.npz` | 918 KB | scoring 97,499 never-fitted variants over the 31 GB + 54 GB caches |
+| `trained_models/sweep_class4/results.csv` | 5 KB | the 24-configuration sweep leaderboard |
+| `trained_models/sweep_class4/val_logits_top5.npz` | 61 KB | rescoring the top-5 configs over the 12 GB sub20k cache |
+
+The two processed sequence tables are tracked rather than summarised because Section 1 recomputes
+the bright/dim cut from the *continuous* log-brightness distribution — a KDE antimode per scaffold
+— which the categorical `brightnessClass` column in the published subsample tables cannot stand in
+for. Checking that the rule reproduces the labels the pipelines actually wrote is the point of that
+section.
 
 `heldout_scored.npz` is keyed by a hash of the checkpoint's bytes plus the size of the exclusion
 set, so it is reused whenever the deployed weights and the two subsample splits are unchanged, and
 correctly discarded if either moves. It does not key on the checkpoint's *filename*, which would
 invalidate it on a rename.
 
-**Two things lane A still cannot do**, both tracked as open items:
-
-- `python nn_distance_accuracy.py` needs `sub40k_esm_residue_fp16.npy` — the 24 GB per-residue
-  cache, a lane B product — because it runs the classifier forward over all 40,000 rows. Its four
-  outputs are tracked under `figures/`, so the numbers are available; only the recomputation is
-  blocked.
-- Section 1 of the notebook reads the two processed `*_dms_sequences.csv` tables (~40 MB), which
-  are lane B products and not yet published.
+**One thing lane A still cannot do:** `python nn_distance_accuracy.py` needs
+`sub40k_esm_residue_fp16.npy` — the 24 GB per-residue cache, a lane B product — because it runs
+the classifier forward over all 40,000 rows. Its four outputs are tracked under `figures/`, so the
+numbers are available; only the recomputation is blocked.
 
 **Lane B — rebuild from the two studies.** Download the raw tables first (see
 [Scaffolds & sources](#scaffolds--sources)); budget ~1.9 h on an L4 and ~54 GB for the orthologue
@@ -151,7 +153,7 @@ python build_subsample.py --per 10000 --stem sub40k        # -> DMS_data/sub40k_
 
 # 4. bright/dim classifier sweep: 24 configs, one worker per GPU, ranked by val AUROC.
 #    First on sub20k (the exploratory sweep), then the winning family refit on sub40k -- the
-#    `--out` directory nn_distance_accuracy.py and visualize_sweep.ipynb both default to.
+#    `--out` directory nn_distance_accuracy.py defaults to.
 python sweep_classify_parallel.py --dry-run                # list configs + shard assignment first
 python sweep_classify_parallel.py --gpus 0,1,2,3           # -> trained_models/sweep_class4/results.csv
 python sweep_classify_parallel.py --gpus 0 --configs cnn-max-d2 \

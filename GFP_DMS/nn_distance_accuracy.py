@@ -9,7 +9,7 @@ those distances are converted to percentiles, and classifier accuracy is reporte
 bin -- with the top bins (95-100) being the sparsest, most outlying corner of the DMS cloud, i.e.
 the regime where a design sitting right at the ID cutoff would be scored.
 
-Accuracy uses the val-F1-optimal threshold from visualize_sweep.ipynb. Train rows are reported for
+Accuracy uses the val-F1-optimal threshold, recomputed here on the validation split. Train rows are reported for
 completeness but are fitted data; read the val/test columns for the honest number.
 
 Usage:
