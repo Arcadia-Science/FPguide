@@ -17,8 +17,22 @@ DMS_data/*.npz
 DMS_data/.embed_progress
 DMS_data/.embed_progress.*
 
+# ...except the small analysis caches lane A needs. These are the outputs of passes over the
+# multi-GB embedding caches, not the caches themselves: keeping the ~1 MB of results in git is
+# what lets the write-up notebook run without the 85 GB of ESM-2 embeddings behind them.
+!DMS_data/heldout_scored.npz
+
 # ---- Trained models & cached predictions (rebuild with sweep_classify_parallel.py) ----------
-trained_models/
+# Directory contents are ignored, with two exceptions re-included below. Note the `dir/*` form
+# rather than `dir/`: git does not descend into an ignored directory, so a bare `trained_models/`
+# would make the negations underneath it unreachable.
+trained_models/*
+!trained_models/sweep_class4/
+trained_models/sweep_class4/*
+# The sweep leaderboard and the top-5 validation logits: 66 KB together, and the only two things
+# the write-up notebook needs from a 24-configuration sweep whose checkpoints total ~100 MB.
+!trained_models/sweep_class4/results.csv
+!trained_models/sweep_class4/val_logits_top5.npz
 
 # ---- Archived regression experiment (superseded by the classifier pipeline) -----------------
 archive_regression/

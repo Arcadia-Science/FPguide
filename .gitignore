@@ -55,8 +55,10 @@ env/
 .idea/
 .vscode/
 
-# Cached trained models (regenerable)
-trained_models/
+# Cached trained models (regenerable). The `dir/*` form rather than a bare `dir/` matters: git
+# does not descend into an ignored directory, so a bare rule here would make the per-folder
+# negations (e.g. GFP_DMS/.gitignore re-including the sweep leaderboard) unreachable.
+**/trained_models/*
 
 # ---- Archived / superseded material (kept locally, out of git) ----
 # Any archive/ folder anywhere in the tree — old notebooks, superseded designs, EDA, etc.

@@ -65,19 +65,39 @@ There are two ways in, and they differ by ~50 GB and two hours of GPU time. **La
 folder's analysis against the published reference cloud; **lane B** rebuilds everything from the two
 source studies. Pick A unless you are specifically reproducing the classifier training.
 
-**Lane A — re-run the analysis (~200 MB download, no GPU).**
+**Lane A — re-run the analysis (~325 MB download, no GPU).**
 
 ```bash
-# the reference cloud + the row-aligned sequence table it is verified against
-gh release download reference-cloud-v1 -p 'sub40k_*' -D DMS_data/
+# both reference clouds + the row-aligned sequence tables they are verified against
+gh release download reference-cloud-v1 -p 'sub20k_*' -p 'sub40k_*' -D DMS_data/
 python build_maxpool_cache.py --verify   # confirm row i of the cloud is row i of the CSV
-python nn_distance_accuracy.py           # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
 ```
 
-The brightness head those two steps load is tracked in git
+The brightness head is tracked in git
 ([`fpdesign/models/brightness_cnn-max-d2_40k.pt`](../fpdesign/models/brightness_cnn-max-d2_40k.pt)),
-so lane A needs nothing from lane B.
+and so are the three small analysis caches that would otherwise each require a pass over the
+multi-GB embedding caches — about 1 MB in total, and the reason the notebook runs without them:
+
+| tracked cache | what it replaces |
+|---|---|
+| `trained_models/sweep_class4/results.csv` | the 24-configuration sweep leaderboard |
+| `trained_models/sweep_class4/val_logits_top5.npz` | rescoring the top-5 configs over the 12 GB sub20k cache |
+| `DMS_data/heldout_scored.npz` | scoring 97,499 never-fitted variants over the 31 GB + 54 GB caches |
+
+`heldout_scored.npz` is keyed by a hash of the checkpoint's bytes plus the size of the exclusion
+set, so it is reused whenever the deployed weights and the two subsample splits are unchanged, and
+correctly discarded if either moves. It does not key on the checkpoint's *filename*, which would
+invalidate it on a rename.
+
+**Two things lane A still cannot do**, both tracked as open items:
+
+- `python nn_distance_accuracy.py` needs `sub40k_esm_residue_fp16.npy` — the 24 GB per-residue
+  cache, a lane B product — because it runs the classifier forward over all 40,000 rows. Its four
+  outputs are tracked under `figures/`, so the numbers are available; only the recomputation is
+  blocked.
+- Section 1 of the notebook reads the two processed `*_dms_sequences.csv` tables (~40 MB), which
+  are lane B products and not yet published.
 
 **Lane B — rebuild from the two studies.** Download the raw tables first (see
 [Scaffolds & sources](#scaffolds--sources)); budget ~1.9 h on an L4 and ~54 GB for the orthologue
