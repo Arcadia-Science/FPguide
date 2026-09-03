@@ -11,7 +11,9 @@ per-config checkpoints into a ranked leaderboard.
 
 Data: the compact `DMS_data/sub20k_*` cache built by `build_subsample.py` (5k rows x 4 scaffolds,
 padded to a common Lmax, label bright=1/dim=0, per-scaffold 70/15/15 split). Small enough (~12 GB
-fp16) that each worker just holds it in RAM.
+fp16) that each worker just holds it in RAM -- but it is a full copy PER WORKER, so `--gpus
+0,1,2,3` needs ~48 GB of host RAM on sub20k (and ~24 GB per worker on sub40k). The launcher
+checks this before spawning anything; `--no-ram-check` overrides.
 
 Outputs:
     trained_models/sweep_class4/<arch>-<pool>-d<depth>_s<seed>.pt   per fit (weights + metrics)
@@ -288,10 +290,50 @@ def check_gpus(gpus):
         )
 
 
+def host_ram_available():
+    """MemAvailable in bytes, or None where it cannot be read (non-Linux host)."""
+    try:
+        for line in open("/proc/meminfo"):
+            if line.startswith("MemAvailable:"):
+                return int(line.split()[1]) * 1024
+    except OSError:
+        pass
+    return None
+
+
+def check_host_ram(gpus, stem, skip=False):
+    """Fail before spawning workers if the subsample cache will not fit K times over in RAM.
+
+    `load_data` materialises the whole `<stem>_esm_residue_fp16.npy` array in RAM (the mmap is
+    only how it is read), and every worker is a separate process with its own copy -- so a
+    4-worker sweep on sub20k (~12 GB) needs ~48 GB of host RAM, and one worker on sub40k needs
+    ~24 GB. Getting OOM-killed hours into a sweep is the expensive way to find this out.
+    """
+    emb = data_paths(stem or "sub20k")[0]
+    if not os.path.exists(emb):
+        return                                        # the worker's own FileNotFoundError is clearer
+    per = os.path.getsize(emb)
+    need = per * len(gpus)
+    avail = host_ram_available()
+    gb = lambda b: b / 1e9                        # decimal GB, matching the README's figures
+    print(f"host RAM: {len(gpus)} worker(s) x {gb(per):.1f} GB cache = {gb(need):.1f} GB needed"
+          + (f", {gb(avail):.1f} GB available" if avail is not None else ", available unknown"))
+    if skip or avail is None or need <= avail:
+        return
+    raise SystemExit(
+        f"{__file__}: {len(gpus)} worker(s) x {gb(per):.1f} GB ({os.path.basename(emb)}) = "
+        f"{gb(need):.1f} GB of host RAM, but only {gb(avail):.1f} GB is available.\n\n"
+        "Each worker holds the whole subsample cache in RAM, so the requirement scales with the\n"
+        "number of GPUs. Use fewer --gpus (the sweep still runs, just serially per worker), or a\n"
+        "smaller --data-stem, or pass --no-ram-check to run anyway and risk an OOM kill."
+    )
+
+
 def run_launcher(a):
     cfgs = _select(make_configs(), a.limit, [s for s in a.configs.split(",") if s] if a.configs else None)
     gpus = [g.strip() for g in a.gpus.split(",") if g.strip() != ""]
     check_gpus(gpus)
+    check_host_ram(gpus, a.data_stem, skip=a.no_ram_check or a.dry_run)
     K = len(gpus)
     print(f"configs: {len(cfgs)} x {len(a.seeds)} seed(s) | GPUs {gpus} ({K} workers)")
     for i, g in enumerate(gpus):
@@ -359,6 +401,8 @@ def main():
     ap.add_argument("--force", action="store_true", help="retrain even if a checkpoint exists")
     ap.add_argument("--data-stem", default=None, help="subsample cache stem (default sub20k)")
     ap.add_argument("--out", default=None, help="checkpoint output dir (default trained_models/sweep_class4)")
+    ap.add_argument("--no-ram-check", action="store_true",
+                    help="skip the host-RAM preflight (each worker holds the whole cache in RAM)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     ap.add_argument("--shard-id", type=int, default=0, help=argparse.SUPPRESS)

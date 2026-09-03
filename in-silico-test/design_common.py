@@ -73,6 +73,12 @@ boundary is an artifact of the sweep's single-split protocol and does not surviv
 two conditions that exist -- ``seen`` (72) and ``held-out`` (36) -- via ``COHORT_CONDITION``
 below. Nothing about the design runs changes; this is a relabeling of what was always there.
 
+That three-file split is the ARCHIVED task 1. Task 2 writes the merge to disk, so its two
+manifests ARE the two conditions (36 + 36), and every default here -- ``pairs_csv_path``,
+``read_pairs``, ``read_condition_pairs``, ``CONDITION_COHORTS`` -- points at ``pairs_task2/``,
+the only pair directory present in a clone. The task-1 grouping is kept as
+``ARCHIVED_CONDITION_COHORTS``, usable only alongside ``pairs_dir=PAIRS_DIR``.
+
 Pair selection targets SPECTRAL DISTANCE, not identity-closeness: each scaffold is matched to
 the most spectrally distant target passing an identity floor/cap + minimum ex/em distance, and
 each cohort is spread evenly across that distance. See ``curate_pairs.py`` for the rationale --
@@ -105,7 +111,8 @@ STRUCT_DIR = HERE / "structures" / "experimental"     # RCSB PDBx cache, self-po
 HITS_CSV = HERE / "structure_hits.csv"                # structure-known scaffolds (split-independent)
 WINDOWS_JSON = HERE / "design_windows.json"           # OURS: build_windows.py (built from scratch)
 PAIRS_DIR_T2 = HERE / "pairs_task2"                   # OURS: 2_design_task_specification (random target per scaffold)
-PAIRS_DIR = HERE / "archive" / "pairs"                # ARCHIVED task 1 (furthest target)
+PAIRS_DIR = HERE / "archive" / "pairs"                # ARCHIVED task 1 (furthest target); archive/
+                                                      # is gitignored, so this is absent in a clone
 
 # TASK SET 2 (stages 2 / 3.1 / 3.2) -- THE LIVE ARMS. Each scaffold paired with a RANDOM
 # qualifying target instead of its furthest one, over two merged cohorts (S-pool, S-test).
@@ -155,10 +162,16 @@ COHORT_CONDITION = {"knownstruct_Strain": "seen", "knownstruct_Sval": "seen",
                     # the conditions themselves rather than a grouping over three role files
                     "knownstruct_Spool": "seen"}
 CONDITIONS = ["seen", "held-out"]
-CONDITION_COHORTS = {c: [k for k in DEFAULT_COHORTS if COHORT_CONDITION[k] == c] for c in CONDITIONS}
 CONDITION_LABEL = {"seen": "S-pool", "held-out": "S-test"}   # display names for figures/tables
 
 TASK2_COHORTS = ["knownstruct_Spool", "knownstruct_Stest"]   # 36 + 36, THE LIVE PAIR -- stage 2
+
+# Condition -> cohorts, over the LIVE task-2 manifests (one cohort per condition, since task 2
+# merges train+val up front). ARCHIVED_CONDITION_COHORTS is the task-1 grouping, usable only with
+# `pairs_dir=PAIRS_DIR` and only where archive/ is present.
+CONDITION_COHORTS = {c: [k for k in TASK2_COHORTS if COHORT_CONDITION[k] == c] for c in CONDITIONS}
+ARCHIVED_CONDITION_COHORTS = {c: [k for k in DEFAULT_COHORTS if COHORT_CONDITION[k] == c]
+                              for c in CONDITIONS}
 
 
 def load_dataset(cur=CUR):
@@ -192,18 +205,20 @@ def load_hits():
     return {int(r["idx"]): r["pdb_id"] for r in csv.DictReader(open(HITS_CSV)) if r["pdb_id"]}
 
 
-def pairs_csv_path(cohort, pairs_dir=PAIRS_DIR):
-    """Manifest path for a cohort. `pairs_dir` selects the task set: PAIRS_DIR (task 1, furthest
-    target) or PAIRS_DIR_T2 (task 2, random target)."""
+def pairs_csv_path(cohort, pairs_dir=PAIRS_DIR_T2):
+    """Manifest path for a cohort. `pairs_dir` selects the task set: PAIRS_DIR_T2 (task 2, random
+    target -- the default, and the only one present in a clone) or PAIRS_DIR (the archived task 1,
+    furthest target, which lives under the gitignored archive/)."""
     return os.path.join(str(pairs_dir), f"pairs_{cohort}.csv")
 
 
-def read_pairs(cohort, pairs_dir=PAIRS_DIR):
+def read_pairs(cohort, pairs_dir=PAIRS_DIR_T2):
     fn = pairs_csv_path(cohort, pairs_dir)
     if not os.path.exists(fn):
         raise FileNotFoundError(
             f"missing pair manifest for cohort {cohort!r}: {fn}\n"
-            f"(run curate_pairs.py in this folder first)")
+            f"(run 2_design_task_specification/curate_pairs_task2.py first; the archived task-1\n"
+            f" manifests come from archive/2_design_task_specification/curate_pairs.py)")
     return list(csv.DictReader(open(fn)))
 
 
@@ -213,15 +228,19 @@ def condition(cohort):
     try:
         return COHORT_CONDITION[cohort]
     except KeyError:
-        raise KeyError(f"unknown cohort {cohort!r}; expected one of {DEFAULT_COHORTS}") from None
+        raise KeyError(f"unknown cohort {cohort!r}; expected one of "
+                       f"{sorted(COHORT_CONDITION)}") from None
 
 
-def read_condition_pairs(cond):
-    """Every pair in a reporting condition, each row tagged with its source cohort + condition."""
+def read_condition_pairs(cond, pairs_dir=PAIRS_DIR_T2, condition_cohorts=None):
+    """Every pair in a reporting condition, each row tagged with its source cohort + condition.
+    Defaults to the live task-2 manifests; for the archived task 1 pass
+    `pairs_dir=PAIRS_DIR, condition_cohorts=ARCHIVED_CONDITION_COHORTS`."""
     if cond not in CONDITIONS:
         raise KeyError(f"unknown condition {cond!r}; expected one of {CONDITIONS}")
+    cohorts = (condition_cohorts or CONDITION_COHORTS)[cond]
     out = []
-    for coh in CONDITION_COHORTS[cond]:
-        for r in read_pairs(coh):
+    for coh in cohorts:
+        for r in read_pairs(coh, pairs_dir):
             out.append({**r, "cohort": coh, "condition": cond})
     return out

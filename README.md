@@ -71,15 +71,15 @@ The reason a 763-sequence profile keeps up is measurable
 |---|---|---|---|---|
 | ubiquitin | 76 | 0.803 | 0.754 | 1.0 |
 | lysozyme | 129 | 0.659 | 0.682 | 1.0 |
-| adenylate kinase | 214 | 0.706 | 0.692 | 1.0 |
+| trypsin | 223 | 0.735 | 0.687 | 1.0 |
 | **EGFP** | 239 | **0.126** | **0.128** | **6.0** |
 | **avGFP** (wild type) | 238 | **0.101** | **0.125** | **6.0** |
 | **mCherry** | 236 | **0.178** | **0.170** | **6.0** |
 
-On ordinary proteins spanning 76–214 residues ESM-2 650M recovers the true residue as its top
+On ordinary proteins spanning 76–223 residues ESM-2 650M recovers the true residue as its top
 choice 66–80% of the time at ~0.7 confidence; on three FPs of comparable length it drops to 10–18%
 at ~0.13, with Gly on top at most positions — close to a background amino-acid distribution. Not a
-length effect (adenylate kinase at 214 behaves like the short controls), not an engineering
+length effect (trypsin at 223 behaves like the short controls), not an engineering
 artifact (wild-type avGFP is the worst of the three), not a harness bug (same code produces the
 sharp control numbers; unmasked reconstruction of EGFP is 99.2%). Across the EGFP design window the
 two priors are nearly orthogonal: mean Spearman(family frequency, ESM-2 probability) = **+0.108**,

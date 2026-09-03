@@ -8,7 +8,7 @@ match.
 WHY
 ---
 ESM-2 650M is close to uninformative on this fold. Masked-marginal top-1 accuracy is 12.6% on
-EGFP and 10.1% on avGFP, against 66-80% on ubiquitin, lysozyme and adenylate kinase
+EGFP and 10.1% on avGFP, against 66-80% on ubiquitin, lysozyme and trypsin
 (``msa_conservation/results/esm_calibration.csv``). A near-flat proposal filtered to top-k is
 close to an arbitrary 10-residue alphabet, and the audit of the existing campaigns shows the
 cost: 22.6% of all 51,731 position-edits placed a residue no aligned FP uses at that column, and

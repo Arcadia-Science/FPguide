@@ -12,7 +12,7 @@ one thing that decides which residues are even on the table:
 ## Why replace ESM-2 here
 
 ESM-2 650M is close to uninformative on this fold. Masked-marginal top-1 accuracy is **12.6 % on
-EGFP** and 10.1 % on avGFP, against **66–80 % on ubiquitin, lysozyme and adenylate kinase** of
+EGFP** and 10.1 % on avGFP, against **66–80 % on ubiquitin, lysozyme and trypsin** of
 comparable length (`../../msa_conservation/results/esm_calibration.csv`). Mean max probability is
 0.128 on EGFP versus 0.68–0.75 on the controls. That is a property of the model on this family,
 not a bug in how it is called — the controls are scored by the same code path.

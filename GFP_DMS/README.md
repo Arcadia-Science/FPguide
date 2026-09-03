@@ -157,6 +157,13 @@ rejected with an explanation instead of yielding plausible bins from mismatched 
 > not have — a worker pinned to a missing device sees no GPU, falls back to CPU and never
 > finishes. Pass only ids you actually have. Budget **~85 GB of free disk** for the two
 > per-residue caches (31 GB avGFP + 54 GB orthologue), before the subsample caches.
+>
+> **Host RAM matters as much as GPU count.** Each sweep worker holds the *whole* subsample cache
+> in RAM — a full copy per process, not a shared mmap — so step 4's `--gpus 0,1,2,3` needs
+> **~48 GB of free RAM** on sub20k (4 × 12.1 GB fp16), and the sub40k refit **~24 GB** for its
+> single worker. `sweep_classify_parallel.py` prints the budget and refuses to start if it will
+> not fit (`--no-ram-check` overrides); on a smaller host, drop to fewer `--gpus` — the sweep
+> still completes, each worker just takes more configs.
 
 ```bash
 # 1. build the processed sequence CSVs (fast, CPU)
