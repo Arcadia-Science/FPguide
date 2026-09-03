@@ -185,8 +185,10 @@ python build_subsample.py                                  # -> DMS_data/sub20k_
 python build_subsample.py --per 10000 --stem sub40k        # -> DMS_data/sub40k_*
 
 # 4. bright/dim classifier sweep: 24 configs, one worker per GPU, ranked by val AUROC.
-#    First on sub20k (the exploratory sweep), then the winning family refit on sub40k -- the
-#    `--out` directory nn_distance_accuracy.py defaults to.
+#    First on sub20k (the exploratory sweep), then the winning family refit on sub40k. The refit
+#    lands wherever --out says; nn_distance_accuracy.py does NOT default to it -- its --ckpt
+#    default is the tracked ../fpdesign/models/brightness_cnn-max-d2_40k.pt, so that lane A runs
+#    on a clone with no trained_models/. Step 5 passes --ckpt to score what you just trained.
 python sweep_classify_parallel.py --dry-run                # list configs + shard assignment first
 python sweep_classify_parallel.py --gpus 0,1,2,3           # -> trained_models/sweep_class4/results.csv
                                                            # again: 4 GPUs; --gpus 0 works, serially
@@ -196,7 +198,10 @@ python sweep_classify_parallel.py --gpus 0 --configs cnn-max-d2 \
 
 # 5. the in-distribution reference cloud the design campaigns gate on, then the figures
 python build_maxpool_cache.py            # -> DMS_data/sub40k_maxpool.npz (~10 min, I/O-bound)
-python nn_distance_accuracy.py           # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
+python nn_distance_accuracy.py --ckpt trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt
+                                         # -> figures/nn_distance_accuracy.{png,csv} (+ _per_row, _meta)
+                                         # drop --ckpt to score the tracked copy instead: byte-
+                                         # identical weights, so the numbers are the same
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
 ```
 
