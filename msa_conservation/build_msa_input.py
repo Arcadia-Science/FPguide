@@ -29,7 +29,7 @@ the exact ``build_dataset.py`` commands, rather than silently emitting 758 seque
 ``data/fp_all.fasta``, ``data/fp_all_meta.csv`` and ``data/fp_all.aln.fasta`` are all tracked in git.
 
 The two variants write DIFFERENT filenames on purpose. Everything downstream (``conservation.py``,
-``esm_profiles.py``, ``esm_vs_family.py``, ``compare_design_windows.py``, and
+``esm_profiles.py``, ``esm_vs_family.py``, ``window_vs_family.py``, and
 ``design-campaign-EGFP/msa-guided/build_msa_pssm.py``) reads ``fp_all*`` by name and pairs
 alignment rows to metadata rows by ``msa_id``, so a 758-row file under those names would silently
 invalidate every published number. ``--peak-only`` cannot overwrite them.

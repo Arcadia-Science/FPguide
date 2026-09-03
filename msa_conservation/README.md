@@ -22,7 +22,7 @@ python build_msa_input.py     # curated union -> data/fp_all.fasta          (763
 python conservation.py        # -> results/column_conservation.csv, summary.json
 python validate.py            # -> results/validation.json   (4 robustness tests)
 python report.py              # -> results/findings.txt      (numbers quoted below)
-python compare_design_windows.py   # -> results/design_window_*.csv, window_family_alphabet.csv
+python window_vs_family.py    # -> results/window_vs_family_egfp.csv, window_alphabet_egfp.csv
 python esm_vs_family.py       # -> results/esm_vs_family_egfp.csv, esm_calibration.csv (needs GPU)
 python esm_profiles.py        # -> results/esm_profiles.npz, esm_sweep_profiles.npz,
                               #    esm_family_sweep.csv   (needs GPU, ~9 min)
@@ -237,75 +237,85 @@ H-bond network and buried waters, so inward-facing positions are not uniformly g
 
 ## Comparison with the campaign design windows
 
-`compare_design_windows.py` scores the existing edit windows against this table. Every
-campaign scaffold is itself a member of the alignment, so window positions map onto
-alignment columns exactly — no re-alignment, no numbering assumptions — and EGFP's
-1-based 68 and avGFP's 67 resolve to the same column. Covers all 26 scaffold windows
-(24 conventional + the EGFP and avGFP campaigns).
+`window_vs_family.py` scores the EGFP edit window against this table. The EGFP scaffold is
+itself a member of the alignment, so window positions map onto alignment columns exactly —
+no re-alignment, no numbering assumptions — and EGFP's 1-based 68 resolves to the same
+column as avGFP's 67, which is why avGFP-equivalent numbering is reported throughout.
 
-**The hard-fixed set is exactly right.** All 78 fixed positions (26 scaffolds × 3) are
-chemistry-locked in the family: the chromophore Gly at 99.8%, the catalytic Arg at 100%
-basic, the catalytic Glu at 94.7% acidic. `pockets.py` derives these geometrically, by
-nearest-Arg/nearest-Glu to the chromophore; the family evidence confirms it picks the
-right residues in every scaffold, including the red/Anthozoa ones where the numbering
-shifts (mCherry 73/100/220, mEosFP 64/91/212, mKate2 66/93/216).
+**Scope: the EGFP window only** (28 positions). Earlier versions of this analysis also pooled
+the 24 conventional scaffolds and the avGFP campaign — 723 scaffold-positions across 26
+windows. Both of those campaigns were archived out of the repo and their window JSONs are not
+published, so those rows cannot be regenerated from a clone. The analysis now stops at the
+window it can defend; where it used to report a mean over 26 scaffolds it reports the
+per-position value for one. One conclusion changed as a result, flagged below.
 
-**The window is depleted of constrained positions, as intended.** 13.5% of barrel
-columns are chemistry-locked, against 5.9% of editable window positions (38/645
-scaffold-positions), and mean `C_chem` is 0.443 inside windows against 0.503 for the
-5 Å pocket as a whole. Excluding the three anchors is what produces the depletion — the
-5 Å criterion itself is chemically neutral (see the absent distance gradient above).
+**The hard-fixed set is exactly right.** All three fixed positions are chemistry-locked in
+the family: the chromophore Gly (EGFP 68) at 99.8% glycine, the catalytic Arg (97) at 100%
+basic, the catalytic Glu (223) at 94.7% acidic. `pockets.py` derives these geometrically, by
+nearest-Arg/nearest-Glu to the chromophore; the family evidence confirms it picks the right
+residues. (The retired pooled run showed the same holding for all 78 fixed positions across
+26 scaffolds, including the red/Anthozoa ones where the numbering shifts — that is no longer
+reproducible from a clone, so it is not claimed here.)
 
-**One real gap: avGFP L60 / EGFP L61.** Pooled across scaffolds, only two chemistry-locked
-positions remain editable, and one of them is already handled:
+**The window is depleted of constrained positions, as intended.** 13.5% of barrel columns
+are chemistry-locked, against 8.0% of the editable window positions (2/25), and mean `C_chem`
+is 0.459 inside the window against 0.503 for the 5 Å pocket as a whole. Excluding the three
+anchors is what produces the depletion — the 5 Å criterion itself is chemically neutral (see
+the absent distance gradient above).
 
-| avGFP pos | class | family frequency | RSA | in how many windows | current constraint |
+**One real gap: avGFP L60 / EGFP L61.** Only two chemistry-locked positions remain editable
+in the window, and one of them is already handled:
+
+| avGFP pos | EGFP pos | class | family frequency | RSA | current constraint |
 |---|---|---|---|---|---|
-| 66 | aromatic | 94.5% | 0.01 | 26 | aromatic `{Y,W,H,F}` — correct |
-| **60** | **aliphatic** | **100%** | **0.00** | **12** | **none — all 20 residues allowed** |
+| 66 | Y67 | aromatic | 94.5% | 0.01 | aromatic `{Y,W,H,F}` — correct |
+| **60** | **L61** | **aliphatic** | **100%** | **0.00** | **none — all 20 residues allowed** |
 
 Position 60 (EGFP 61) is the single most constrained position in the entire EGFP window
 (`C_chem` = 1.00), fully buried at RSA 0.00, 4.8 Å from the chromophore, and **not one of
 763 aligned FPs puts a non-aliphatic residue there** — the family uses only Leu (84%),
-Ile (11%), Val (3%) and Met (2%). It is currently free to become Asp, Lys or Pro. It
-appears unrestricted in 12 scaffolds: EGFP, avGFP, mVenus, DimVenus, PA-GFP, GFPxm162,
-GFPxm191uv, deGFP3, W1C, mCerulean2.D3, htFuncLib_sf:mid.9 and the EGFP/avGFP campaigns.
-The cheapest fix is a one-line `position_constraints` entry restricting it to `LIVM`.
+Ile (11%), Val (3%) and Met (2%). It is currently free to become Asp, Lys or Pro. The
+cheapest fix is a one-line `position_constraints` entry restricting it to `LIVM`. (The
+retired pooled run found it unrestricted in 12 of the 26 windows, so this was never an
+EGFP-specific oversight.)
 
-**Tier-B's H-bond alphabet is the part that disagrees with the family.** `HBOND_AA` =
+**Tier-B's H-bond alphabet is defensible in the EGFP window.** `HBOND_AA` =
 `{S,T,Y,N,Q,D,E,H,K,R,W}` is applied wherever a side-chain N/O sits within 3.5 Å of a
-chromophore N/O *in that scaffold's own structure*. Averaged over the 69 constrained
-scaffold-positions it retains 75% of the family's weighted mass, but the spread is wide:
+chromophore N/O in the scaffold's own structure. It lands on three EGFP positions, and across
+them retains 83% of the family's weighted mass:
 
-| avGFP pos | family's dominant class | mass kept by `HBOND_AA` | scaffolds affected |
+| avGFP pos | EGFP pos | family's dominant class | mass kept by `HBOND_AA` |
 |---|---|---|---|
-| 165 | aliphatic (43%) | 0.254 | mTagBFP2 |
-| 205 | aliphatic (68%) | 0.305 | PA-GFP, W1C, mCerulean2.D3 |
-| 167 | aliphatic (66%) | 0.310 | DsRed-Express, E2-Red/Green |
-| 220 | aliphatic (62%) | 0.341 | DsRed-Express |
-| 110 | polar (41%) | 0.575 | 7 scaffolds |
-| 94 | aromatic (56%) | 0.863 | 22 scaffolds |
-| 203 | basic (60%) | 0.872 | 2 scaffolds |
-| 69 | basic (64%) | 0.890 | 9 scaffolds |
+| 148 | H149 | polar (45%) | 0.748 |
+| 94 | Q95 | aromatic (56%) | 0.863 |
+| 203 | T204 | basic (60%) | 0.872 |
 
-At the top four the constraint forbids the residue class the family actually prefers,
-discarding 66–75% of the natural distribution. That is a per-scaffold geometric call
-disagreeing with the family consensus — the H-bond may well be real in that one crystal
-structure, but the family says the position does not require H-bond capability. At
-positions 94, 203 and 69 the alphabet and the family agree well.
+None of the three forbids the class the family prefers, so within this window the hand-written
+alphabet and the family broadly agree. Position 148 is the loosest fit: the family's plurality
+there is polar at only 45%, so a quarter of the natural mass sits outside `HBOND_AA`.
 
-**An empirical alternative.** `results/window_family_alphabet.csv` gives, for every
-window position of every scaffold, the smallest residue set covering 90% of the weighted
+> **This is the one conclusion that narrowing to EGFP changed.** The retired pooled run found
+> `HBOND_AA` retaining only 75% of family mass over 69 scaffold-positions, with four positions
+> (avGFP 165, 205, 167, 220) where it *forbids* the family's preferred aliphatic class and
+> discards 66–75% of the natural distribution — a per-scaffold geometric call disagreeing with
+> the family consensus. Every one of those four came from a non-EGFP scaffold (mTagBFP2,
+> PA-GFP, W1C, mCerulean2.D3, DsRed-Express, E2-Red/Green), so the finding does not apply to
+> the EGFP campaign and is no longer reproducible from a clone. It is recorded here as prior
+> observation, not as a claim this repo supports: if the conventional campaign is ever
+> revived, it is the first thing to re-check.
+
+**An empirical alternative.** `results/window_alphabet_egfp.csv` gives, for every
+window position, the smallest residue set covering 90% of the weighted
 family distribution — an evolution-derived alphabet that could replace or augment the
 hand-written Tier-B sets. It is sharply position-dependent, which a single global
 alphabet cannot be: EGFP L61 → `LI` (2 residues), Y93 → `YFML`, L221 → `LQIV`, while
 T66, the chromophore X position, → `QGMSTACWH` (9) and I168 → `MILWKRVQTAE` (11). The
-scaffold's own residue is inside the 90% set at 697 of 723 window positions, so this is
-a soft prior for the design search, not a rewrite of the scaffolds.
+scaffold's own residue is inside the 90% set at all 28 window positions, so this is a soft
+prior for the design search, not a rewrite of the scaffolds.
 
 ![design window vs conservation](figures/design_window_vs_conservation.png)
 
-### The EGFP campaign specifically
+### Where the window sits in the barrel-wide distribution
 
 The EGFP window is 25 editable positions plus the 3 fixed ones. Placed against the
 barrel-wide distribution of `C_chem` (quartiles 0.34 / 0.47 / 0.62), the window sits
@@ -379,14 +389,14 @@ The consequence for the campaigns is concrete, though. `campaign.py` scores cand
 with `z(logp_ESM)` and restricts to `topk(logp, k=10)`; on FP scaffolds that term is
 close to flat, so it is contributing far less ranking signal than it would on a typical
 protein, and the top-10 truncation is discarding the family-preferred residue at 39% of
-window positions. A per-position prior from `window_family_alphabet.csv` would supply
+window positions. A per-position prior from `window_alphabet_egfp.csv` would supply
 exactly the information ESM-2 is missing here, and it is cheap — a lookup table, no
 extra forward passes. Worth checking on the existing sweep outputs before changing
 anything: if λ_ex/λ_em dominate the score anyway, the flat ESM term may already be
 effectively inert rather than actively harmful.
 
-**Possible window expansion.** 14 columns within 10 Å of the chromophore have
-`C_chem` < 0.35 and are in no current window — the family tolerates wide variation
+**Possible window expansion.** 16 columns within 10 Å of the chromophore have
+`C_chem` < 0.35 and are outside the EGFP window — the family tolerates wide variation
 there. The most interesting is **avGFP C70** (`C_chem` 0.199, RSA 0.00, 6.1 Å): fully
 buried, second shell, and highly variable across the family. Others are 164, 166, 168,
 202, 206, 207, 219, 223, 225. Note the trade-off honestly: these sit outside the 5 Å
@@ -429,7 +439,7 @@ window result is the general one:
 
 The practical reading is the same as above, now with the whole barrel behind it: a per-position
 family prior is not redundant with the ESM-2 term, and the cheapest fix is to *widen* the proposal
-support to the union of ESM-2's top-10 with `window_family_alphabet.csv`, rather than to replace
+support to the union of ESM-2's top-10 with `window_alphabet_egfp.csv`, rather than to replace
 either.
 
 ## What the figures establish, taken together
@@ -543,9 +553,8 @@ Beyond the modelling caveats at the end of this README:
 | `figures/pocket_vs_scaffold.png` | the absent chromophore-distance gradient |
 | `figures/class_conservation_summary.png` | per-class conservation and the ~2× count gap |
 | `figures/pocket_composition.png` | class composition of all 28 pocket positions |
-| `results/design_window_comparison.csv` | every campaign window position scored against the family (per scaffold-position) |
-| `results/design_window_summary.csv` | per-scaffold window totals |
-| `results/window_family_alphabet.csv` | evolution-derived 90%-mass residue alphabet per window position |
+| `results/window_vs_family_egfp.csv` | each of the 28 EGFP window positions scored against the family |
+| `results/window_alphabet_egfp.csv` | evolution-derived 90%-mass residue alphabet per window position |
 | `results/esm_vs_family_egfp.csv` | ESM-2 masked marginal vs family frequency at each EGFP window position |
 | `results/esm_calibration.csv` | ESM-2 masked-marginal sharpness on FPs vs matched control proteins |
 | `figures/design_window_vs_conservation.png` | the EGFP window ranked by family constraint |

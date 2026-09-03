@@ -550,8 +550,11 @@ python make_pairs.py                             # -> pairs/campaign_pairs_egfp.
 python make_shortlist_case.py --verify-refs      # references/ still agrees with every design run
 ```
 
-The edit window `design_windows_egfp_tierB.json` is derived one level up in the conventional campaign
-tooling and copied into each effort so every strategy edits the identical positions.
+The edit window `design_windows_egfp_tierB.json` is derived by
+[`fpdesign/build_design_windows.py`](../fpdesign/build_design_windows.py) (which defaults to this
+campaign's `pairs/campaign_pairs_egfp.csv`) and copied into each effort so every strategy edits the
+identical positions. Regenerating it reproduces the `windows` payload exactly; only `meta.generated_at`
+changes.
 
 `references/reference_EGFP-<target>.csv` holds the two rows every shortlist opens with — the EGFP
 and target sequences and their true measured peaks. They used to be read out of whichever design

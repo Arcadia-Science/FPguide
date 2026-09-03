@@ -15,6 +15,7 @@ completeness but are fitted data; read the val/test columns for the honest numbe
 Usage:
     python nn_distance_accuracy.py                                   # sub40k + the 40k checkpoint
     python nn_distance_accuracy.py --ckpt trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt
+                                                                     # the same weights, training-run path
 """
 from __future__ import annotations
 
@@ -111,7 +112,10 @@ def plot(tab, dist, pct, p99, y, correct, split, path):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--stem", default="sub40k")
-    ap.add_argument("--ckpt", default="trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt")
+    # The deployed head, as tracked in git. trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt is the
+    # byte-identical training-run original, which a fresh clone does not have (trained_models/ is
+    # gitignored) -- so the default has to be the tracked copy for lane A to run as documented.
+    ap.add_argument("--ckpt", default="../fpdesign/models/brightness_cnn-max-d2_40k.pt")
     ap.add_argument("--out", default="figures/nn_distance_accuracy")
     a = ap.parse_args()
 

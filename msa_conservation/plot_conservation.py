@@ -238,15 +238,14 @@ def fig_pocket_composition(hi):
 
 def fig_design_window(hi):
     """The EGFP edit window, ranked by how hard the family constrains each position."""
-    cmp_path = HERE / "results" / "design_window_comparison.csv"
-    alpha_path = HERE / "results" / "window_family_alphabet.csv"
+    cmp_path = HERE / "results" / "window_vs_family_egfp.csv"
+    alpha_path = HERE / "results" / "window_alphabet_egfp.csv"
     if not cmp_path.exists():
-        print("skipping design-window figure (run compare_design_windows.py first)")
+        print("skipping design-window figure (run window_vs_family.py first)")
         return
     d = pd.read_csv(cmp_path)
-    a = pd.read_csv(alpha_path)[["campaign", "scaffold", "pos_1based",
-                                 "n_aa_90", "family_alphabet_90"]]
-    d = d[(d.campaign == "EGFP")].merge(a, on=["campaign", "scaffold", "pos_1based"])
+    a = pd.read_csv(alpha_path)[["pos_1based", "n_aa_90", "family_alphabet_90"]]
+    d = d.merge(a, on="pos_1based")
     d = d.sort_values("C_chem", ascending=False).reset_index(drop=True)
 
     style = {"fixed": ("#484B50", "hard-fixed"), "aromatic": ("#7A77AB", "aromatic-restricted"),

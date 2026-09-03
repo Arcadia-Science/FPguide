@@ -103,10 +103,9 @@ def calibration(model, alphabet, dev, extra):
 
 
 def main():
-    cmp_ = pd.read_csv(HERE / "results" / "design_window_comparison.csv")
-    cmp_ = cmp_[cmp_.campaign == "EGFP"].copy()
-    alpha = pd.read_csv(HERE / "results" / "window_family_alphabet.csv")
-    alpha = alpha[alpha.campaign == "EGFP"][["pos_1based", "family_alphabet_90"]]
+    cmp_ = pd.read_csv(HERE / "results" / "window_vs_family_egfp.csv")
+    alpha = pd.read_csv(HERE / "results" / "window_alphabet_egfp.csv")[
+        ["pos_1based", "family_alphabet_90"]]
     cons = pd.read_csv(HERE / "results" / "column_conservation.csv")
 
     import json

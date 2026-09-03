@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-"""Compute the design (edit) window for each of the 24 campaign scaffolds using the
-structure-based 5 A contact shell and save them to a single portable JSON so any design
+"""Compute the design (edit) window for each scaffold in a campaign pairs list, using the
+structure-based 5 A contact shell, and save them to a single portable JSON so any design
 algorithm can load them without re-deriving.
 
 Window rule (identical to fpdesign/pockets.py):
@@ -19,7 +19,7 @@ position_constraints, so a design can retune the wavelength while preserving H-b
 CAPABILITY (not identity). This is layered on top of the pos2->aromatic constraint and does
 not change the editable set (H-bond partners are already inside the 5 A pocket).
 
-Output: design_windows_24_tierB.json
+Output (default): design-campaign-EGFP/design_windows_egfp_tierB.json
   { "meta": {...}, "windows": { "<scaffold>": { chromophore, catalytic, pocket, editable,
     fixed, position_constraints, scaffold_seq, ... } } }
 All position lists are 0-based into scaffold_seq; *_1based mirrors are included for convenience.
@@ -35,7 +35,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent      # .../fpdesign
 REPO = HERE.parent                           # .../spectrum-to-fp-design
-CAMPAIGN = REPO / "design-campaign-conventional"   # default home for pairs list + output JSON
+# Default home for the pairs list + output JSON. This is the EGFP campaign because it is the
+# only one still in the repo: the conventional (24-scaffold) and avGFP campaigns were archived
+# out (see the top-level README), which left these defaults pointing at absent files. Pass
+# --pairs/--out to run against any other pairs list; the schema is unchanged.
+CAMPAIGN = REPO / "design-campaign-EGFP"
 CUR = REPO / "dataset_pipeline" / "data" / "peak" / "curated"
 sys.path.insert(0, str(REPO))      # importable when run as a script, not just as fpdesign.*
 from fpdesign import pockets       # noqa: E402
@@ -67,8 +71,8 @@ def load_seqs():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pairs", default=str(CAMPAIGN / "pairs" / "campaign_pairs_24.csv"))
-    ap.add_argument("--out", default=str(CAMPAIGN / "design_windows_24_tierB.json"))
+    ap.add_argument("--pairs", default=str(CAMPAIGN / "pairs" / "campaign_pairs_egfp.csv"))
+    ap.add_argument("--out", default=str(CAMPAIGN / "design_windows_egfp_tierB.json"))
     ap.add_argument("--cutoff", type=float, default=CUTOFF)
     ap.add_argument("--hbond-cutoff", type=float, default=HBOND_CUTOFF,
                     help="heavy-atom N/O donor..acceptor distance to flag a Tier-B H-bond partner")

@@ -2,7 +2,8 @@
 """Shared design-campaign engine for the conventional FP design campaigns.
 
 This is the common library extracted from the (previously duplicated) per-folder
-``design_campaign.py`` drivers under ``design-campaign-conventional/``. Every campaign
+``design_campaign.py`` drivers of the original conventional campaign, since archived
+out of the repo (see the top-level README). Every campaign
 runs the SAME procedure -- iterate over scaffold->target pairs, run ``--trials`` independent
 any-order masked-LM design trials over a per-scaffold edit window, batch the trials on one GPU
 forward, and log one CSV per pair (round 0 = scaffold) -- and differs ONLY in:

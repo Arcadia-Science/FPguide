@@ -8,8 +8,9 @@ shift. (The green mEmerald and red mCherry targets were dropped in the consolida
       EBFP     (156, ex 380 / em 440)  blue    avGFP lineage (Clontech, US5,777,079 expired)
       mOrange  (479, ex 548 / em 562)  orange  DsRed/mFruit lineage (Tsien, US7,687,614 expired 2021)
 
-Output columns match design-campaign-conventional/pairs/campaign_pairs_24.csv so the shared
-fpdesign engine loads it unchanged. ``identity`` is the global scaffold<->target sequence identity
+Output columns match the schema the shared fpdesign engine expects -- the same nine columns the
+archived conventional campaign's ``campaign_pairs_24.csv`` used -- so ``build_design_windows.py``
+and ``campaign.py`` load it unchanged. ``identity`` is the global scaffold<->target sequence identity
 (metadata only; the edit window lives entirely on the EGFP scaffold, so no identity band is imposed).
 """
 import csv
