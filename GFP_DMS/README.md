@@ -73,10 +73,16 @@ python nn_distance_accuracy.py --probs   # -> figures/nn_distance_accuracy.{png,
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
 ```
 
-`gh` is a real dependency of this lane, and it is pinned in `environment.yml` alongside `mafft`.
-It is not a convenience wrapper around a URL you could `curl` instead: **this repository is
-private, so its release assets require an authenticated request** and no plain HTTPS URL can
-work. Run `gh auth login` once before the download.
+`gh` is pinned in `environment.yml` alongside `mafft` because it pulls all four assets in one
+command, but it is a convenience rather than a requirement — the same release assets are
+reachable over plain HTTPS with no credentials:
+
+```bash
+BASE=https://github.com/Arcadia-Science/FPguide/releases/download/reference-cloud-v1
+for f in sub20k_maxpool.npy sub20k_sequences.csv sub40k_maxpool.npz sub40k_sequences.csv; do
+  curl -fL -o "DMS_data/$f" "$BASE/$f"
+done
+```
 
 Verify the transfer (`build_maxpool_cache.py --verify` checks row alignment, not bytes):
 

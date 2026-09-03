@@ -147,6 +147,9 @@ if not _CLOUD.exists():
                      "The in-distribution reference cloud is not on disk (gitignored, 197 MiB). Fetch the\n"
                      "published copy:\n\n"
                      "    gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D GFP_DMS/DMS_data/\n\n"
+                     "Or over plain HTTPS, without gh:\n\n"
+                     "    curl -fL -o GFP_DMS/DMS_data/sub40k_maxpool.npz \\\n"
+                     "      https://github.com/Arcadia-Science/FPguide/releases/download/reference-cloud-v1/sub40k_maxpool.npz\n\n"
                      "Or rebuild it from the two source DMS studies -- see the Reproduce block in\n"
                      "GFP_DMS/README.md -- ending in:\n\n"
                      "    python GFP_DMS/build_maxpool_cache.py\n")

@@ -263,6 +263,9 @@ on.
 >
 > ```bash
 > gh release download reference-cloud-v1 -p sub40k_maxpool.npz -D GFP_DMS/DMS_data/
+> # or, without gh:
+> curl -fL -o GFP_DMS/DMS_data/sub40k_maxpool.npz \
+>   https://github.com/Arcadia-Science/FPguide/releases/download/reference-cloud-v1/sub40k_maxpool.npz
 > ```
 >
 > Rebuilding it instead means re-downloading two published DMS studies and running ~85 GB of
