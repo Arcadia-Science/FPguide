@@ -64,17 +64,56 @@ def wilson(k, n, z=1.96):
     return (c - h, c + h)
 
 
-def load_split_cache(stem):
-    """sub{20,40}k cache with the residue embeddings left on disk (memmap)."""
-    emb, lenp, csvp = sw.data_paths(stem)
+def load_split_meta(stem):
+    """Labels and split indices for sub{20,40}k, from the sequence CSV alone.
+
+    Everything this script does except the classifier forward pass needs only these -- which is
+    what makes --probs possible: the CSV is 11 MB and published, the residue cache is 24 GB and
+    is not.
+    """
+    _, _, csvp = sw.data_paths(stem)
     meta = pd.read_csv(csvp)
     split = meta["split"].to_numpy()
-    H = np.load(emb, mmap_mode="r")
-    D = dict(H=H, Ls=np.load(lenp).astype(np.int64), ar=torch.arange(H.shape[1]),
-             y=meta["label"].to_numpy(np.float32),
+    D = dict(y=meta["label"].to_numpy(np.float32),
              tr=np.where(split == "train")[0], va=np.where(split == "val")[0],
              te=np.where(split == "test")[0])
     return D, meta, split
+
+
+def load_split_cache(stem):
+    """load_split_meta plus the residue embeddings, left on disk (memmap)."""
+    emb, lenp, _ = sw.data_paths(stem)
+    D, meta, split = load_split_meta(stem)
+    H = np.load(emb, mmap_mode="r")
+    D.update(H=H, Ls=np.load(lenp).astype(np.int64), ar=torch.arange(H.shape[1]))
+    return D, meta, split
+
+
+def load_replayed_probs(path, meta):
+    """Per-row classifier probabilities from a previous run's *_per_row.csv.
+
+    The forward pass is the only part of this script that needs the 24 GB per-residue cache, and
+    its output is a single column that previous runs already committed to git. Replaying it keeps
+    every statistic below recomputed from published inputs. Row alignment against the sequence
+    table is asserted, not assumed -- a stale CSV must fail loudly rather than produce plausible
+    bins from mismatched rows.
+    """
+    pr = pd.read_csv(path)
+    if len(pr) != len(meta):
+        raise SystemExit(f"{__file__}: {path} has {len(pr)} rows, the cache has {len(meta)}")
+    for col in ("scaffold", "prob", "y", "split"):
+        if col not in pr.columns:
+            raise SystemExit(f"{__file__}: {path} has no '{col}' column -- not a per-row CSV "
+                             "written by this script")
+    bad = (pr["scaffold"].values != meta["scaffold"].values)
+    if bad.any():
+        raise SystemExit(f"{__file__}: {path} is not row-aligned with the sequence table "
+                         f"({int(bad.sum())} scaffold mismatches). Regenerate it without --probs.")
+    bad = (pr["y"].to_numpy(int) != meta["label"].to_numpy(int))
+    if bad.any():
+        raise SystemExit(f"{__file__}: {path} disagrees with the sequence table on "
+                         f"{int(bad.sum())} labels. Regenerate it without --probs.")
+    return pr["prob"].to_numpy(np.float64)
 
 
 def plot(tab, dist, pct, p99, y, correct, split, path):
@@ -117,6 +156,12 @@ def main():
     # gitignored) -- so the default has to be the tracked copy for lane A to run as documented.
     ap.add_argument("--ckpt", default="../fpdesign/models/brightness_cnn-max-d2_40k.pt")
     ap.add_argument("--out", default="figures/nn_distance_accuracy")
+    ap.add_argument("--probs", metavar="CSV", nargs="?",
+                    const="figures/nn_distance_accuracy_per_row.csv",
+                    help="replay the classifier probabilities from a previous run's per-row CSV "
+                         "instead of recomputing them from the per-residue cache. Makes this a "
+                         "~210 MB, no-GPU run; defaults to the tracked "
+                         "figures/nn_distance_accuracy_per_row.csv when given without a value.")
     a = ap.parse_args()
 
     dev = sw.device()
@@ -134,7 +179,7 @@ def main():
                          "GFP_DMS/README.md -- ending in:\n\n"
                          "    python GFP_DMS/build_maxpool_cache.py\n")
     emb_path = sw.data_paths(a.stem)[0]
-    if not os.path.exists(emb_path):
+    if not a.probs and not os.path.exists(emb_path):
         raise SystemExit(
             f"{__file__}: missing {emb_path}\n\n"
             f"This is the {a.stem} PER-RESIDUE ESM-2 cache (24 GiB for sub40k). It is a lane B\n"
@@ -144,12 +189,16 @@ def main():
             "The results of that forward pass are tracked in git, so you do not have to redo it:\n\n"
             "    GFP_DMS/figures/nn_distance_accuracy_per_row.csv   (40,000 rows: prob, y, split, ...)\n"
             "    GFP_DMS/figures/nn_distance_accuracy.csv           (the per-bin table)\n\n"
+            "Replay them instead of recomputing them -- this needs nothing but the published\n"
+            "reference cloud and sequence table:\n\n"
+            "    python nn_distance_accuracy.py --probs\n\n"
             "To rebuild the cache anyway, see the lane B block in GFP_DMS/README.md:\n\n"
             "    python GFP_DMS/embed_parallel.py ...   then   python GFP_DMS/build_subsample.py "
             "--per 10000 --stem sub40k\n")
 
-    D, meta, split = load_split_cache(a.stem)
-    print(f"cache {a.stem}: {len(meta)} rows | train {len(D['tr'])} val {len(D['va'])} test {len(D['te'])}")
+    D, meta, split = (load_split_meta if a.probs else load_split_cache)(a.stem)
+    print(f"cache {a.stem}: {len(meta)} rows | train {len(D['tr'])} val {len(D['va'])} test {len(D['te'])}"
+          + ("  [--probs: residue cache not opened]" if a.probs else ""))
 
     # ---- campaign ID statistic: self-excluded NN distance in z-scored max-pool space ----
     z = np.load(MAXPOOL, allow_pickle=True)
@@ -166,12 +215,16 @@ def main():
           f"p99 (ID cutoff) {p99:.3f}  max {dist.max():.3f}")
 
     # ---- score every row (train rows are fitted; kept for reference) ----
-    net, ck = pm.load_model(os.path.join(HERE, a.ckpt), dev, out=1)
-    print(f"checkpoint {a.ckpt}: {ck.get('arch')}-{ck.get('pool')}-d{ck.get('depth')} n_train={ck.get('n_train')}",
-          flush=True)
-    logits, idx = sw.predict_logits(net, D, np.arange(len(meta)), dev)
-    prob = 1 / (1 + np.exp(-logits.astype(np.float64)))
-    prob = prob[np.argsort(idx)]                              # predict_logits sorts; restore row order
+    if a.probs:
+        prob = load_replayed_probs(os.path.join(HERE, a.probs), meta)
+        print(f"probabilities replayed from {a.probs} (no forward pass, no checkpoint loaded)")
+    else:
+        net, ck = pm.load_model(os.path.join(HERE, a.ckpt), dev, out=1)
+        print(f"checkpoint {a.ckpt}: {ck.get('arch')}-{ck.get('pool')}-d{ck.get('depth')} n_train={ck.get('n_train')}",
+              flush=True)
+        logits, idx = sw.predict_logits(net, D, np.arange(len(meta)), dev)
+        prob = 1 / (1 + np.exp(-logits.astype(np.float64)))
+        prob = prob[np.argsort(idx)]                          # predict_logits sorts; restore row order
     y = D["y"].astype(int)
 
     def f1(yy, yhat):
@@ -218,13 +271,21 @@ def main():
     os.makedirs(os.path.join(HERE, os.path.dirname(a.out)), exist_ok=True)
     plot(tab, dist, pct, p99, y, correct, split, os.path.join(HERE, a.out + ".png"))
     tab.to_csv(os.path.join(HERE, a.out + ".csv"), index=False)
-    pd.DataFrame(dict(scaffold=meta["scaffold"], split=split, nn_dist=dist, nn_pct=pct,
-                      y=y, prob=prob, correct=correct)).to_csv(os.path.join(HERE, a.out + "_per_row.csv"),
-                                                              index=False)
-    json.dump(dict(stem=a.stem, ckpt=a.ckpt, threshold=thr, id_cutoff_p99=p99,
+    if a.probs:
+        # The per-row CSV is this mode's *input*. Rewriting it would only push `prob` through
+        # another float64 text round-trip (~1 ulp) and dirty a tracked file for no gain.
+        print(f"(--probs: not rewriting {a.out}_per_row.csv -- it is the input)")
+    else:
+        pd.DataFrame(dict(scaffold=meta["scaffold"], split=split, nn_dist=dist, nn_pct=pct,
+                          y=y, prob=prob, correct=correct)).to_csv(
+                              os.path.join(HERE, a.out + "_per_row.csv"), index=False)
+    json.dump(dict(stem=a.stem, ckpt=(None if a.probs else a.ckpt),
+                   probs_source=(a.probs or None),
+                   prob_mode=("replayed" if a.probs else "recomputed"),
+                   threshold=thr, id_cutoff_p99=p99,
                    heldout_acc=float(correct[ho].mean()), heldout_auroc=float(_auroc(y[ho], prob[ho]))),
               open(os.path.join(HERE, a.out + "_meta.json"), "w"), indent=2)
-    print(f"\nwrote {a.out}.csv / _per_row.csv / _meta.json")
+    print(f"\nwrote {a.out}.csv / _meta.json" + ("" if a.probs else " / _per_row.csv"))
 
 
 if __name__ == "__main__":

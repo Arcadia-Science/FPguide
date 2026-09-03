@@ -69,6 +69,7 @@ source studies. Pick A unless you are specifically reproducing the classifier tr
 # both reference clouds + the row-aligned sequence tables they are verified against
 gh release download reference-cloud-v1 -p 'sub20k_*' -p 'sub40k_*' -D DMS_data/
 python build_maxpool_cache.py --verify   # confirm row i of the cloud is row i of the CSV
+python nn_distance_accuracy.py --probs   # -> figures/nn_distance_accuracy.{png,csv} (+ _meta)
 jupyter nbconvert --to notebook --execute --inplace visualization.ipynb
 ```
 
@@ -124,10 +125,21 @@ set, so it is reused whenever the deployed weights and the two subsample splits 
 correctly discarded if either moves. It does not key on the checkpoint's *filename*, which would
 invalidate it on a rename.
 
-**One thing lane A still cannot do:** `python nn_distance_accuracy.py` needs
-`sub40k_esm_residue_fp16.npy` — the 24 GB per-residue cache, a lane B product — because it runs
-the classifier forward over all 40,000 rows. Its four outputs are tracked under `figures/`, so the
-numbers are available; only the recomputation is blocked.
+**Why `nn_distance_accuracy.py` takes `--probs` here.** Run bare, it opens
+`sub40k_esm_residue_fp16.npy` — the 24 GB per-residue cache, a lane B product — purely to run the
+classifier forward over all 40,000 rows. That forward pass is the *only* thing it needs the cache
+for: the NN distances come from the published max-pool cloud, and the labels and splits from the
+published sequence table. `--probs` replays that one column from a previous run's
+`figures/nn_distance_accuracy_per_row.csv`, which is tracked, and recomputes everything else —
+the 40k × 40k self-excluded nearest-neighbour distances, the val-F1-optimal threshold, every
+stratified accuracy, the Wilson intervals, the AUROCs and both figure panels.
+
+The replayed run reproduces the committed `nn_distance_accuracy.csv` and `.png` **byte for byte**.
+It is a replay of the forward pass, not an independent re-derivation of it, so `_meta.json`
+records `prob_mode: replayed` and leaves `ckpt` null; re-verifying that the checkpoint produces
+those probabilities is lane B, which is the lane split working as intended. Row alignment against
+the sequence table is asserted rather than assumed — a truncated, shuffled or wrong CSV is
+rejected with an explanation instead of yielding plausible bins from mismatched rows.
 
 **Lane B — rebuild from the two studies.** Download the raw tables first (see
 [Scaffolds & sources](#scaffolds--sources)); budget ~1.9 h on an L4 and ~54 GB for the orthologue
