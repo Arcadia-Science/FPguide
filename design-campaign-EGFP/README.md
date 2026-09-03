@@ -347,7 +347,7 @@ is embedded once ever.
 > which was retired to `archive/` — it was written against the T=10 folder layout and six
 > shortlists, four of which no longer exist. They are **not** regenerable from the current tree and
 > `nbconvert` will not reproduce them, so they followed the notebook that made them into
-> [`archive/figures/`](archive) — gitignored, kept on the authors' machines, and no longer published
+> `archive/figures/` — gitignored, absent from a clone, kept on the authors' machines, and no longer published
 > even though the write-up references them. Everything that can still be recomputed lives in the two
 > scripts and the notebook above, whose own figures go to `figures_benchmark/`; that is now this
 > folder's only figure directory.

@@ -218,6 +218,42 @@ Datasets and analyses that feed the design campaigns rather than the core pipeli
   (`1GFL.pdbx`) used by `msa_conservation/`. Self-populating: `pockets.py` fetches a missing PDB
   ID from RCSB into this folder on demand.
 
+## What a reproducer can regenerate
+
+Four tiers, and which one a figure falls into is the first thing worth knowing. Each folder's
+README has the detail; this is the map.
+
+**Tier 1 — runs from a bare clone.** No download beyond the conda env, no GPU: every input is
+tracked.
+
+| entry point | reads |
+|---|---|
+| `msa_conservation/visualization.ipynb`, `plot_conservation.py` | tracked `data/` (the 763-sequence union + MAFFT alignment) and all 13 files of `results/` |
+| `experiment/0831_spectrum/*.ipynb` | the tracked plate reads (`*_raw_well_data.csv`) and `fpbase-extractor/fpbase_output/fpbase_spectra.json` |
+
+**Tier 2 — one download, no training.** Add the `reference-cloud-v1` release (~325 MB; see
+[`GFP_DMS/README.md`](GFP_DMS/README.md) lane A).
+
+| entry point | also needs |
+|---|---|
+| `GFP_DMS/visualization.ipynb`, `nn_distance_accuracy.py --probs` | both clouds + their row-aligned sequence tables. Section 1 of the notebook is Tier 1; the rest is not |
+| `design-campaign-EGFP/benchmark_report.py`, `esm2_guided/analyze.py`, `visualization.ipynb` | `sub40k_maxpool.npz` (imported by `make_shortlist_case.py`) **and** the ESM-2 650M weights, to embed designs — so a GPU in practice |
+
+**Tier 3 — needs a gitignored cache rebuilt locally first** (GPU, and see the size table below).
+These fail with the command to run, not a traceback.
+
+| entry point | missing input | rebuild with |
+|---|---|---|
+| `dataset_pipeline/visualize_curation.ipynb` | `data/fpbase_esm2_650M_max.npy` | `python dataset_pipeline/embed_fpbase_maxpool.py` |
+| `in-silico-test/figures.ipynb` | the ESM-2 **and** ProstT5 per-residue caches, plus `trained_models/` (checkpoints + `surrogate_cv3.csv`) | `dataset_pipeline/embed.py`, `embed_prostt5.py`, then that folder's sweep/CV scripts |
+| `in-silico-test/sweep_results.ipynb` | `trained_models/` (the sweep leaderboards and top checkpoints) | the sweep scripts in `in-silico-test/1_surrogate_oracle_training/` |
+
+**Tier 4 — not regenerable from the published tree**, and the READMEs say so where they cite it:
+the frozen `design-campaign-EGFP/figures/` (the notebook that made it was archived), task set 1
+and the archived MSA arm of `in-silico-test/`, everything under any `archive/`, and the plate
+reads in `experiment/` — primary measurements, tracked precisely because they cannot be
+recomputed.
+
 ## What's in this repo, what's kept local
 
 Some material this README refers to is deliberately not published, so a reader who goes looking for
@@ -229,7 +265,7 @@ it knows it is absent by design rather than missing:
 | a few exploratory experiment folders | side experiments that are not part of the pipeline or the campaigns above | as above |
 | ESM-2 per-residue embedding caches (`esm_residue_fp16.npy`, `fpbase_esm2_650M_max.npy`, `DMS_data/*.npy`) | 0.5–50 GB each, over GitHub's file limit | re-run `dataset_pipeline/embed.py` / `embed_fpbase_maxpool.py`, `GFP_DMS/embed_dms.py` + `embed_parallel.py` |
 | ProstT5 per-residue embedding cache (`prostt5_residue_fp16.npy`) — the oracle input | ~0.9 GB | re-run `dataset_pipeline/embed_prostt5.py` (`--verify` / `--spot-check` validate one you already have) |
-| `GFP_DMS/DMS_data/sub40k_maxpool.npz` | the 40k in-distribution reference cloud, ~207 MB | re-run `python GFP_DMS/build_maxpool_cache.py` |
+| `GFP_DMS/DMS_data/sub40k_maxpool.npz` | the 40k in-distribution reference cloud, ~207 MB | download the published copy — [`GFP_DMS/README.md`](GFP_DMS/README.md) lane A. `build_maxpool_cache.py` alone will *not* rebuild it: it streams the 24 GB per-residue cache, so rebuilding means all of lane B (two study downloads + ~85 GB of embedding) |
 | `trained_models/`, and `*.pt` generally | regenerable checkpoints and cached predictions | re-run the sweep/training script in the folder that owns them |
 | the Atkinson Hyperlegible faces (`dataset_pipeline/fonts/`) | cut from the Google Fonts variable originals, not ours to redistribute | `python dataset_pipeline/fetch_arcadia_fonts.py` |
 

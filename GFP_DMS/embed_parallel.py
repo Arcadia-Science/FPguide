@@ -111,6 +111,27 @@ def run_worker(a):
 
 
 # --------------------------------------------------------------------------- launcher
+def check_gpus(gpus):
+    """Fail before spawning workers if a requested GPU id is not actually there.
+
+    Each worker is pinned with CUDA_VISIBLE_DEVICES=<id>; an id past the end of the visible
+    devices leaves that worker with no device, and it silently falls back to CPU -- at which
+    point the run does not finish rather than failing. Check the ids up front instead.
+    """
+    import torch
+    n = torch.cuda.device_count()
+    bad = [g for g in gpus if not g.isdigit() or int(g) >= n]
+    if bad:
+        raise SystemExit(
+            f"{__file__}: --gpus asks for {','.join(gpus)}, but this host has {n} visible CUDA "
+            f"device(s){' (none)' if n == 0 else f' (ids 0..{n - 1})'}.\n\n"
+            f"Unknown id(s): {','.join(bad)}. A worker pinned to a missing device sees no GPU and\n"
+            "falls back to CPU, which will not finish. Pass --gpus with the ids you actually have\n"
+            "(e.g. --gpus 0 on a single-GPU host)"
+            + ("." if n else ", or run on a GPU host.")
+        )
+
+
 def run_launcher(a):
     emb, lenp = derive_paths(a.input)
     if a.emb:
@@ -120,6 +141,7 @@ def run_launcher(a):
     Ls = np.array([len(s) for s in seqs], dtype=np.int64)
     Lmax = int(Ls.max())
     gpus = [g.strip() for g in a.gpus.split(",") if g.strip() != ""]
+    check_gpus(gpus)
     K = len(gpus)
     gb = N * Lmax * D_IN * 2 / 1e9
 
@@ -206,7 +228,9 @@ def main():
     ap.add_argument("--input", default=DEFAULT_INPUT, help="input sequences CSV")
     ap.add_argument("--seq-col", default="mutatedSequence", help="sequence column name")
     ap.add_argument("--emb", default="", help="override embedding .npy path (default: derived from --input)")
-    ap.add_argument("--gpus", default="0,1,2,3", help="comma-separated GPU ids, one shard each")
+    ap.add_argument("--gpus", default="0",
+                    help="comma-separated GPU ids, one shard each (default: single GPU; pass "
+                         "e.g. 0,1,2,3 on a 4-GPU host)")
     ap.add_argument("--bs", type=int, default=16, help="ESM forward batch size (per GPU)")
     ap.add_argument("--chunk", type=int, default=256, help="rows per outer write step (per GPU)")
     ap.add_argument("--force", action="store_true", help="rebuild from scratch")

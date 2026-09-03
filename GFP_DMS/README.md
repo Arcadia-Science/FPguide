@@ -148,8 +148,15 @@ the sequence table is asserted rather than assumed — a truncated, shuffled or 
 rejected with an explanation instead of yielding plausible bins from mismatched rows.
 
 **Lane B — rebuild from the two studies.** Download the raw tables first (see
-[Scaffolds & sources](#scaffolds--sources)); budget ~1.9 h on an L4 and ~54 GB for the orthologue
-embedding cache alone.
+[Scaffolds & sources](#scaffolds--sources)).
+
+> **Hardware this lane assumes.** The `--gpus 0,1,2,3` below is written for a **4-GPU host**, one
+> worker per GPU. The ~1.9 h embedding figure quoted in this README is *single*-GPU wall time
+> (141,144 sequences at ~20 seq/s on an L4); sharding it over 4 GPUs brings it to ~30 min. Both
+> launchers default to `--gpus 0` and now **refuse to start** if you ask for an id the host does
+> not have — a worker pinned to a missing device sees no GPU, falls back to CPU and never
+> finishes. Pass only ids you actually have. Budget **~85 GB of free disk** for the two
+> per-residue caches (31 GB avGFP + 54 GB orthologue), before the subsample caches.
 
 ```bash
 # 1. build the processed sequence CSVs (fast, CPU)
@@ -160,6 +167,7 @@ python transform_ortho_dms.py            # -> DMS_data/ortho_gfp_dms_sequences.c
 #    embed_dms.py covers avGFP only, and the other three scaffolds come from embed_parallel.py.
 python embed_dms.py                      # -> DMS_data/esm_residue_fp16.npy (+ _len)
 python embed_parallel.py --input DMS_data/ortho_gfp_dms_sequences.csv --gpus 0,1,2,3
+                                         # 4-GPU host; --gpus 0 on one GPU (the ~1.9 h figure)
                                          # -> DMS_data/ortho_gfp_dms_esm_residue_fp16.npy (+ _len)
 
 # 3. the stratified 4-scaffold subsample caches. The default is sub20k (5k rows x 4 scaffolds);
@@ -174,6 +182,7 @@ python build_subsample.py --per 10000 --stem sub40k        # -> DMS_data/sub40k_
 #    `--out` directory nn_distance_accuracy.py defaults to.
 python sweep_classify_parallel.py --dry-run                # list configs + shard assignment first
 python sweep_classify_parallel.py --gpus 0,1,2,3           # -> trained_models/sweep_class4/results.csv
+                                                           # again: 4 GPUs; --gpus 0 works, serially
 python sweep_classify_parallel.py --gpus 0 --configs cnn-max-d2 \
        --data-stem sub40k --out trained_models/cnn_max_d2_40k
                                          # -> trained_models/cnn_max_d2_40k/cnn-max-d2_s0.pt
@@ -195,10 +204,15 @@ campaigns load — it is the one checkpoint from this folder tracked in git, as
 
 ## Not in git (see `.gitignore`)
 
-`DMS_data/` in full — the two studies' raw tables, the processed `*_sequences.csv`, the subsample
-caches and the ESM-2 embedding arrays (tens of GB) — plus `trained_models/` (checkpoints and
-prediction caches) and run logs. What is tracked is the **code** that rebuilds all of it, and
-[`figures/`](figures).
+`DMS_data/` and `trained_models/` are ignored **by default, with named exceptions** — see
+`GFP_DMS/.gitignore`, where each exception is a `!` line. Not in git: the two studies' raw tables,
+the `sub20k_*`/`sub40k_*` subsample caches, the ESM-2 embedding arrays (tens of GB), every
+checkpoint except the brightness head, and run logs.
+
+Tracked anyway, because the notebook and lane A read them: the five artifacts in the ~41 MB table
+above — including the two processed `*_sequences.csv` — plus [`figures/`](figures) and the **code**
+that rebuilds everything else. So Section 1 of the notebook runs against what is already in a
+fresh clone; the transform scripts do *not* have to be re-run first.
 
 The two raw tables are not redistributed here; download them from the sources in
 [Scaffolds & sources](#scaffolds--sources) into `DMS_data/` under the filenames in that table, then

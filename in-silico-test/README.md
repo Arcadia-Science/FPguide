@@ -137,7 +137,9 @@ every folder in this repo keeps its own figures, there is no shared figure direc
 
 The cross-task-set table in [Design results](#design-results-task-set-2--the-live-task-set) came
 from `archive/compare_task_sets.py`, archived with task set 1 since half of what it prints *is*
-task 1. It still runs, reading both task sets' design CSVs where they sit.
+task 1. Like every `archive/` here it is **gitignored and not in a clone** — the numbers it
+produced are reproduced in that section, but the script itself is only on the authors' machines
+(where it still runs, reading both task sets' design CSVs where they sit).
 
 ### Model selection: the CV mattered
 

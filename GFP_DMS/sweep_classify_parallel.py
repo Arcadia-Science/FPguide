@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Multi-GPU bright/dim CLASSIFIER sweep over the 4-scaffold 20k subsample.
 
-The regression analogue is `sweep_brightness.py`; this trades the log-brightness regression head
+The regression analogue, `sweep_brightness.py`, is archived (`GFP_DMS/archive_regression/`,
+gitignored and not in a clone); this trades its log-brightness regression head
 for a binary **bright vs dim** classifier (single logit, BCE-with-logits) and swaps the metrics to
 AUROC / AUPRC / accuracy / F1. It runs a CNN/MLP backbone x pooling x depth grid (24 configs; no
 transformer) but **in parallel across GPUs**: the launcher assigns configs round-robin to one worker per GPU
@@ -267,9 +268,30 @@ def merge_leaderboard(cfgs, seeds, out_dir=OUT):
     print(f"best: {b['label']}  val AUROC {b['val_auroc']:.4f}  test AUROC {b['test_auroc']:.4f}")
 
 
+def check_gpus(gpus):
+    """Fail before spawning workers if a requested GPU id is not actually there.
+
+    Each worker is pinned with CUDA_VISIBLE_DEVICES=<id>; an id past the end of the visible
+    devices leaves that worker with no device, and it silently falls back to CPU -- at which
+    point the run does not finish rather than failing. Check the ids up front instead.
+    """
+    n = torch.cuda.device_count()
+    bad = [g for g in gpus if not g.isdigit() or int(g) >= n]
+    if bad:
+        raise SystemExit(
+            f"{__file__}: --gpus asks for {','.join(gpus)}, but this host has {n} visible CUDA "
+            f"device(s){' (none)' if n == 0 else f' (ids 0..{n - 1})'}.\n\n"
+            f"Unknown id(s): {','.join(bad)}. A worker pinned to a missing device sees no GPU and\n"
+            "falls back to CPU, which will not finish. Pass --gpus with the ids you actually have\n"
+            "(e.g. --gpus 0 on a single-GPU host)"
+            + ("." if n else ", or run on a GPU host.")
+        )
+
+
 def run_launcher(a):
     cfgs = _select(make_configs(), a.limit, [s for s in a.configs.split(",") if s] if a.configs else None)
     gpus = [g.strip() for g in a.gpus.split(",") if g.strip() != ""]
+    check_gpus(gpus)
     K = len(gpus)
     print(f"configs: {len(cfgs)} x {len(a.seeds)} seed(s) | GPUs {gpus} ({K} workers)")
     for i, g in enumerate(gpus):
@@ -326,7 +348,9 @@ def run_launcher(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--gpus", default="0,1,2,3", help="comma-separated GPU ids, one worker each")
+    ap.add_argument("--gpus", default="0",
+                    help="comma-separated GPU ids, one worker each (default: single GPU; pass "
+                         "e.g. 0,1,2,3 on a 4-GPU host)")
     ap.add_argument("--seeds", type=int, nargs="+", default=[0])
     ap.add_argument("--max-epochs", type=int, default=50)
     ap.add_argument("--patience", type=int, default=20)

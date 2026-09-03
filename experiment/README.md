@@ -73,7 +73,7 @@ Note the last row's filename and header disagree: the file is `egfp_ctermtag`, t
 N-terminal tag; it is not untagged.
 
 The ten designs and what they were predicted to do, from
-[`FPdesign-batch1_summary.xlsx`](../design-campaign-EGFP/shortlists/FPdesign-batch1_summary.xlsx):
+[`FPdesign-batch1.xlsx`](../design-campaign-EGFP/shortlists/FPdesign-batch1.xlsx):
 
 | construct | target | strategy | mutations vs EGFP | predicted peak MAE | brightness logit |
 |---|---|---|---|---|---|
@@ -226,7 +226,6 @@ avGFP, and mOrange reference curves.
 - **One well, one read, no replicates.** Only `mOrange_MSA_07` (well D4) has a dedicated
   background-subtracted workup; the other nine designs appear in the survey figures only. Nothing
   here is repeated across days or wells.
-- **`experiment/` is untracked but not gitignored.** Unlike `archive/`, nothing excludes it — it
-  is simply not committed yet. The plate data and plasmid maps are primary records that cannot be
-  regenerated, so decide deliberately whether they belong in git rather than leaving it to
-  `git add -A`.
+- **`experiment/` is tracked.** The plate data, plasmid FASTAs, figures and both notebooks are
+  committed: they are primary records that cannot be regenerated, so they are published with the
+  rest of the repo rather than kept local like `archive/`.

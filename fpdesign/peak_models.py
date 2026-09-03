@@ -9,9 +9,10 @@ whole curve.
 Backbones: a **CNN** (1-D convolutions over residues) and a **Transformer encoder**, each with a
 ``mean | min | max | std | concat | concatstd`` masked-pooling readout, a learned ``attn`` pool, or a
 learned second-order ``cov`` (covariance-probe) pool over the ESM-2 / ProstT5 per-residue embeddings.
-Used by ``sweep_peak_oracle.py`` / ``sweep_results.ipynb`` / ``train_oracle_prostt5.py`` (and the archived
-``archive/surrogate_oracle_peak_dual.ipynb``) so saved checkpoints reconstruct identically wherever they
-are loaded.
+Used by ``in-silico-test/1_surrogate_oracle_training/sweep_peak_oracle.py`` and
+``in-silico-test/sweep_results.ipynb`` — and by the archived ``train_oracle_prostt5.py`` and
+``surrogate_oracle_peak_dual.ipynb`` under ``archive/esm2_design/``, which is gitignored and not
+in a clone — so saved checkpoints reconstruct identically wherever they are loaded.
 """
 from __future__ import annotations
 import torch
