@@ -160,4 +160,3 @@ Tests cover normalization of both API shapes and all output writers offline
   cite FPbase (Lambert TJ, *Nat Methods* 2019) when using the data.
 - Field coverage reflects what FPbase has curated — many entries have `null`
   values for properties that were never measured.
-```

@@ -6,6 +6,16 @@
 # arm64 `torch` wheel's MPS (Metal) backend is used instead; set
 # PYTORCH_ENABLE_MPS_FALLBACK=1 for any op MPS doesn't implement.
 #
+# CUDA / driver floor (Linux). `torch==2.13.0` resolves to the +cu130 wheel: it ships its own
+# CUDA 13.0 runtime and cuDNN 9.20.0.48 as pip packages (the nvidia-* / cuda-* lines in
+# requirements.linux-64.txt), so NO system CUDA toolkit is required — but the wheel does need an
+# NVIDIA driver >= 580.65.06, NVIDIA's minimum for CUDA 13.0, which 13.x keeps via minor-version
+# compatibility. `nvidia-smi` reports the driver; the host this checkout is on satisfies it with
+# driver 595.71.05 / CUDA 13.2. To confirm the stack after install:
+#     python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"
+#     # -> 2.13.0+cu130 13.0 True
+# An older driver leaves torch.cuda.is_available() False and every GPU lane silently on CPU.
+#
 # Create from THIS directory (the project root) so the editable fpbase-extractor
 # install path resolves:
 #     conda env create -f environment.yml

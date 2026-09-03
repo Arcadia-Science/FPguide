@@ -1,7 +1,12 @@
-# spectrum-to-fp-design
+# FPguide
 
 Code and data for the Arcadia Science publication
 [doi:10.57844/arcadia-66aw-aa84](https://doi.org/10.57844/arcadia-66aw-aa84).
+
+> **Two names, one project.** The repository is **`FPguide`** — that is the directory `git clone`
+> creates. The project name `spectrum-to-fp-design` predates the rename and is what the conda env,
+> the two lock files, and every path comment in the code use; they are deliberately left alone, so
+> `conda activate spectrum-to-fp-design` is correct inside a clone named `FPguide/`.
 
 ESM-2–guided design of **fluorescent proteins (FPs)** conditioned on their photophysical
 properties. The core pipeline has three parts:
@@ -119,13 +124,18 @@ From this directory (the project root, so the editable `fpbase-extractor` instal
 
 ```bash
 conda env create -f environment.yml
-conda activate spectrum-to-fp-design
+conda activate spectrum-to-fp-design   # the env keeps the project name, not the repo name
 ```
 
 Device is auto-detected at runtime: **CUDA → MPS → CPU**. Every result in this repo was produced
 on Linux + CUDA (an L4). Apple Silicon works too — macOS has no CUDA, so the Mac GPU is used via
-**MPS**; set `PYTORCH_ENABLE_MPS_FALLBACK=1` for any op MPS doesn't implement. The ESM-2 650M
-weights (~650 MB) download to the torch cache on first use.
+**MPS**; set `PYTORCH_ENABLE_MPS_FALLBACK=1` for any op MPS doesn't implement.
+On Linux, `torch==2.13.0` installs the **+cu130** wheel — it brings its own CUDA 13.0 runtime and
+cuDNN, so no system CUDA toolkit is needed, but it requires an **NVIDIA driver ≥ 580.65.06**
+(CUDA 13.0's minimum; check with `nvidia-smi`). Below that, `torch.cuda.is_available()` is False
+and the GPU lanes fall back to CPU instead of failing.
+
+The ESM-2 650M weights (~650 MB) download to the torch cache on first use.
 
 `fpdesign/` is imported but **not installed** — the folders that use it put the repo root on
 `sys.path` at the top of each script, so run them from where their own README says to.
