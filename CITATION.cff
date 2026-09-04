@@ -1,0 +1,59 @@
+cff-version: 1.2.0
+message: If you use this software, please cite the associated publication.
+title: Joint steering of protein generation across multiple target properties
+doi: 10.57844/arcadia-66aw-aa84
+authors:
+- family-names: Avasthi
+  given-names: Prachee
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-1688-722X
+- family-names: Bell
+  given-names: Audrey
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0009-0008-2270-1613
+- family-names: Bircher
+  given-names: Josie
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-8024-9409
+- family-names: Hochstrasser
+  given-names: Megan L.
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-4404-078X
+- family-names: Kraemer
+  given-names: James
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0009-0009-5871-3808
+- family-names: Mets
+  given-names: David G.
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0000-0002-0803-0912
+- family-names: Zhou
+  given-names: Zhengqing
+  affiliation: Arcadia Science
+  orcid: https://orcid.org/0009-0000-9987-5832
+preferred-citation:
+  title: Joint steering of protein generation across multiple target properties
+  type: article
+  doi: 10.57844/arcadia-66aw-aa84
+  authors:
+  - family-names: Avasthi
+    given-names: Prachee
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0000-0002-1688-722X
+  - family-names: Bircher
+    given-names: Josie
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0000-0002-8024-9409
+  - family-names: Kraemer
+    given-names: James
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0009-0009-5871-3808
+  - family-names: Mets
+    given-names: David G.
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0000-0002-0803-0912
+  - family-names: Zhou
+    given-names: Zhengqing
+    affiliation: Arcadia Science
+    orcid: https://orcid.org/0009-0000-9987-5832
+  year: 2026
