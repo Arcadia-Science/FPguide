@@ -58,7 +58,7 @@ exceptiongroup @ file:///home/conda/feedstock_root/build_artifacts/exceptiongrou
 executing @ file:///home/conda/feedstock_root/build_artifacts/executing_1756729339227/work
 fair-esm==2.0.0
 fastjsonschema @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_python-fastjsonschema_1755304154/work/dist
-filelock==3.29.7
+filelock==4.2.1
 fonttools @ file:///home/conda/feedstock_root/build_artifacts/fonttools_1778770237442/work
 fqdn @ file:///home/conda/feedstock_root/build_artifacts/fqdn_1733327382592/work/dist
 frozenlist==1.8.0
